@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Publicá tu perfil · Elite Angels VIP</title>
-<meta name="description" content="Publicá tu perfil en Elite Angels. Cargá tus datos, definí tu valor en USD y activá tu anuncio pagando con tarjeta.">
+<meta name="description" content="Publicá tu perfil en Elite Angels. Cargá tus datos, definí tu valor en pesos y activá tu anuncio pagando con Mercado Pago.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -54,7 +54,7 @@
   <div class="container page-hero-content">
     <span class="eyebrow">Sumate a Elite Angels</span>
     <h1>Publicá tu <span class="text-gold">perfil</span></h1>
-    <p>Cargá tus datos, definí tu valor en dólares y activá tu anuncio pagando con tarjeta de crédito o débito.</p>
+    <p>Cargá tus datos, definí tu valor en pesos y activá tu anuncio pagando con Mercado Pago.</p>
     <div class="breadcrumb"><a href="index.html">Inicio</a> · Publicar</div>
   </div>
 </section>
@@ -101,13 +101,13 @@
 
           <div class="wizard-step" data-step="2">
             <h3 style="font-size:1.6rem;margin-bottom:8px">Definí tu valor</h3>
-            <p style="color:var(--text-soft);margin-bottom:26px;font-size:.95rem">Este es el valor en dólares que aparecerá en tu perfil. Para activar tu publicación se cobra este mismo importe por única vez con tu tarjeta.</p>
+            <p style="color:var(--text-soft);margin-bottom:26px;font-size:.95rem">Este es el valor en pesos que aparecerá en tu perfil. Para activar tu publicación se cobra este mismo importe por única vez con Mercado Pago.</p>
             <div class="field">
-              <label>Tu tarifa base (USD)</label>
-              <div class="price-input-wrap"><span class="cur">$</span><input type="number" name="precio" id="precioInput" min="50" step="10" placeholder="400" required></div>
-              <div class="price-chips"><button type="button" data-price="200">200</button><button type="button" data-price="300">300</button><button type="button" data-price="400">400</button><button type="button" data-price="600">600</button><button type="button" data-price="800">800</button></div>
-              <div class="price-hint">Mínimo 50 USD. Podés cambiarlo más adelante.</div>
-              <div class="msg" style="margin-top:8px">Ingresá un valor válido (mín. 50 USD)</div>
+              <label>Tu tarifa base (pesos ARS)</label>
+              <div class="price-input-wrap"><span class="cur">$</span><input type="number" name="precio" id="precioInput" min="50000" step="10000" placeholder="400000" required></div>
+              <div class="price-chips"><button type="button" data-price="200000">$200.000</button><button type="button" data-price="300000">$300.000</button><button type="button" data-price="400000">$400.000</button><button type="button" data-price="600000">$600.000</button><button type="button" data-price="800000">$800.000</button></div>
+              <div class="price-hint">Mínimo $50.000. Podés cambiarlo más adelante.</div>
+              <div class="msg" style="margin-top:8px">Ingresá un valor válido (mín. $50.000)</div>
             </div>
             <div class="wizard-actions"><button type="button" class="btn btn-ghost" data-prev="1">← Volver</button><button type="button" class="btn btn-gold" data-next="3">Ir al pago →</button></div>
           </div>
@@ -115,11 +115,11 @@
           <div class="wizard-step" data-step="3">
             <div id="payArea">
               <h3 style="font-size:1.6rem;margin-bottom:8px">Activá tu publicación</h3>
-              <p style="color:var(--text-soft);margin-bottom:24px;font-size:.95rem">Pagá con tarjeta de crédito o débito para publicar tu perfil.</p>
+              <p style="color:var(--text-soft);margin-bottom:24px;font-size:.95rem">Vas a pagar de forma segura en Mercado Pago.</p>
               <div class="pay-summary">
                 <div class="row"><span>Publicación de perfil VIP</span><span id="sumName">—</span></div>
                 <div class="row"><span>Vigencia</span><span>30 días</span></div>
-                <div class="row total"><span class="lbl">Total a pagar</span><span class="amt"><span id="sumAmount">0</span> USD</span></div>
+                <div class="row total"><span class="lbl">Total a pagar</span><span class="amt"><span id="sumAmount">$0</span></span></div>
               </div>
               <div class="pay-type">
                 <label><input type="radio" name="cardType" value="credito" checked> Tarjeta de crédito</label>
@@ -130,14 +130,14 @@
                 <div class="cc-number" id="ccNumber">•••• •••• •••• ••••</div>
                 <div class="cc-bottom"><div><div class="k">Titular</div><div class="v" id="ccName">NOMBRE APELLIDO</div></div><div><div class="k">Vence</div><div class="v" id="ccExp">MM/AA</div></div></div>
               </div>
-              <div class="field"><label>Número de tarjeta</label><input type="text" id="cardNumber" inputmode="numeric" maxlength="19" placeholder="0000 0000 0000 0000" required><div class="msg">Número inválido</div></div>
-              <div class="field"><label>Nombre del titular</label><input type="text" id="cardName" placeholder="Como figura en la tarjeta" required><div class="msg">Ingresá el titular</div></div>
+              <div class="field"><label>Número de tarjeta</label><input type="text" id="cardNumber" inputmode="numeric" maxlength="19" placeholder="0000 0000 0000 0000"><div class="msg">Número inválido</div></div>
+              <div class="field"><label>Nombre del titular</label><input type="text" id="cardName" placeholder="Como figura en la tarjeta"><div class="msg">Ingresá el titular</div></div>
               <div class="field-row">
-                <div class="field"><label>Vencimiento</label><input type="text" id="cardExp" inputmode="numeric" maxlength="5" placeholder="MM/AA" required><div class="msg">Fecha inválida</div></div>
-                <div class="field"><label>CVC</label><input type="text" id="cardCvc" inputmode="numeric" maxlength="4" placeholder="123" required><div class="msg">CVC inválido</div></div>
+                <div class="field"><label>Vencimiento</label><input type="text" id="cardExp" inputmode="numeric" maxlength="5" placeholder="MM/AA"><div class="msg">Fecha inválida</div></div>
+                <div class="field"><label>CVC</label><input type="text" id="cardCvc" inputmode="numeric" maxlength="4" placeholder="123"><div class="msg">CVC inválido</div></div>
               </div>
-              <div class="wizard-actions"><button type="button" class="btn btn-ghost" data-prev="2">← Volver</button><button type="submit" class="btn btn-gold" id="payBtn">Pagar <span id="payBtnAmount"></span> USD</button></div>
-              <div class="secure-row"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Pago cifrado · No almacenamos los datos de tu tarjeta</div>
+              <div class="wizard-actions"><button type="button" class="btn btn-ghost" data-prev="2">← Volver</button><button type="submit" class="btn btn-gold" id="payBtn">Pagar <span id="payBtnAmount"></span></button></div>
+              <div class="secure-row"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Pago seguro procesado por Mercado Pago</div>
             </div>
             <div class="pay-done" id="payDone">
               <div class="ok">✓</div>
