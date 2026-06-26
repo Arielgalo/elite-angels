@@ -119,6 +119,23 @@ function publishWizard(){
   let amount = 0;
   const dots = document.querySelectorAll('.step-dot');
   const stepsEls = form.querySelectorAll('.wizard-step');
+
+  // Regreso desde Mercado Pago
+  const pagoRet = new URLSearchParams(location.search).get('pago');
+  if(pagoRet){
+    const pa = document.getElementById('payArea'); if(pa) pa.style.display = 'none';
+    const pd = document.getElementById('payDone');
+    if(pd){
+      const titulo = pd.querySelector('h3'); const txt = pd.querySelector('p');
+      if(pagoRet === 'ok'){ if(titulo) titulo.textContent = '¡Pago confirmado!'; if(txt) txt.textContent = 'Recibimos tu pago y tu solicitud. La verificamos y, una vez aprobada, queda publicada por 30 días.'; }
+      else if(pagoRet === 'pendiente'){ if(titulo) titulo.textContent = 'Pago pendiente'; if(txt) txt.textContent = 'Tu pago quedó pendiente de acreditación. Cuando se confirme, procesamos tu publicación.'; }
+      else { if(titulo) titulo.textContent = 'El pago no se completó'; if(txt) txt.textContent = 'No se pudo procesar el pago. Podés intentar publicar nuevamente.'; }
+      pd.classList.add('show');
+    }
+    stepsEls.forEach(s => s.classList.toggle('active', +s.dataset.step === 3));
+    dots.forEach(d => d.classList.add('done'));
+  }
+
   function goStep(n){
     stepsEls.forEach(s => s.classList.toggle('active', +s.dataset.step === n));
     dots.forEach(d => { const dn = +d.dataset.step; d.classList.toggle('active', dn === n); d.classList.toggle('done', dn < n); });
@@ -142,7 +159,7 @@ function publishWizard(){
     const cur = +b.closest('.wizard-step').dataset.step;
     if(!validateStep(cur)) return;
     const next = +b.dataset.next;
-    if(next === 3){ amount = +document.getElementById('precioInput').value || 0; document.getElementById('sumName').textContent = form.nombre.value || '—'; document.getElementById('sumAmount').textContent = amount; document.getElementById('payBtnAmount').textContent = amount; }
+    if(next === 3){ amount = +document.getElementById('precioInput').value || 0; document.getElementById('sumName').textContent = form.nombre.value || '—'; document.getElementById('sumAmount').textContent = amount; const pba = document.getElementById('payBtnAmount'); if(pba) pba.textContent = amount; }
     goStep(next);
   }));
   form.querySelectorAll('[data-prev]').forEach(b => b.addEventListener('click', () => goStep(+b.dataset.prev)));
@@ -170,17 +187,30 @@ function publishWizard(){
   cardName.addEventListener('input', () => { document.getElementById('ccName').textContent = cardName.value.toUpperCase() || 'NOMBRE APELLIDO'; });
   cardExp.addEventListener('input', () => { let v = cardExp.value.replace(/\D/g,'').slice(0,4); if(v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2); cardExp.value = v; document.getElementById('ccExp').textContent = v || 'MM/AA'; });
   cardCvc.addEventListener('input', () => { cardCvc.value = cardCvc.value.replace(/\D/g,'').slice(0,4); });
+
+  // Pago real con Mercado Pago: ocultar el formulario de tarjeta (MP lo maneja)
+  const usingMP = !!window.eaSupa;
+  if(usingMP){
+    const cc = document.querySelector('.credit-card'); if(cc) cc.style.display = 'none';
+    const pt = document.querySelector('.pay-type'); if(pt) pt.style.display = 'none';
+    [cardNumber,cardName,cardExp,cardCvc].forEach(el => { const fld = el && el.closest('.field'); if(fld) fld.style.display = 'none'; });
+    const sr = document.querySelector('.secure-row'); if(sr) sr.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Pago seguro procesado por Mercado Pago — no ingresás datos de tarjeta acá';
+    const pb = document.getElementById('payBtn'); if(pb) pb.innerHTML = 'Pagar <span id="payBtnAmount"></span> USD con Mercado Pago';
+  }
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     let ok = true;
-    const setErr = (el, bad) => { el.closest('.field').classList.toggle('err', bad); if(bad) ok = false; };
-    setErr(cardNumber, !luhnValid(cardNumber.value)); setErr(cardName, !cardName.value.trim()); setErr(cardExp, !expValid(cardExp.value)); setErr(cardCvc, !/^\d{3,4}$/.test(cardCvc.value));
+    if(!usingMP){
+      const setErr = (el, bad) => { el.closest('.field').classList.toggle('err', bad); if(bad) ok = false; };
+      setErr(cardNumber, !luhnValid(cardNumber.value)); setErr(cardName, !cardName.value.trim()); setErr(cardExp, !expValid(cardExp.value)); setErr(cardCvc, !/^\d{3,4}$/.test(cardCvc.value));
+    }
     if(!ok) return;
     const btn = document.getElementById('payBtn'); btn.textContent = 'Procesando…'; btn.disabled = true;
-    const payload = { id:'sol_'+Date.now(), fecha:new Date().toISOString(), nombre:form.nombre.value.trim(), edad:+form.edad.value||null, ciudad:form.ciudad.value, altura:form.altura.value.trim(), telefono:form.telefono.value.trim(), email:form.email.value.trim(), bio:form.bio.value.trim(), precio:amount, fotos:photoData.slice(0,6), cardType:(form.cardType.value||'credito'), cardBrand:cardBrand(cardNumber.value), cardLast4:cardNumber.value.replace(/\D/g,'').slice(-4), pago:'pagado', estado:'pendiente' };
+    const payload = { id:'sol_'+Date.now(), fecha:new Date().toISOString(), nombre:form.nombre.value.trim(), edad:+form.edad.value||null, ciudad:form.ciudad.value, altura:form.altura.value.trim(), telefono:form.telefono.value.trim(), email:form.email.value.trim(), bio:form.bio.value.trim(), precio:amount, fotos:photoData.slice(0,6), cardType:(form.cardType?form.cardType.value:'')||'', cardBrand:cardBrand(cardNumber.value), cardLast4:cardNumber.value.replace(/\D/g,'').slice(-4), pago:'pagado', estado:'pendiente' };
     const showDone = () => { document.getElementById('payArea').style.display = 'none'; document.getElementById('doneName').textContent = form.nombre.value || ''; document.getElementById('payDone').classList.add('show'); dots.forEach(d => d.classList.add('done')); };
     const fail = (msg) => { btn.textContent = 'Reintentar pago'; btn.disabled = false; alert(msg || 'No se pudo completar.'); };
-    if(window.eaSupa){ window.eaSupa.submitPublish(payload, photoFiles).then(showDone).catch(err => { console.error(err); fail('No se pudo enviar la solicitud al servidor.'); }); }
+    if(window.eaSupa){ window.eaSupa.submitPublish(payload, photoFiles).then(r => { if(r !== 'redirect') showDone(); }).catch(err => { console.error(err); fail('No se pudo iniciar el pago. Probá de nuevo.'); }); }
     else { setTimeout(() => { saveSubmission(payload); showDone(); }, 1300); }
   });
 }

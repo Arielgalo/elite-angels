@@ -11,7 +11,7 @@
   }
   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  /* ---------- Publicar: subir fotos + crear solicitud ---------- */
+  /* ---------- Publicar: subir fotos + crear solicitud + iniciar pago en Mercado Pago ---------- */
   async function submitPublish(payload, files) {
     const urls = [];
     for (let i = 0; i < (files || []).length && i < 6; i++) {
@@ -26,12 +26,21 @@
     const row = {
       nombre: payload.nombre, edad: payload.edad, ciudad: payload.ciudad, altura: payload.altura,
       telefono: payload.telefono, email: payload.email, bio: payload.bio, precio: payload.precio,
-      fotos: urls, card_type: payload.cardType, card_brand: payload.cardBrand,
-      card_last4: payload.cardLast4, pago: 'pagado', estado: 'pendiente'
+      fotos: urls, pago: 'pendiente', estado: 'pendiente'
     };
-    const { error } = await client.from('solicitudes').insert(row);
+    const { data: ins, error } = await client.from('solicitudes').insert(row).select('id').single();
     if (error) throw error;
-    return true;
+
+    const resp = await client.functions.invoke('crear-pago', {
+      body: { nombre: payload.nombre, precio: payload.precio, solicitud_id: ins.id }
+    });
+    if (resp.error) throw resp.error;
+    const initPoint = resp.data && (resp.data.init_point || resp.data.sandbox_init_point);
+    if (initPoint) {
+      window.location.href = initPoint;
+      return 'redirect';
+    }
+    throw new Error((resp.data && resp.data.error) || 'No se pudo iniciar el pago.');
   }
 
   /* ---------- Panel de moderación con login ---------- */
@@ -42,7 +51,7 @@
       { label: 'Edad verificada (+18)', ok: !!(s.edad && s.edad >= 18), detail: s.edad ? s.edad + ' años' : 'sin dato' },
       { label: 'Datos de contacto completos', ok: !!(s.nombre && s.telefono && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s.email || '')), detail: s.email || '—' },
       { label: 'Ciudad y tarifa definidas', ok: !!(s.ciudad && s.precio >= 50), detail: (s.ciudad || '—') + ' · ' + (s.precio || 0) + ' USD' },
-      { label: 'Pago confirmado', ok: s.pago === 'pagado', detail: (s.card_brand || 'Tarjeta') + ' ****' + (s.card_last4 || '') }
+      { label: 'Pago confirmado', ok: s.pago === 'pagado', detail: (s.mp_status || s.pago || '—') }
     ];
   }
 
@@ -98,7 +107,7 @@
             <div class="rev-meta">${s.ciudad || '—'} · ${s.edad || '—'} años · ${s.altura || '—'} · recibido ${fecha}</div></div>
             <span class="status-badge ${allOk ? 'ready' : 'incomplete'}">${allOk ? 'Listo para publicar' : 'Faltan datos'}</span>
           </div>
-          <div class="rev-contact"><span>📞 ${s.telefono || '—'}</span><span>✉ ${s.email || '—'}</span><span>💳 ${s.card_brand || 'Tarjeta'} ****${s.card_last4 || ''}</span></div>
+          <div class="rev-contact"><span>📞 ${s.telefono || '—'}</span><span>✉ ${s.email || '—'}</span><span>💳 Pago: ${s.pago || '—'}${s.mp_payment_id ? ' (MP ' + s.mp_payment_id + ')' : ''}</span></div>
           ${s.bio ? `<p class="rev-bio">"${s.bio}"</p>` : ''}
           <div class="checklist">${checks.map(c => `<div class="ck-item ${c.ok ? 'ok' : 'no'}"><span class="ck-box">${c.ok ? '✓' : '✕'}</span><span class="ck-label">${c.label}</span><span class="ck-detail">${c.detail}</span></div>`).join('')}</div>
           ${s.estado === 'pendiente'
@@ -142,7 +151,6 @@
     });
   }
 
-  /* ---------- Perfiles publicados para el sitio público ---------- */
   async function getPublicados() {
     const { data, error } = await client.from('perfiles_publicados').select('*').order('created_at', { ascending: false });
     return error ? [] : data;
