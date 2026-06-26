@@ -3,3 +3,5 @@ Allow: /
 Disallow: /panel.html
 
 Sitemap: /sitemap.xml
+
+# repo público — deploy 1782485880
