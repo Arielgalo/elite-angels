@@ -1,0 +1,21 @@
+# Configuración de despliegue en Netlify — Elite Angels
+# Sitio estático: no requiere build.
+
+[build]
+  publish = "."
+  command = ""
+
+# Cabeceras de seguridad
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# El panel de moderación no debe indexarse
+[[headers]]
+  for = "/panel.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
