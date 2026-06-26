@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Publicá tu perfil · Elite Angels VIP</title>
-<meta name="description" content="Publicá tu perfil en Elite Angels. Cargá tus datos, definí tu valor en pesos y activá tu anuncio pagando con Mercado Pago.">
+<meta name="description" content="Publicá tu perfil en Elite Angels. Elegí país, provincia y ciudad, definí tu valor en pesos y activá tu anuncio con Mercado Pago.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -54,7 +54,7 @@
   <div class="container page-hero-content">
     <span class="eyebrow">Sumate a Elite Angels</span>
     <h1>Publicá tu <span class="text-gold">perfil</span></h1>
-    <p>Cargá tus datos, definí tu valor en pesos y activá tu anuncio pagando con Mercado Pago.</p>
+    <p>Elegí dónde publicarte (país, provincia y ciudad), definí tu valor en pesos y activá tu anuncio con Mercado Pago.</p>
     <div class="breadcrumb"><a href="index.html">Inicio</a> · Publicar</div>
   </div>
 </section>
@@ -77,16 +77,15 @@
               <div class="field"><label>Edad</label><input type="number" name="edad" min="18" max="70" placeholder="22" required><div class="msg">Debés ser mayor de 18</div></div>
             </div>
             <div class="field-row">
-              <div class="field"><label>Ciudad</label>
-                <select name="ciudad" required>
-                  <option value="">Seleccionar</option>
-                  <option>Madrid</option><option>Barcelona</option><option>Buenos Aires</option><option>Miami</option><option>Dubái</option><option>Otra</option>
-                </select><div class="msg">Elegí tu ciudad</div>
-              </div>
+              <div class="field"><label>País</label><select id="selPais" required><option value="">País</option></select><div class="msg">Elegí el país</div></div>
+              <div class="field"><label>Provincia / Estado</label><select id="selProvincia" required disabled><option value="">Provincia / Estado</option></select><div class="msg">Elegí la provincia</div></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Ciudad</label><select id="selCiudad" required disabled><option value="">Ciudad</option></select><div class="msg">Elegí la ciudad</div></div>
               <div class="field"><label>Altura</label><input type="text" name="altura" placeholder="1.70 m"></div>
             </div>
             <div class="field-row">
-              <div class="field"><label>Teléfono / WhatsApp</label><input type="tel" name="telefono" placeholder="+00 000 000 000" required><div class="msg">Ingresá un teléfono</div></div>
+              <div class="field"><label>Teléfono / WhatsApp</label><input type="tel" name="telefono" placeholder="+54 11 0000 0000" required><div class="msg">Ingresá un teléfono</div></div>
               <div class="field"><label>Email</label><input type="email" name="email" placeholder="tu@email.com" required><div class="msg">Email no válido</div></div>
             </div>
             <div class="field"><label>Descripción / ¿Quién sos?</label><textarea name="bio" placeholder="Contá tu estilo, idiomas, qué te hace especial..."></textarea></div>
@@ -130,11 +129,11 @@
                 <div class="cc-number" id="ccNumber">•••• •••• •••• ••••</div>
                 <div class="cc-bottom"><div><div class="k">Titular</div><div class="v" id="ccName">NOMBRE APELLIDO</div></div><div><div class="k">Vence</div><div class="v" id="ccExp">MM/AA</div></div></div>
               </div>
-              <div class="field"><label>Número de tarjeta</label><input type="text" id="cardNumber" inputmode="numeric" maxlength="19" placeholder="0000 0000 0000 0000"><div class="msg">Número inválido</div></div>
-              <div class="field"><label>Nombre del titular</label><input type="text" id="cardName" placeholder="Como figura en la tarjeta"><div class="msg">Ingresá el titular</div></div>
+              <div class="field"><label>Número de tarjeta</label><input type="text" id="cardNumber" inputmode="numeric" maxlength="19" placeholder="0000 0000 0000 0000"></div>
+              <div class="field"><label>Nombre del titular</label><input type="text" id="cardName" placeholder="Como figura en la tarjeta"></div>
               <div class="field-row">
-                <div class="field"><label>Vencimiento</label><input type="text" id="cardExp" inputmode="numeric" maxlength="5" placeholder="MM/AA"><div class="msg">Fecha inválida</div></div>
-                <div class="field"><label>CVC</label><input type="text" id="cardCvc" inputmode="numeric" maxlength="4" placeholder="123"><div class="msg">CVC inválido</div></div>
+                <div class="field"><label>Vencimiento</label><input type="text" id="cardExp" inputmode="numeric" maxlength="5" placeholder="MM/AA"></div>
+                <div class="field"><label>CVC</label><input type="text" id="cardCvc" inputmode="numeric" maxlength="4" placeholder="123"></div>
               </div>
               <div class="wizard-actions"><button type="button" class="btn btn-ghost" data-prev="2">← Volver</button><button type="submit" class="btn btn-gold" id="payBtn">Pagar <span id="payBtnAmount"></span></button></div>
               <div class="secure-row"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Pago seguro procesado por Mercado Pago</div>
@@ -142,7 +141,7 @@
             <div class="pay-done" id="payDone">
               <div class="ok">✓</div>
               <h3 style="font-size:1.7rem;margin-bottom:12px">¡Pago confirmado!</h3>
-              <p style="color:var(--text-soft);max-width:440px;margin:0 auto 24px">Tu perfil <strong id="doneName" style="color:var(--gold)"></strong> fue recibido. Lo verificamos y, una vez aprobado, queda publicado por 30 días.</p>
+              <p style="color:var(--text-soft);max-width:440px;margin:0 auto 24px">Tu perfil fue recibido. Lo verificamos y, una vez aprobado, queda publicado por 30 días.</p>
               <a href="modelos.html" class="btn btn-gold">Ver el catálogo</a>
             </div>
           </div>
@@ -177,6 +176,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/ea-supabase.js"></script>
+<script src="js/locations.js"></script>
 <script src="js/app.js" defer></script>
 </body>
 </html>
