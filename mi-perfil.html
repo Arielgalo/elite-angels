@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Panel de moderación · Elite Angels</title>
+<title>Mi perfil · Elite Angels</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -17,41 +17,31 @@
   <div class="container nav">
     <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Elite Angels"><span class="logo-text">Elite<span>Angels</span></span></a>
     <nav class="nav-links">
-      <a href="index.html">Sitio</a>
+      <a href="index.html">Inicio</a>
       <a href="modelos.html">Modelos</a>
       <a href="publicar.html">Publicá</a>
-      <a href="panel.html" class="active">Panel</a>
+      <a href="mi-perfil.html" class="active">Mi perfil</a>
     </nav>
-    <div class="nav-actions"><span class="admin-tag">Administración</span></div>
+    <div class="nav-actions"><a href="publicar.html" class="btn btn-gold" style="padding:13px 22px">Publicar</a></div>
   </div>
 </header>
 
-<section class="section" style="padding-top:50px">
+<section class="section" style="padding-top:60px">
   <div class="container">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:18px;margin-bottom:32px">
-      <div>
-        <span class="eyebrow">Moderación</span>
-        <h1 style="font-size:clamp(2rem,4vw,3rem);margin-top:12px">Solicitudes de publicación</h1>
-        <p style="color:var(--text-soft);margin-top:8px">Revisá fotos y datos, verificá el checklist y dá el OK para publicar.</p>
-      </div>
+    <div style="text-align:center;max-width:620px;margin:0 auto 36px">
+      <span class="eyebrow">Acceso de modelos</span>
+      <h1 style="font-size:clamp(2rem,4.5vw,3rem);margin-top:12px">Editá tu perfil</h1>
+      <p style="color:var(--text-soft);margin-top:10px">Ingresá con el email que usaste al publicar. Podés actualizar tus fotos, videos, voz, descripción y datos cuando quieras.</p>
     </div>
-
-    <div class="panel-tabs">
-      <button class="panel-tab active" data-tab="pendiente">Pendientes <span class="cnt">0</span></button>
-      <button class="panel-tab" data-tab="publicado">Publicadas <span class="cnt">0</span></button>
-      <button class="panel-tab" data-tab="rechazado">Rechazadas <span class="cnt">0</span></button>
-      <button class="panel-tab" data-tab="resenas">Reseñas <span class="cnt">0</span></button>
-    </div>
-
-    <div id="panelRoot" data-filter="pendiente"></div>
+    <div id="portalRoot"></div>
   </div>
 </section>
 
 <footer class="footer" style="padding:50px 0 30px">
   <div class="container">
     <div class="footer-bottom" style="border:none;padding:0">
-      <p>© 2026 Elite Angels · Panel interno de administración</p>
-      <div class="age"><span class="b18">18+</span><span>Uso exclusivo del equipo</span></div>
+      <p>© 2026 Elite Angels</p>
+      <div class="age"><span class="b18">18+</span><span>Solo para mayores de edad</span></div>
     </div>
   </div>
 </footer>
