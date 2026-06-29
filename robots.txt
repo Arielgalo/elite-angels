@@ -5,3 +5,4 @@ Disallow: /panel.html
 Sitemap: /sitemap.xml
 
 # repo público — deploy 1782485880
+# deploy verificado por el titular
