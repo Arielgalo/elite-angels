@@ -31,7 +31,7 @@
     const row = {
       nombre: payload.nombre, edad: payload.edad, pais: payload.pais, provincia: payload.provincia,
       ciudad: payload.ciudad, altura: payload.altura, telefono: payload.telefono, email: payload.email,
-      bio: payload.bio, precio: payload.precio, fotos: m.fotos, videos: m.videos, audio: m.audio,
+      bio: payload.bio, precio: payload.precio, fotos: m.fotos, videos: m.videos, audio: m.audio, busto: payload.busto, cintura: payload.cintura, cola: payload.cola, nacionalidad: payload.nacionalidad, cabello: payload.cabello, tipo_cuerpo: payload.tipo_cuerpo,
       pago: 'pendiente', estado: 'pendiente'
     };
     const { data: ins, error } = await client.from('solicitudes').insert(row).select('id').single();
@@ -76,6 +76,18 @@
         <div class="field"><label>Teléfono / WhatsApp</label><input data-ef="telefono" value="${esc(s.telefono)}"></div>
         <div class="field"><label>Tarifa (ARS)${isAdmin?'':' — la edita la administración'}</label><input data-ef="precio" type="number" value="${esc(s.precio)}" ${isAdmin?'':'disabled'}></div>
       </div>
+      <div class="field-row">
+        <div class="field"><label>Nacionalidad</label><input data-ef="nacionalidad" value="${esc(s.nacionalidad)}" placeholder="Argentina"></div>
+        <div class="field"><label>Cabello</label><input data-ef="cabello" value="${esc(s.cabello)}" placeholder="Morena / Rubia..."></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Tipo de cuerpo</label><input data-ef="tipo_cuerpo" value="${esc(s.tipo_cuerpo)}" placeholder="Delgada / Curvas..."></div>
+        <div class="field"><label>Busto</label><input data-ef="busto" value="${esc(s.busto)}" placeholder="90 cm"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Cintura</label><input data-ef="cintura" value="${esc(s.cintura)}" placeholder="60 cm"></div>
+        <div class="field"><label>Cola</label><input data-ef="cola" value="${esc(s.cola)}" placeholder="95 cm"></div>
+      </div>
       <div class="field"><label>Descripción</label><textarea data-ef="bio">${esc(s.bio)}</textarea></div>
       <div class="field"><label>Fotos actuales</label><div class="ed-chips">${mediaChips(s.fotos,'foto')||'<span style="color:var(--text-mute)">sin fotos</span>'}</div><input type="file" data-ef="addFotos" accept="image/*" multiple></div>
       <div class="field"><label>Videos actuales</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
@@ -94,7 +106,7 @@
     const fIn = formEl.querySelector('[data-ef="addFotos"]'); const vIn = formEl.querySelector('[data-ef="addVideos"]'); const aIn = formEl.querySelector('[data-ef="addAudio"]');
     const nuevos = await subirMedios(fIn?[...fIn.files]:[], vIn?[...vIn.files]:[], aIn&&aIn.files[0]?aIn.files[0]:null);
     fotos = fotos.concat(nuevos.fotos); videos = videos.concat(nuevos.videos); if (nuevos.audio) audio = nuevos.audio;
-    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), telefono:get('telefono'), bio:get('bio'), fotos, videos, audio };
+    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), fotos, videos, audio };
     if (isAdmin) patch.precio = +get('precio')||0;
     const { error } = await client.from('solicitudes').update(patch).eq('id', id);
     if (error) throw error;

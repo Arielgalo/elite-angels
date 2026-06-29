@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Publicá tu perfil · Elite Angels VIP</title>
-<meta name="description" content="Publicá tu perfil en Elite Angels. Elegí país, provincia y ciudad, definí tu valor en pesos y activá tu anuncio con Mercado Pago.">
+<title>Publicá tu perfil · Aura Experience VIP</title>
+<meta name="description" content="Publicá tu perfil en Aura Experience. Elegí país, provincia y ciudad, definí tu valor en pesos y activá tu anuncio con Mercado Pago.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
 
 <div class="age-gate" id="ageGate">
   <div class="age-box">
-    <img src="assets/logo.svg" class="logo-emblem" alt="Elite Angels">
+    <img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience">
     <h2>Acceso exclusivo +18</h2>
     <p>Este sitio contiene contenido destinado únicamente a personas mayores de edad. Al ingresar confirmás que tenés 18 años o más.</p>
     <div class="actions">
@@ -27,7 +27,7 @@
 
 <header class="header" id="header">
   <div class="container nav">
-    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Elite Angels"><span class="logo-text">Elite<span>Angels</span></span></a>
+    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience"><span class="logo-text">Aura<span> Experience</span></span></a>
     <nav class="nav-links">
       <a href="index.html">Inicio</a>
       <a href="modelos.html">Modelos</a>
@@ -52,9 +52,9 @@
 <section class="page-hero">
   <div class="hero-bg"></div>
   <div class="container page-hero-content">
-    <span class="eyebrow">Sumate a Elite Angels</span>
+    <span class="eyebrow">Sumate a Aura Experience</span>
     <h1>Publicá tu <span class="text-gold">perfil</span></h1>
-    <p>Elegí dónde publicarte (país, provincia y ciudad), definí tu valor en pesos y activá tu anuncio con Mercado Pago.</p>
+    <p>Comprá tu espacio en Aura Experience. Vos decidís cuánto cobrás por cita privada: ese valor es el de tu espacio. Publicás tus fotos, videos y voz, y los clientes te contratan directo.</p>
     <div class="breadcrumb"><a href="index.html">Inicio</a> · Publicar</div>
   </div>
 </section>
@@ -85,6 +85,18 @@
               <div class="field"><label>Altura</label><input type="text" name="altura" placeholder="1.70 m"></div>
             </div>
             <div class="field-row">
+              <div class="field"><label>Nacionalidad</label><input type="text" name="nacionalidad" placeholder="Argentina"></div>
+              <div class="field"><label>Cabello</label><select name="cabello"><option value="">Seleccionar</option><option>Rubia</option><option>Morena</option><option>Castaña</option><option>Pelirroja</option><option>Otro</option></select></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Tipo de cuerpo</label><select name="tipo_cuerpo"><option value="">Seleccionar</option><option>Delgada</option><option>Atlética</option><option>Curvas</option><option>Voluptuosa</option></select></div>
+              <div class="field"><label>Busto</label><input type="text" name="busto" placeholder="90 cm"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Cintura</label><input type="text" name="cintura" placeholder="60 cm"></div>
+              <div class="field"><label>Cola</label><input type="text" name="cola" placeholder="95 cm"></div>
+            </div>
+            <div class="field-row">
               <div class="field"><label>Teléfono / WhatsApp</label><input type="tel" name="telefono" placeholder="+54 11 0000 0000" required><div class="msg">Ingresá un teléfono</div></div>
               <div class="field"><label>Email</label><input type="email" name="email" placeholder="tu@email.com" required><div class="msg">Email no válido</div></div>
             </div>
@@ -104,13 +116,13 @@
 
           <div class="wizard-step" data-step="2">
             <h3 style="font-size:1.6rem;margin-bottom:8px">Definí tu valor</h3>
-            <p style="color:var(--text-soft);margin-bottom:26px;font-size:.95rem">Este es el valor en pesos que aparecerá en tu perfil. Para activar tu publicación se cobra este mismo importe por única vez con Mercado Pago.</p>
+            <p style="color:var(--text-soft);margin-bottom:26px;font-size:.95rem">Elegí tu espacio según lo que vas a cobrar por cita privada. Ese mismo monto es el valor de tu publicación: lo comprás por única vez y tu perfil queda activo 30 días.</p>
             <div class="field">
-              <label>Tu tarifa base (pesos ARS)</label>
-              <div class="price-input-wrap"><span class="cur">$</span><input type="number" name="precio" id="precioInput" min="50000" step="10000" placeholder="400000" required></div>
-              <div class="price-chips"><button type="button" data-price="200000">$200.000</button><button type="button" data-price="300000">$300.000</button><button type="button" data-price="400000">$400.000</button><button type="button" data-price="600000">$600.000</button><button type="button" data-price="800000">$800.000</button></div>
-              <div class="price-hint">Mínimo $50.000. Podés cambiarlo más adelante.</div>
-              <div class="msg" style="margin-top:8px">Ingresá un valor válido (mín. $50.000)</div>
+              <label>Tu tarifa por cita privada / valor de tu espacio (ARS)</label>
+              <div class="price-input-wrap"><span class="cur">$</span><input type="number" name="precio" id="precioInput" min="100000" step="10000" placeholder="400000" value="" required></div>
+              <div class="price-chips"><button type="button" data-price="100000">$100.000</button><button type="button" data-price="200000">$200.000</button><button type="button" data-price="400000">$400.000</button><button type="button" data-price="600000">$600.000</button><button type="button" data-price="800000">$800.000</button></div>
+              <div class="price-hint">Espacios desde $100.000. Podés cambiarlo más adelante.</div>
+              <div class="msg" style="margin-top:8px">Elegí un espacio (mínimo $100.000)</div>
             </div>
             <div class="wizard-actions"><button type="button" class="btn btn-ghost" data-prev="1">← Volver</button><button type="button" class="btn btn-gold" data-next="3">Ir al pago →</button></div>
           </div>
@@ -160,7 +172,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Elite Angels"><span class="logo-text">Elite<span>Angels</span></span></a>
+        <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience"><span class="logo-text">Aura<span> Experience</span></span></a>
         <p>Agencia internacional de modelos acompañantes VIP. Discreción, elegancia y experiencias a medida.</p>
         <div class="socials">
           <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
@@ -170,9 +182,9 @@
       </div>
       <div class="footer-col"><h4>Navegación</h4><a href="index.html">Inicio</a><a href="modelos.html">Modelos</a><a href="nosotros.html">Nosotros</a><a href="contacto.html">Contacto</a></div>
       <div class="footer-col"><h4>Modelos</h4><a href="publicar.html">Publicá tu perfil</a><a href="publicar.html">Tarifas</a><a href="nosotros.html">Cómo funciona</a></div>
-      <div class="footer-col"><h4>Contacto</h4><a href="contacto.html">+00 000 000 000</a><a href="contacto.html">reservas@eliteangels.com</a><a href="https://wa.me/0000000000">WhatsApp 24/7</a></div>
+      <div class="footer-col"><h4>Contacto</h4><a href="contacto.html">+00 000 000 000</a><a href="contacto.html">hola@auraexperience.com</a><a href="https://wa.me/0000000000">WhatsApp 24/7</a></div>
     </div>
-    <div class="footer-bottom"><p>© 2026 Elite Angels. Todos los derechos reservados.</p><div class="age"><span class="b18">18+</span><span>Solo para mayores de edad</span></div></div>
+    <div class="footer-bottom"><p>© 2026 Aura Experience. Todos los derechos reservados.</p><div class="age"><span class="b18">18+</span><span>Solo para mayores de edad</span></div></div>
   </div>
 </footer>
 

@@ -28,7 +28,7 @@
   <!-- Letra E -->
   <text x="100" y="112" text-anchor="middle" dominant-baseline="central"
         font-family="Cormorant Garamond, Georgia, serif" font-weight="600"
-        font-size="62" fill="url(#g)">E</text>
+        font-size="62" fill="url(#g)">A</text>
 
   <!-- Estrellas -->
   <g fill="url(#g)">

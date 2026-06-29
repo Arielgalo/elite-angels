@@ -1,21 +1,22 @@
-/* ELITE ANGELS — Lógica del sitio */
+/* AURA EXPERIENCE — Lógica del sitio */
 const fmtP = (n) => '$' + Number(n || 0).toLocaleString('es-AR');
 const ubicTxt = (m) => [m.ciudad, m.provincia, m.pais].filter(Boolean).join(', ');
 const waLink = (tel) => 'https://wa.me/' + String(tel || '').replace(/[^\d]/g, '');
+const numCm = (v) => { const n = parseInt(String(v||'').replace(/[^\d]/g,''),10); return isNaN(n)?null:n; };
 
 const MODELS = [
-  { id:'valentina', name:'Valentina', pais:'España', provincia:'Comunidad de Madrid', ciudad:'Madrid', age:24, height:'1.72', price:400000, tone:'#d4af6e', badge:'VIP', langs:['Español','Inglés','Italiano'], style:['Elegante','Carismática'], bio:'Refinada y culta, combina una belleza serena con una conversación cautivadora.' },
-  { id:'isabella', name:'Isabella', pais:'España', provincia:'Cataluña', ciudad:'Barcelona', age:26, height:'1.75', price:500000, tone:'#d9a7a0', badge:'TOP', langs:['Español','Inglés','Francés'], style:['Sofisticada','Divertida'], bio:'Modelo internacional de presencia magnética y trato natural.' },
-  { id:'camila', name:'Camila', pais:'Argentina', provincia:'Ciudad de Buenos Aires', ciudad:'Palermo', age:23, height:'1.68', price:300000, tone:'#e8cf9a', badge:'NUEVA', langs:['Español','Inglés'], style:['Dulce','Espontánea'], bio:'Encanto latino y una sonrisa irresistible para veladas íntimas.' },
-  { id:'sophia', name:'Sophia', pais:'Estados Unidos', provincia:'Florida', ciudad:'Miami', age:27, height:'1.74', price:600000, tone:'#c9a4cf', badge:'VIP', langs:['Inglés','Español'], style:['Glamorosa','Mundana'], bio:'Belleza cosmopolita y estilo impecable.' },
-  { id:'aaliyah', name:'Aaliyah', pais:'Emiratos Árabes Unidos', provincia:'Dubái', ciudad:'Marina', age:25, height:'1.76', price:800000, tone:'#a4b8cf', badge:'TOP', langs:['Inglés','Árabe'], style:['Exótica','Distinguida'], bio:'Presencia exótica y modales exquisitos.' },
-  { id:'martina', name:'Martina', pais:'Argentina', provincia:'Córdoba', ciudad:'Córdoba', age:22, height:'1.70', price:250000, tone:'#cfc0a4', badge:'NUEVA', langs:['Español','Inglés'], style:['Juvenil','Encantadora'], bio:'Juventud, energía y una elegancia natural.' },
-  { id:'lucia', name:'Lucía', pais:'España', provincia:'Andalucía', ciudad:'Marbella', age:28, height:'1.73', price:450000, tone:'#d4af6e', badge:'VIP', langs:['Español','Inglés'], style:['Sensual','Intelectual'], bio:'Sofisticación mediterránea con un fondo culto.' },
-  { id:'renata', name:'Renata', pais:'Argentina', provincia:'Buenos Aires', ciudad:'La Plata', age:25, height:'1.71', price:350000, tone:'#d9a7a0', badge:'TOP', langs:['Español','Inglés'], style:['Apasionada','Elegante'], bio:'Carácter cálido y una elegancia que no pasa desapercibida.' },
-  { id:'victoria', name:'Victoria', pais:'Estados Unidos', provincia:'Nevada', ciudad:'Las Vegas', age:26, height:'1.77', price:700000, tone:'#e8cf9a', badge:'VIP', langs:['Inglés','Español'], style:['Imponente','Refinada'], bio:'Estatura de modelo y porte de reina.' },
-  { id:'noor', name:'Noor', pais:'Emiratos Árabes Unidos', provincia:'Dubái', ciudad:'Downtown', age:24, height:'1.69', price:550000, tone:'#c9a4cf', badge:'NUEVA', langs:['Inglés','Árabe'], style:['Misteriosa','Cautivadora'], bio:'Mirada profunda y un aura enigmática.' },
-  { id:'emma', name:'Emma', pais:'Uruguay', provincia:'Maldonado', ciudad:'Punta del Este', age:27, height:'1.72', price:500000, tone:'#a4b8cf', badge:'TOP', langs:['Inglés','Español'], style:['Cosmopolita','Cálida'], bio:'Espíritu viajero y conversación fluida en varios idiomas.' },
-  { id:'bianca', name:'Bianca', pais:'Argentina', provincia:'Santa Fe', ciudad:'Rosario', age:23, height:'1.70', price:400000, tone:'#cfc0a4', badge:'VIP', langs:['Español','Inglés'], style:['Vivaz','Glamorosa'], bio:'Energía contagiosa y un estilo siempre impecable.' },
+  { id:'valentina', name:'Valentina', pais:'España', provincia:'Comunidad de Madrid', ciudad:'Madrid', age:24, height:'1.72', cabello:'Castaña', tipo:'Delgada', nacionalidad:'Española', price:400000, tone:'#d4af6e', badge:'VIP', langs:['Español','Inglés'], style:['Elegante'], bio:'Refinada y culta.' },
+  { id:'isabella', name:'Isabella', pais:'España', provincia:'Cataluña', ciudad:'Barcelona', age:26, height:'1.75', cabello:'Morena', tipo:'Atlética', nacionalidad:'Española', price:500000, tone:'#d9a7a0', badge:'TOP', langs:['Español','Francés'], style:['Sofisticada'], bio:'Presencia magnética.' },
+  { id:'camila', name:'Camila', pais:'Argentina', provincia:'Ciudad de Buenos Aires', ciudad:'Palermo', age:23, height:'1.68', cabello:'Rubia', tipo:'Curvas', nacionalidad:'Argentina', price:300000, tone:'#e8cf9a', badge:'NUEVA', langs:['Español'], style:['Dulce'], bio:'Encanto latino.' },
+  { id:'sophia', name:'Sophia', pais:'Estados Unidos', provincia:'Florida', ciudad:'Miami', age:27, height:'1.74', cabello:'Rubia', tipo:'Voluptuosa', nacionalidad:'Estadounidense', price:600000, tone:'#c9a4cf', badge:'VIP', langs:['Inglés','Español'], style:['Glamorosa'], bio:'Belleza cosmopolita.' },
+  { id:'aaliyah', name:'Aaliyah', pais:'Emiratos Árabes Unidos', provincia:'Dubái', ciudad:'Marina', age:25, height:'1.76', cabello:'Morena', tipo:'Atlética', nacionalidad:'Libanesa', price:800000, tone:'#a4b8cf', badge:'TOP', langs:['Inglés','Árabe'], style:['Exótica'], bio:'Presencia exótica.' },
+  { id:'martina', name:'Martina', pais:'Argentina', provincia:'Córdoba', ciudad:'Córdoba', age:22, height:'1.70', cabello:'Castaña', tipo:'Delgada', nacionalidad:'Argentina', price:250000, tone:'#cfc0a4', badge:'NUEVA', langs:['Español'], style:['Juvenil'], bio:'Juventud y elegancia.' },
+  { id:'lucia', name:'Lucía', pais:'España', provincia:'Andalucía', ciudad:'Marbella', age:28, height:'1.73', cabello:'Pelirroja', tipo:'Curvas', nacionalidad:'Española', price:450000, tone:'#d4af6e', badge:'VIP', langs:['Español'], style:['Sensual'], bio:'Sofisticación mediterránea.' },
+  { id:'renata', name:'Renata', pais:'Argentina', provincia:'Buenos Aires', ciudad:'La Plata', age:25, height:'1.71', cabello:'Morena', tipo:'Curvas', nacionalidad:'Argentina', price:350000, tone:'#d9a7a0', badge:'TOP', langs:['Español'], style:['Apasionada'], bio:'Carácter cálido.' },
+  { id:'victoria', name:'Victoria', pais:'Estados Unidos', provincia:'Nevada', ciudad:'Las Vegas', age:26, height:'1.77', cabello:'Rubia', tipo:'Voluptuosa', nacionalidad:'Rusa', price:700000, tone:'#e8cf9a', badge:'VIP', langs:['Inglés'], style:['Imponente'], bio:'Porte de reina.' },
+  { id:'noor', name:'Noor', pais:'Emiratos Árabes Unidos', provincia:'Dubái', ciudad:'Downtown', age:24, height:'1.69', cabello:'Morena', tipo:'Delgada', nacionalidad:'Árabe', price:550000, tone:'#c9a4cf', badge:'NUEVA', langs:['Inglés','Árabe'], style:['Misteriosa'], bio:'Aura enigmática.' },
+  { id:'emma', name:'Emma', pais:'Uruguay', provincia:'Maldonado', ciudad:'Punta del Este', age:27, height:'1.72', cabello:'Castaña', tipo:'Atlética', nacionalidad:'Uruguaya', price:500000, tone:'#a4b8cf', badge:'TOP', langs:['Inglés','Español'], style:['Cosmopolita'], bio:'Espíritu viajero.' },
+  { id:'bianca', name:'Bianca', pais:'Argentina', provincia:'Santa Fe', ciudad:'Rosario', age:23, height:'1.70', cabello:'Rubia', tipo:'Curvas', nacionalidad:'Argentina', price:400000, tone:'#cfc0a4', badge:'VIP', langs:['Español'], style:['Vivaz'], bio:'Energía contagiosa.' },
 ];
 function figureSVG(tone){ return `<svg viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" color="${tone}" d="M100 40c14 0 24 11 24 27s-10 30-24 30-24-14-24-30 10-27 24-27Zm-44 110c8-18 25-30 44-30s36 12 44 30c10 22 14 70 14 130H42c0-60 4-108 14-130Z"/></svg>`; }
 function cardMedia(m){ return m.foto ? `<div class="figure" style="position:absolute;inset:0"><img src="${m.foto}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover"></div>` : `<div class="figure" style="position:absolute;inset:0">${figureSVG(m.tone||'#d4af6e')}</div>`; }
@@ -33,102 +34,105 @@ function modelCard(m){
       <div class="model-cta"><span class="link">Ver perfil →</span></div>
     </div></a>`;
 }
-function fromPublicado(p){ return { sid:p.id, name:p.nombre, pais:p.pais, provincia:p.provincia, ciudad:p.ciudad, edad:p.edad, age:p.edad, height:p.altura, price:p.precio, foto:(Array.isArray(p.fotos)&&p.fotos[0])||null, fotos:p.fotos||[], videos:p.videos||[], audio:p.audio, telefono:p.telefono, bio:p.bio, badge:'VIP' }; }
+function fromPublicado(p){ return { sid:p.id, name:p.nombre, pais:p.pais, provincia:p.provincia, ciudad:p.ciudad, edad:p.edad, age:p.edad, height:p.altura, busto:p.busto, cintura:p.cintura, cola:p.cola, nacionalidad:p.nacionalidad, cabello:p.cabello, tipo:p.tipo_cuerpo, price:p.precio, foto:(Array.isArray(p.fotos)&&p.fotos[0])||null, fotos:p.fotos||[], videos:p.videos||[], audio:p.audio, telefono:p.telefono, bio:p.bio, badge:'VIP' }; }
 async function getReales(){ try { return window.eaSupa ? (await window.eaSupa.getPublicados()).map(fromPublicado) : []; } catch(e){ return []; } }
 
-async function renderFeatured(){ const el = document.getElementById('featuredGrid'); if(!el) return; const reales = await getReales(); el.innerHTML = [...reales, ...MODELS].slice(0,8).map(modelCard).join(''); }
+async function renderFeatured(){ const el=document.getElementById('featuredGrid'); if(!el) return; const reales=await getReales(); el.innerHTML=[...reales,...MODELS].slice(0,8).map(modelCard).join(''); }
+
+let CATALOGO=[];
 async function renderCatalog(){
-  const el = document.getElementById('modelsGrid'); if(!el) return;
-  const reales = await getReales(); const lista = [...reales, ...MODELS];
-  el.innerHTML = lista.map(modelCard).join('');
-  const filtros = document.getElementById('filters');
-  if(filtros){
-    const paises = [...new Set(lista.map(m=>m.pais).filter(Boolean))];
-    filtros.innerHTML = `<button class="filter-btn active" data-filter="all">Todos</button>` + paises.map(p=>`<button class="filter-btn" data-filter="${p}">${p}</button>`).join('');
-    const btns = filtros.querySelectorAll('.filter-btn');
-    btns.forEach(b=>b.addEventListener('click',()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); const f=b.dataset.filter; document.querySelectorAll('#modelsGrid .model-card').forEach(c=>{ c.style.display=(f==='all'||c.dataset.pais===f)?'':'none'; }); }));
-  }
+  const el=document.getElementById('modelsGrid'); if(!el) return;
+  const reales=await getReales(); CATALOGO=[...reales,...MODELS];
+  // cascada de ubicación en el buscador
+  const L=window.EA_LOCATIONS||{}; const qP=document.getElementById('qPais'),qPr=document.getElementById('qProv'),qC=document.getElementById('qCiudad');
+  if(qP){ qP.innerHTML='<option value="">Todos los países</option>'+Object.keys(L).map(p=>`<option>${p}</option>`).join('');
+    qP.addEventListener('change',()=>{ const pr=L[qP.value]?Object.keys(L[qP.value]):[]; qPr.innerHTML='<option value="">Toda provincia</option>'+pr.map(p=>`<option>${p}</option>`).join(''); qC.innerHTML='<option value="">Toda ciudad</option>'; });
+    qPr.addEventListener('change',()=>{ const cs=(L[qP.value]&&L[qP.value][qPr.value])||[]; qC.innerHTML='<option value="">Toda ciudad</option>'+cs.map(c=>`<option>${c}</option>`).join(''); }); }
+  // preset por URL (?pais=)
+  const presetPais=new URLSearchParams(location.search).get('pais'); if(presetPais&&qP){ qP.value=presetPais; qP.dispatchEvent(new Event('change')); }
+  const buscar=document.getElementById('qBuscar'), limpiar=document.getElementById('qLimpiar');
+  if(buscar) buscar.addEventListener('click',aplicar);
+  if(limpiar) limpiar.addEventListener('click',()=>{ document.querySelectorAll('.search-panel input,.search-panel select').forEach(i=>i.value=''); aplicar(); });
+  aplicar();
+}
+function aplicar(){
+  const el=document.getElementById('modelsGrid'); if(!el) return;
+  const v=(id)=>{ const e=document.getElementById(id); return e?e.value.trim():''; };
+  const texto=v('qText').toLowerCase(), fp=v('qPais'), fpr=v('qProv'), fc=v('qCiudad');
+  const emin=+v('qEdadMin')||0, emax=+v('qEdadMax')||999, pmin=+v('qPrecioMin')||0, pmax=+v('qPrecioMax')||1e12;
+  const halt=numCm(v('qAltura'))||0, fb=v('qBusto').toLowerCase(), fci=v('qCintura').toLowerCase(), fco=v('qCola').toLowerCase();
+  const fcab=v('qCabello'), ftipo=v('qTipo');
+  const res=CATALOGO.filter(m=>{
+    const edad=+(m.age||m.edad||0); const alt=numCm(m.height)||0;
+    if(texto){ const blob=[m.name,m.ciudad,m.provincia,m.pais,m.nacionalidad,m.bio].join(' ').toLowerCase(); if(!blob.includes(texto)) return false; }
+    if(fp && m.pais!==fp) return false;
+    if(fpr && m.provincia!==fpr) return false;
+    if(fc && m.ciudad!==fc) return false;
+    if(edad<emin||edad>emax) return false;
+    if((m.price||0)<pmin||(m.price||0)>pmax) return false;
+    if(halt && alt<halt) return false;
+    if(fb && !String(m.busto||'').toLowerCase().includes(fb)) return false;
+    if(fci && !String(m.cintura||'').toLowerCase().includes(fci)) return false;
+    if(fco && !String(m.cola||'').toLowerCase().includes(fco)) return false;
+    if(fcab && (m.cabello||'')!==fcab) return false;
+    if(ftipo && (m.tipo||'')!==ftipo) return false;
+    return true;
+  });
+  el.innerHTML = res.length ? res.map(modelCard).join('') : '<div class="panel-empty" style="grid-column:1/-1"><div class="pe-ic">🔎</div><h3>Sin resultados</h3><p>Probá ampliar tu búsqueda.</p></div>';
+  const cont=document.getElementById('qCount'); if(cont) cont.textContent = res.length+' resultado'+(res.length===1?'':'s');
 }
 
-function lightbox(src){
-  let lb = document.getElementById('eaLightbox');
-  if(!lb){ lb = document.createElement('div'); lb.id='eaLightbox'; lb.className='lightbox'; lb.innerHTML='<span class="lb-close">✕</span><img>'; document.body.appendChild(lb); lb.addEventListener('click',()=>lb.classList.remove('show')); }
-  lb.querySelector('img').src = src; lb.classList.add('show');
-}
+function lightbox(src){ let lb=document.getElementById('eaLightbox'); if(!lb){ lb=document.createElement('div'); lb.id='eaLightbox'; lb.className='lightbox'; lb.innerHTML='<span class="lb-close">✕</span><img>'; document.body.appendChild(lb); lb.addEventListener('click',()=>lb.classList.remove('show')); } lb.querySelector('img').src=src; lb.classList.add('show'); }
 
 async function renderProfile(){
-  const wrap = document.getElementById('pName'); if(!wrap) return;
-  const params = new URLSearchParams(location.search); const sid = params.get('sid');
-  let m, real=false;
-  if(sid && window.eaSupa){ const p = await window.eaSupa.getPerfil(sid); if(p){ m = fromPublicado(p); real=true; } }
-  if(!m){ const id = params.get('id')||'valentina'; m = MODELS.find(x=>x.id===id)||MODELS[0]; }
-  document.title = `${m.name} · Elite Angels VIP`;
-  document.getElementById('crumbName').textContent = m.name;
-  document.getElementById('pName').textContent = m.name;
-  document.getElementById('pLoc').textContent = ubicTxt(m);
-  document.getElementById('pBio').textContent = m.bio || '';
-  const fotos = (m.fotos && m.fotos.length) ? m.fotos : null;
-  const mainImg = document.getElementById('mainImg');
-  mainImg.innerHTML = fotos ? `<img src="${fotos[0]}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in">` : `<div class="figure" style="position:absolute;inset:0">${figureSVG(m.tone||'#d4af6e')}</div>`;
+  const wrap=document.getElementById('pName'); if(!wrap) return;
+  const params=new URLSearchParams(location.search); const sid=params.get('sid'); let m,real=false;
+  if(sid&&window.eaSupa){ const p=await window.eaSupa.getPerfil(sid); if(p){ m=fromPublicado(p); real=true; } }
+  if(!m){ const id=params.get('id')||'valentina'; m=MODELS.find(x=>x.id===id)||MODELS[0]; }
+  document.title=`${m.name} · Aura Experience`;
+  document.getElementById('crumbName').textContent=m.name;
+  document.getElementById('pName').textContent=m.name;
+  document.getElementById('pLoc').textContent=ubicTxt(m);
+  document.getElementById('pBio').textContent=m.bio||'';
+  const fotos=(m.fotos&&m.fotos.length)?m.fotos:null;
+  const mainImg=document.getElementById('mainImg');
+  mainImg.innerHTML=fotos?`<img src="${fotos[0]}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in">`:`<div class="figure" style="position:absolute;inset:0">${figureSVG(m.tone||'#d4af6e')}</div>`;
   if(fotos) mainImg.querySelector('img').addEventListener('click',()=>lightbox(fotos[0]));
-  const thumbsEl = document.getElementById('thumbs');
-  if(fotos){
-    thumbsEl.innerHTML = fotos.map((x,i)=>`<div class="thumb${i===0?' active':''}"><img src="${x}" style="width:100%;height:100%;object-fit:cover"></div>`).join('');
-    thumbsEl.querySelectorAll('.thumb').forEach((t,i)=>t.addEventListener('click',()=>{ const im=mainImg.querySelector('img'); if(im){ im.src=fotos[i]; } thumbsEl.querySelectorAll('.thumb').forEach(x=>x.classList.remove('active')); t.classList.add('active'); }));
-  } else {
-    thumbsEl.innerHTML = [m.tone||'#d4af6e','#d9a7a0','#e8cf9a','#a4b8cf'].map(t=>`<div class="thumb"><div class="figure" style="position:absolute;inset:0">${figureSVG(t)}</div></div>`).join('');
-  }
-  // Videos
-  const vidWrap = document.getElementById('profileVideos');
-  if(vidWrap){ const vids = m.videos||[]; vidWrap.innerHTML = vids.length ? `<h3 style="font-size:1.4rem;margin:8px 0 14px">Videos</h3><div class="video-grid">${vids.map(v=>`<video controls preload="metadata" playsinline src="${v}"></video>`).join('')}</div>` : ''; }
-  // Audio (mensaje de voz)
-  const audWrap = document.getElementById('profileAudio');
-  if(audWrap){ audWrap.innerHTML = m.audio ? `<div class="voice-card"><span class="voice-ic">🎤</span><div><div class="voice-t">Mensaje de voz</div><audio controls src="${m.audio}" style="width:100%;margin-top:6px"></audio></div></div>` : ''; }
-  // Specs
-  document.getElementById('specGrid').innerHTML = [['Edad',(m.age||m.edad||'—')+' años'],['Altura',(m.height||'—')],['Tarifa',fmtP(m.price)],['Ubicación',m.ciudad||'—']].map(s=>`<div class="spec"><div class="k">${s[0]}</div><div class="v">${s[1]}</div></div>`).join('');
-  document.getElementById('pChips').innerHTML = [...(m.langs||[]),...(m.style||[])].map(c=>`<span class="chip">${c}</span>`).join('');
-  const rateBox = document.getElementById('rateBox');
-  if(rateBox){ const rows=[['1 hora',m.price],['2 horas',Math.round(m.price*1.8)],['Cena / Evento',Math.round(m.price*2.5)],['Noche completa',Math.round(m.price*4)]]; rateBox.innerHTML = `<h3 style="font-size:1.3rem;margin-bottom:8px">Tarifas</h3>`+rows.map(r=>`<div class="rate-row"><span class="dur">${r[0]}</span><span class="pr">${fmtP(r[1])}</span></div>`).join(''); }
-  // Contratación directa a la modelo (WhatsApp)
-  const acc = document.getElementById('profileActions');
-  if(acc){
-    const tel = real ? m.telefono : '';
-    acc.innerHTML = tel ? `<a href="${waLink(tel)}" target="_blank" class="btn btn-wa" style="justify-content:center">Contratar por WhatsApp</a><p style="color:var(--text-mute);font-size:.82rem;margin-top:10px">La contratación es directa y privada con ${m.name}.</p>` : `<a href="https://wa.me/" target="_blank" class="btn btn-wa" style="justify-content:center">Contactar</a>`;
-  }
-  // Reseñas
-  if(real && window.eaSupa) renderResenas(m.sid);
-  const rel = document.getElementById('relatedGrid');
-  if(rel){ const reales = await getReales(); rel.innerHTML = [...reales,...MODELS].filter(x=>(x.sid||x.id)!==(m.sid||m.id)).slice(0,4).map(modelCard).join(''); }
+  const thumbsEl=document.getElementById('thumbs');
+  if(fotos){ thumbsEl.innerHTML=fotos.map((x,i)=>`<div class="thumb${i===0?' active':''}"><img src="${x}" style="width:100%;height:100%;object-fit:cover"></div>`).join(''); thumbsEl.querySelectorAll('.thumb').forEach((t,i)=>t.addEventListener('click',()=>{ const im=mainImg.querySelector('img'); if(im) im.src=fotos[i]; thumbsEl.querySelectorAll('.thumb').forEach(x=>x.classList.remove('active')); t.classList.add('active'); })); }
+  else { thumbsEl.innerHTML=[m.tone||'#d4af6e','#d9a7a0','#e8cf9a','#a4b8cf'].map(t=>`<div class="thumb"><div class="figure" style="position:absolute;inset:0">${figureSVG(t)}</div></div>`).join(''); }
+  const vidWrap=document.getElementById('profileVideos'); if(vidWrap){ const vids=m.videos||[]; vidWrap.innerHTML=vids.length?`<h3 style="font-size:1.4rem;margin:8px 0 14px">Videos</h3><div class="video-grid">${vids.map(v=>`<video controls preload="metadata" playsinline src="${v}"></video>`).join('')}</div>`:''; }
+  const audWrap=document.getElementById('profileAudio'); if(audWrap){ audWrap.innerHTML=m.audio?`<div class="voice-card"><span class="voice-ic">🎤</span><div><div class="voice-t">Mensaje de voz</div><audio controls src="${m.audio}" style="width:100%;margin-top:6px"></audio></div></div>`:''; }
+  const specs=[['Edad',(m.age||m.edad||'—')+' años'],['Altura',(m.height||'—')],['Tarifa',fmtP(m.price)],['Ubicación',m.ciudad||'—']];
+  if(m.busto) specs.push(['Busto',m.busto]); if(m.cintura) specs.push(['Cintura',m.cintura]); if(m.cola) specs.push(['Cola',m.cola]);
+  if(m.cabello) specs.push(['Cabello',m.cabello]); if(m.tipo) specs.push(['Cuerpo',m.tipo]); if(m.nacionalidad) specs.push(['Nacionalidad',m.nacionalidad]);
+  document.getElementById('specGrid').innerHTML=specs.map(s=>`<div class="spec"><div class="k">${s[0]}</div><div class="v">${s[1]}</div></div>`).join('');
+  document.getElementById('pChips').innerHTML=[...(m.langs||[]),...(m.style||[])].map(c=>`<span class="chip">${c}</span>`).join('');
+  const rateBox=document.getElementById('rateBox'); if(rateBox){ const rows=[['1 hora',m.price],['2 horas',Math.round(m.price*1.8)],['Cena / Evento',Math.round(m.price*2.5)],['Noche completa',Math.round(m.price*4)]]; rateBox.innerHTML=`<h3 style="font-size:1.3rem;margin-bottom:8px">Tarifas</h3>`+rows.map(r=>`<div class="rate-row"><span class="dur">${r[0]}</span><span class="pr">${fmtP(r[1])}</span></div>`).join(''); }
+  const acc=document.getElementById('profileActions'); if(acc){ const tel=real?m.telefono:''; acc.innerHTML=tel?`<a href="${waLink(tel)}" target="_blank" class="btn btn-wa" style="justify-content:center">Contratar por WhatsApp</a><p style="color:var(--text-mute);font-size:.82rem;margin-top:10px">Contratación directa y privada con ${m.name}.</p>`:`<a href="https://wa.me/" target="_blank" class="btn btn-wa" style="justify-content:center">Contactar</a>`; }
+  if(real&&window.eaSupa) renderResenas(m.sid);
+  const rel=document.getElementById('relatedGrid'); if(rel){ const reales=await getReales(); rel.innerHTML=[...reales,...MODELS].filter(x=>(x.sid||x.id)!==(m.sid||m.id)).slice(0,4).map(modelCard).join(''); }
 }
 
 async function renderResenas(sid){
-  const cont = document.getElementById('resenasSection'); if(!cont) return;
-  let lista = [];
-  try { lista = await window.eaSupa.getResenas(sid); } catch(e){}
-  const items = lista.length ? lista.map(r=>`<div class="resena"><div class="resena-top"><span class="resena-av">${(r.autor||'?').slice(0,1).toUpperCase()}</span><div><div class="resena-nm">${r.autor||'Anónimo'}</div><div class="resena-stars">${'★'.repeat(r.estrellas)}${'☆'.repeat(5-r.estrellas)}</div></div></div><p>${(r.texto||'').replace(/</g,'&lt;')}</p></div>`).join('') : '<p style="color:var(--text-mute)">Todavía no hay reseñas. ¡Sé el primero en dejar una!</p>';
-  cont.innerHTML = `<div class="section-head" style="margin-bottom:30px"><span class="eyebrow">Experiencias</span><h2 style="font-size:clamp(1.8rem,4vw,2.6rem);margin-top:10px">Reseñas</h2><div class="divider"></div></div>
+  const cont=document.getElementById('resenasSection'); if(!cont) return;
+  let lista=[]; try{ lista=await window.eaSupa.getResenas(sid); }catch(e){}
+  const items=lista.length?lista.map(r=>`<div class="resena"><div class="resena-top"><span class="resena-av">${(r.autor||'?').slice(0,1).toUpperCase()}</span><div><div class="resena-nm">${r.autor||'Anónimo'}</div><div class="resena-stars">${'★'.repeat(r.estrellas)}${'☆'.repeat(5-r.estrellas)}</div></div></div><p>${(r.texto||'').replace(/</g,'&lt;')}</p></div>`).join(''):'<p style="color:var(--text-mute)">Todavía no hay reseñas. ¡Sé el primero!</p>';
+  cont.innerHTML=`<div class="section-head" style="margin-bottom:30px"><span class="eyebrow">Experiencias</span><h2 style="font-size:clamp(1.8rem,4vw,2.6rem);margin-top:10px">Reseñas</h2><div class="divider"></div></div>
     <div class="resenas-grid">${items}</div>
-    <div class="form-card" style="max-width:560px;margin:34px auto 0">
-      <h3 style="font-size:1.3rem;margin-bottom:6px">Dejá tu reseña</h3>
-      <p style="color:var(--text-soft);font-size:.88rem;margin-bottom:18px">Tu comentario se publica luego de ser revisado.</p>
+    <div class="form-card" style="max-width:560px;margin:34px auto 0"><h3 style="font-size:1.3rem;margin-bottom:6px">Dejá tu reseña</h3><p style="color:var(--text-soft);font-size:.88rem;margin-bottom:18px">Se publica luego de ser revisada.</p>
       <div class="field-row"><div class="field"><label>Tu nombre</label><input id="rsAutor" placeholder="Cómo querés aparecer"></div>
-      <div class="field"><label>Puntaje</label><select id="rsEstrellas"><option value="5">★★★★★ Excelente</option><option value="4">★★★★ Muy bueno</option><option value="3">★★★ Bueno</option><option value="2">★★ Regular</option><option value="1">★ Malo</option></select></div></div>
+      <div class="field"><label>Puntaje</label><select id="rsEstrellas"><option value="5">★★★★★</option><option value="4">★★★★</option><option value="3">★★★</option><option value="2">★★</option><option value="1">★</option></select></div></div>
       <div class="field"><label>Tu experiencia</label><textarea id="rsTexto" placeholder="Contá tu experiencia..."></textarea></div>
       <button class="btn btn-gold" id="rsEnviar" style="width:100%;justify-content:center">Enviar reseña</button>
-      <p id="rsMsg" style="color:var(--gold);font-size:.85rem;text-align:center;margin-top:12px"></p>
-    </div>`;
-  const btn = document.getElementById('rsEnviar');
-  btn.addEventListener('click', async ()=>{
-    const autor=document.getElementById('rsAutor').value.trim(); const texto=document.getElementById('rsTexto').value.trim(); const estrellas=+document.getElementById('rsEstrellas').value;
-    if(!autor||!texto){ document.getElementById('rsMsg').textContent='Completá tu nombre y tu experiencia.'; return; }
-    btn.textContent='Enviando…'; btn.disabled=true;
-    try{ await window.eaSupa.submitResena({solicitud_id:sid,autor,texto,estrellas}); document.getElementById('rsMsg').textContent='¡Gracias! Tu reseña quedó pendiente de aprobación.'; document.getElementById('rsAutor').value=''; document.getElementById('rsTexto').value=''; }
-    catch(e){ document.getElementById('rsMsg').textContent='No se pudo enviar. Probá de nuevo.'; }
-    btn.textContent='Enviar reseña'; btn.disabled=false;
-  });
+      <p id="rsMsg" style="color:var(--gold);font-size:.85rem;text-align:center;margin-top:12px"></p></div>`;
+  const btn=document.getElementById('rsEnviar');
+  btn.addEventListener('click',async()=>{ const autor=document.getElementById('rsAutor').value.trim(),texto=document.getElementById('rsTexto').value.trim(),estrellas=+document.getElementById('rsEstrellas').value; if(!autor||!texto){ document.getElementById('rsMsg').textContent='Completá nombre y experiencia.'; return; } btn.textContent='Enviando…'; btn.disabled=true; try{ await window.eaSupa.submitResena({solicitud_id:sid,autor,texto,estrellas}); document.getElementById('rsMsg').textContent='¡Gracias! Tu reseña quedó pendiente de aprobación.'; document.getElementById('rsAutor').value=''; document.getElementById('rsTexto').value=''; }catch(e){ document.getElementById('rsMsg').textContent='No se pudo enviar.'; } btn.textContent='Enviar reseña'; btn.disabled=false; });
 }
 
-function ageGate(){ const gate=document.getElementById('ageGate'); if(!gate) return; if(!sessionStorage.getItem('ea_age_ok')){ document.body.style.overflow='hidden'; requestAnimationFrame(()=>gate.classList.add('show')); } const c=document.getElementById('ageConfirm'); if(c) c.addEventListener('click',()=>{ sessionStorage.setItem('ea_age_ok','1'); gate.classList.remove('show'); document.body.style.overflow=''; }); }
+function heroCarousel(){ const c=document.getElementById('heroCarousel'); if(!c) return; const slides=[...c.querySelectorAll('.hero-slide')]; const dotsW=document.getElementById('heroDots'); if(!slides.length) return; let i=0; if(dotsW){ dotsW.innerHTML=slides.map((_,k)=>`<button class="${k===0?'active':''}" data-k="${k}"></button>`).join(''); dotsW.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>go(+b.dataset.k))); } function go(n){ slides[i].classList.remove('active'); if(dotsW)dotsW.children[i].classList.remove('active'); i=(n+slides.length)%slides.length; slides[i].classList.add('active'); if(dotsW)dotsW.children[i].classList.add('active'); } setInterval(()=>go(i+1),5000); }
+
+function ageGate(){ const g=document.getElementById('ageGate'); if(!g) return; if(!sessionStorage.getItem('ea_age_ok')){ document.body.style.overflow='hidden'; requestAnimationFrame(()=>g.classList.add('show')); } const c=document.getElementById('ageConfirm'); if(c) c.addEventListener('click',()=>{ sessionStorage.setItem('ea_age_ok','1'); g.classList.remove('show'); document.body.style.overflow=''; }); }
 function headerScroll(){ const h=document.getElementById('header'); if(!h) return; const on=()=>h.classList.toggle('scrolled',window.scrollY>40); on(); window.addEventListener('scroll',on,{passive:true}); }
 function mobileMenu(){ const b=document.getElementById('burger'),m=document.getElementById('mobileMenu'); if(!b||!m) return; b.addEventListener('click',()=>{ b.classList.toggle('open'); m.classList.toggle('open'); document.body.style.overflow=m.classList.contains('open')?'hidden':''; }); m.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ b.classList.remove('open'); m.classList.remove('open'); document.body.style.overflow=''; })); }
 function reveals(){ const els=document.querySelectorAll('.reveal:not(.in)'); if(!('IntersectionObserver'in window)){ els.forEach(e=>e.classList.add('in')); return; } const io=new IntersectionObserver((en)=>{ en.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:0.12,rootMargin:'0px 0px -40px 0px'}); els.forEach(e=>io.observe(e)); }
@@ -138,25 +142,23 @@ function publishWizard(){
   if(window.EA_LOCATIONS) setupUbic();
   let amount=0; const dots=document.querySelectorAll('.step-dot'); const stepsEls=form.querySelectorAll('.wizard-step');
   const pagoRet=new URLSearchParams(location.search).get('pago');
-  if(pagoRet){ const pa=document.getElementById('payArea'); if(pa) pa.style.display='none'; const pd=document.getElementById('payDone'); if(pd){ const t=pd.querySelector('h3'),x=pd.querySelector('p'); if(pagoRet==='ok'){ if(t)t.textContent='¡Pago confirmado!'; if(x)x.textContent='Recibimos tu pago y tu solicitud. La verificamos y queda publicada.'; } else if(pagoRet==='pendiente'){ if(t)t.textContent='Pago pendiente'; if(x)x.textContent='Tu pago quedó pendiente de acreditación.'; } else { if(t)t.textContent='El pago no se completó'; if(x)x.textContent='Podés intentar publicar nuevamente.'; } pd.classList.add('show'); } stepsEls.forEach(s=>s.classList.toggle('active',+s.dataset.step===3)); dots.forEach(d=>d.classList.add('done')); }
+  if(pagoRet){ const pa=document.getElementById('payArea'); if(pa) pa.style.display='none'; const pd=document.getElementById('payDone'); if(pd){ const t=pd.querySelector('h3'),x=pd.querySelector('p'); if(pagoRet==='ok'){ if(t)t.textContent='¡Pago confirmado!'; if(x)x.textContent='Recibimos tu pago y tu solicitud. La verificamos y queda publicada.'; } else if(pagoRet==='pendiente'){ if(t)t.textContent='Pago pendiente'; if(x)x.textContent='Tu pago quedó pendiente de acreditación.'; } else { if(t)t.textContent='El pago no se completó'; if(x)x.textContent='Podés intentar nuevamente.'; } pd.classList.add('show'); } stepsEls.forEach(s=>s.classList.toggle('active',+s.dataset.step===3)); dots.forEach(d=>d.classList.add('done')); }
   function goStep(n){ stepsEls.forEach(s=>s.classList.toggle('active',+s.dataset.step===n)); dots.forEach(d=>{ const dn=+d.dataset.step; d.classList.toggle('active',dn===n); d.classList.toggle('done',dn<n); }); window.scrollTo({top:form.getBoundingClientRect().top+window.scrollY-120,behavior:'smooth'}); }
   function validateStep(n){ let ok=true; form.querySelector(`.wizard-step[data-step="${n}"]`).querySelectorAll('[required]').forEach(inp=>{ const f=inp.closest('.field'); let bad=!inp.value.trim(); if(inp.type==='email'&&inp.value) bad=!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(inp.value); if(inp.name==='edad'&&inp.value) bad=+inp.value<18; if(inp.id==='precioInput'&&inp.value) bad=+inp.value<50000; if(f) f.classList.toggle('err',bad); if(bad) ok=false; }); return ok; }
-  function setupUbic(){ const L=window.EA_LOCATIONS, sP=document.getElementById('selPais'),sPr=document.getElementById('selProvincia'),sC=document.getElementById('selCiudad'); if(!sP) return; sP.innerHTML='<option value="">País</option>'+Object.keys(L).map(p=>`<option>${p}</option>`).join(''); sP.addEventListener('change',()=>{ const pr=L[sP.value]?Object.keys(L[sP.value]):[]; sPr.innerHTML='<option value="">Provincia / Estado</option>'+pr.map(p=>`<option>${p}</option>`).join(''); sPr.disabled=!pr.length; sC.innerHTML='<option value="">Ciudad</option>'; sC.disabled=true; }); sPr.addEventListener('change',()=>{ const cs=(L[sP.value]&&L[sP.value][sPr.value])||[]; sC.innerHTML='<option value="">Ciudad</option>'+cs.map(c=>`<option>${c}</option>`).join(''); sC.disabled=!cs.length; }); }
+  function setupUbic(){ const L=window.EA_LOCATIONS,sP=document.getElementById('selPais'),sPr=document.getElementById('selProvincia'),sC=document.getElementById('selCiudad'); if(!sP) return; sP.innerHTML='<option value="">País</option>'+Object.keys(L).map(p=>`<option>${p}</option>`).join(''); sP.addEventListener('change',()=>{ const pr=L[sP.value]?Object.keys(L[sP.value]):[]; sPr.innerHTML='<option value="">Provincia / Estado</option>'+pr.map(p=>`<option>${p}</option>`).join(''); sPr.disabled=!pr.length; sC.innerHTML='<option value="">Ciudad</option>'; sC.disabled=true; }); sPr.addEventListener('change',()=>{ const cs=(L[sP.value]&&L[sP.value][sPr.value])||[]; sC.innerHTML='<option value="">Ciudad</option>'+cs.map(c=>`<option>${c}</option>`).join(''); sC.disabled=!cs.length; }); }
   form.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{ const cur=+b.closest('.wizard-step').dataset.step; if(!validateStep(cur)) return; const next=+b.dataset.next; if(next===3){ amount=+document.getElementById('precioInput').value||0; document.getElementById('sumName').textContent=form.nombre.value||'—'; document.getElementById('sumAmount').textContent=fmtP(amount); const pba=document.getElementById('payBtnAmount'); if(pba) pba.textContent=fmtP(amount); } goStep(next); }));
   form.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click',()=>goStep(+b.dataset.prev)));
   form.querySelectorAll('.price-chips button').forEach(b=>b.addEventListener('click',()=>{ document.getElementById('precioInput').value=b.dataset.price; }));
   const drop=document.getElementById('photoDrop'),input=document.getElementById('photoInput'),preview=document.getElementById('photoPreview'); let photoFiles=[];
   if(drop){ drop.addEventListener('click',()=>input.click()); input.addEventListener('change',()=>{ preview.innerHTML=''; photoFiles=[...input.files].slice(0,8); photoFiles.forEach(f=>{ const u=URL.createObjectURL(f); preview.insertAdjacentHTML('beforeend',`<div class="pp"><img src="${u}"></div>`); }); }); }
-  const vInput=document.getElementById('videoInput'), vPrev=document.getElementById('videoPreview'); let videoFiles=[];
-  if(vInput){ vInput.addEventListener('change',()=>{ videoFiles=[...vInput.files].slice(0,4); if(vPrev) vPrev.textContent = videoFiles.length?`${videoFiles.length} video(s) seleccionado(s)`:''; }); }
-  const aInput=document.getElementById('audioInput'), aPrev=document.getElementById('audioPreview');
-  if(aInput){ aInput.addEventListener('change',()=>{ if(aPrev) aPrev.textContent = aInput.files[0]?'Audio listo ✓':''; }); }
+  const vInput=document.getElementById('videoInput'),vPrev=document.getElementById('videoPreview'); let videoFiles=[]; if(vInput){ vInput.addEventListener('change',()=>{ videoFiles=[...vInput.files].slice(0,4); if(vPrev) vPrev.textContent=videoFiles.length?`${videoFiles.length} video(s)`:''; }); }
+  const aInput=document.getElementById('audioInput'),aPrev=document.getElementById('audioPreview'); if(aInput){ aInput.addEventListener('change',()=>{ if(aPrev) aPrev.textContent=aInput.files[0]?'Audio listo ✓':''; }); }
   const usingMP=!!window.eaSupa;
-  if(usingMP){ const cc=document.querySelector('.credit-card'); if(cc)cc.style.display='none'; const pt=document.querySelector('.pay-type'); if(pt)pt.style.display='none'; ['cardNumber','cardName','cardExp','cardCvc'].forEach(id=>{ const el=document.getElementById(id); const f=el&&el.closest('.field'); if(f)f.style.display='none'; }); const sr=document.querySelector('.secure-row'); if(sr) sr.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Pago seguro por Mercado Pago'; const pb=document.getElementById('payBtn'); if(pb) pb.innerHTML='Pagar <span id="payBtnAmount"></span> con Mercado Pago'; }
-  form.addEventListener('submit',(e)=>{ e.preventDefault(); if(!usingMP){ alert('Conectá el backend.'); return; } const sP=document.getElementById('selPais'),sPr=document.getElementById('selProvincia'),sC=document.getElementById('selCiudad'); const btn=document.getElementById('payBtn'); btn.textContent='Procesando…'; btn.disabled=true; const payload={ nombre:form.nombre.value.trim(), edad:+form.edad.value||null, pais:sP?sP.value:'', provincia:sPr?sPr.value:'', ciudad:sC?sC.value:'', altura:form.altura.value.trim(), telefono:form.telefono.value.trim(), email:form.email.value.trim(), bio:form.bio.value.trim(), precio:amount }; const fail=(msg)=>{ btn.textContent='Reintentar pago'; btn.disabled=false; alert(msg); }; window.eaSupa.submitPublish(payload, photoFiles, videoFiles, aInput&&aInput.files[0]?aInput.files[0]:null).then(r=>{ if(r!=='redirect'){ document.getElementById('payArea').style.display='none'; document.getElementById('payDone').classList.add('show'); } }).catch(err=>{ console.error(err); fail('No se pudo iniciar el pago. Probá de nuevo.'); }); });
+  if(usingMP){ const cc=document.querySelector('.credit-card'); if(cc)cc.style.display='none'; const pt=document.querySelector('.pay-type'); if(pt)pt.style.display='none'; ['cardNumber','cardName','cardExp','cardCvc'].forEach(id=>{ const el=document.getElementById(id); const f=el&&el.closest('.field'); if(f)f.style.display='none'; }); const sr=document.querySelector('.secure-row'); if(sr) sr.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Pago seguro por Mercado Pago'; const pb=document.getElementById('payBtn'); if(pb) pb.innerHTML='Comprar mi espacio · <span id="payBtnAmount"></span> con Mercado Pago'; }
+  form.addEventListener('submit',(e)=>{ e.preventDefault(); if(!usingMP){ alert('Conectá el backend.'); return; } const g=(id)=>{ const el=document.getElementById(id); return el?el.value.trim():''; }; const sP=document.getElementById('selPais'),sPr=document.getElementById('selProvincia'),sC=document.getElementById('selCiudad'); const btn=document.getElementById('payBtn'); btn.textContent='Procesando…'; btn.disabled=true; const payload={ nombre:form.nombre.value.trim(), edad:+form.edad.value||null, pais:sP?sP.value:'', provincia:sPr?sPr.value:'', ciudad:sC?sC.value:'', altura:form.altura.value.trim(), busto:g('busto'), cintura:g('cintura'), cola:g('cola'), nacionalidad:g('nacionalidad'), cabello:g('cabello'), tipo_cuerpo:g('tipo_cuerpo'), telefono:form.telefono.value.trim(), email:form.email.value.trim(), bio:form.bio.value.trim(), precio:amount }; const fail=(msg)=>{ btn.textContent='Reintentar'; btn.disabled=false; alert(msg); }; window.eaSupa.submitPublish(payload, photoFiles, videoFiles, aInput&&aInput.files[0]?aInput.files[0]:null).then(r=>{ if(r!=='redirect'){ document.getElementById('payArea').style.display='none'; document.getElementById('payDone').classList.add('show'); } }).catch(err=>{ console.error(err); fail('No se pudo iniciar el pago. Probá de nuevo.'); }); });
 }
 
 function panelInit(){ const root=document.getElementById('panelRoot'); if(!root) return; if(window.eaSupa){ window.eaSupa.initPanel(); return; } root.innerHTML='<div class="panel-empty"><div class="pe-ic">📭</div><h3>Conectá el backend</h3></div>'; }
 function portalInit(){ const root=document.getElementById('portalRoot'); if(!root) return; if(window.eaSupa){ window.eaSupa.initPortal(); } }
 
-document.addEventListener('DOMContentLoaded',()=>{ ageGate(); headerScroll(); mobileMenu(); renderFeatured(); renderCatalog(); renderProfile(); reveals(); publishWizard(); panelInit(); portalInit(); setTimeout(reveals,120); });
+document.addEventListener('DOMContentLoaded',()=>{ ageGate(); headerScroll(); mobileMenu(); heroCarousel(); renderFeatured(); renderCatalog(); renderProfile(); reveals(); publishWizard(); panelInit(); portalInit(); setTimeout(reveals,120); });
