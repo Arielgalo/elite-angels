@@ -84,6 +84,7 @@ function aplicar(){
 
 function lightbox(src){ let lb=document.getElementById('eaLightbox'); if(!lb){ lb=document.createElement('div'); lb.id='eaLightbox'; lb.className='lightbox'; lb.innerHTML='<span class="lb-close">✕</span><img>'; document.body.appendChild(lb); lb.addEventListener('click',()=>lb.classList.remove('show')); } lb.querySelector('img').src=src; lb.classList.add('show'); }
 
+function mediaKind(u){ const e=(String(u).split('?')[0].split('.').pop()||'').toLowerCase(); if(['mp3','wav','ogg','oga','m4a','aac','opus','weba','flac'].includes(e)) return 'audio'; return 'video'; }
 async function renderProfile(){
   const wrap=document.getElementById('pName'); if(!wrap) return;
   const params=new URLSearchParams(location.search); const sid=params.get('sid'); let m,real=false;
@@ -101,8 +102,10 @@ async function renderProfile(){
   const thumbsEl=document.getElementById('thumbs');
   if(fotos){ thumbsEl.innerHTML=fotos.map((x,i)=>`<div class="thumb${i===0?' active':''}"><img src="${x}" style="width:100%;height:100%;object-fit:cover"></div>`).join(''); thumbsEl.querySelectorAll('.thumb').forEach((t,i)=>t.addEventListener('click',()=>{ const im=mainImg.querySelector('img'); if(im) im.src=fotos[i]; thumbsEl.querySelectorAll('.thumb').forEach(x=>x.classList.remove('active')); t.classList.add('active'); })); }
   else { thumbsEl.innerHTML=[m.tone||'#d4af6e','#d9a7a0','#e8cf9a','#a4b8cf'].map(t=>`<div class="thumb"><div class="figure" style="position:absolute;inset:0">${figureSVG(t)}</div></div>`).join(''); }
-  const vidWrap=document.getElementById('profileVideos'); if(vidWrap){ const vids=m.videos||[]; vidWrap.innerHTML=vids.length?`<h3 style="font-size:1.4rem;margin:8px 0 14px">Videos</h3><div class="video-grid">${vids.map(v=>`<video controls preload="metadata" playsinline src="${v}"></video>`).join('')}</div>`:''; }
-  const audWrap=document.getElementById('profileAudio'); if(audWrap){ audWrap.innerHTML=m.audio?`<div class="voice-card"><span class="voice-ic">🎤</span><div><div class="voice-t">Mensaje de voz</div><audio controls src="${m.audio}" style="width:100%;margin-top:6px"></audio></div></div>`:''; }
+  const allMedia=[...(m.videos||[])]; if(m.audio) allMedia.push(m.audio);
+  const vids=allMedia.filter(u=>mediaKind(u)==='video'); const auds=allMedia.filter(u=>mediaKind(u)==='audio');
+  const vidWrap=document.getElementById('profileVideos'); if(vidWrap){ vidWrap.innerHTML=vids.length?`<h3 style="font-size:1.4rem;margin:8px 0 14px">Videos</h3><div class="video-grid">${vids.map(v=>`<video controls preload="metadata" playsinline><source src="${v}">Tu navegador no puede reproducir este video.</video>`).join('')}</div>`:''; }
+  const audWrap=document.getElementById('profileAudio'); if(audWrap){ audWrap.innerHTML=auds.length?auds.map(a=>`<div class="voice-card"><span class="voice-ic">🎤</span><div style="flex:1"><div class="voice-t">Mensaje de voz</div><audio controls src="${a}" style="width:100%;margin-top:6px"></audio></div></div>`).join(''):''; }
   const specs=[['Edad',(m.age||m.edad||'—')+' años'],['Altura',(m.height||'—')],['Tarifa',fmtP(m.price)],['Ubicación',m.ciudad||'—']];
   if(m.busto) specs.push(['Busto',m.busto]); if(m.cintura) specs.push(['Cintura',m.cintura]); if(m.cola) specs.push(['Cola',m.cola]);
   if(m.cabello) specs.push(['Cabello',m.cabello]); if(m.tipo) specs.push(['Cuerpo',m.tipo]); if(m.nacionalidad) specs.push(['Nacionalidad',m.nacionalidad]);
@@ -158,7 +161,20 @@ function publishWizard(){
   form.addEventListener('submit',(e)=>{ e.preventDefault(); if(!usingMP){ alert('Conectá el backend.'); return; } const g=(id)=>{ const el=document.getElementById(id); return el?el.value.trim():''; }; const sP=document.getElementById('selPais'),sPr=document.getElementById('selProvincia'),sC=document.getElementById('selCiudad'); const btn=document.getElementById('payBtn'); btn.textContent='Procesando…'; btn.disabled=true; const payload={ nombre:form.nombre.value.trim(), edad:+form.edad.value||null, pais:sP?sP.value:'', provincia:sPr?sPr.value:'', ciudad:sC?sC.value:'', altura:form.altura.value.trim(), busto:g('busto'), cintura:g('cintura'), cola:g('cola'), nacionalidad:g('nacionalidad'), cabello:g('cabello'), tipo_cuerpo:g('tipo_cuerpo'), telefono:form.telefono.value.trim(), email:form.email.value.trim(), bio:form.bio.value.trim(), precio:amount }; const fail=(msg)=>{ btn.textContent='Reintentar'; btn.disabled=false; alert(msg); }; window.eaSupa.submitPublish(payload, photoFiles, videoFiles, aInput&&aInput.files[0]?aInput.files[0]:null).then(r=>{ if(r!=='redirect'){ document.getElementById('payArea').style.display='none'; document.getElementById('payDone').classList.add('show'); } }).catch(err=>{ console.error(err); fail('No se pudo iniciar el pago. Probá de nuevo.'); }); });
 }
 
+
+async function aplicarConfig(){
+  if(!(window.eaSupa&&window.eaSupa.getConfig)) return;
+  let c={}; try{ c=(await window.eaSupa.getConfig())||{}; }catch(e){ return; }
+  if(c.whatsapp){ const wa='https://wa.me/'+String(c.whatsapp).replace(/[^0-9]/g,''); document.querySelectorAll('a[href*="wa.me"]').forEach(a=>a.href=wa); }
+  if(c.telefono){ document.querySelectorAll('.js-phone, a[href^="tel:"]').forEach(a=>{ a.textContent=c.telefono; a.href='tel:'+String(c.telefono).replace(/[^0-9+]/g,''); }); }
+  if(c.instagram){ document.querySelectorAll('a[aria-label="Instagram"]').forEach(a=>a.href=c.instagram); }
+  if(c.telegram){ document.querySelectorAll('a[aria-label="Telegram"]').forEach(a=>a.href=c.telegram); }
+  if(c.hero_titulo){ const h=document.getElementById('heroTitulo'); if(h) h.innerHTML=c.hero_titulo; }
+  if(c.hero_lead){ const l=document.getElementById('heroLead'); if(l) l.textContent=c.hero_lead; }
+  if(Array.isArray(c.carrusel)){ const slides=document.querySelectorAll('.hero-slide'); c.carrusel.forEach((u,i)=>{ if(u&&slides[i]) slides[i].style.backgroundImage="linear-gradient(120deg,rgba(18,7,22,.78),rgba(18,7,22,.28) 46%,rgba(18,7,22,0) 72%),url('"+u+"')"; }); }
+}
+
 function panelInit(){ const root=document.getElementById('panelRoot'); if(!root) return; if(window.eaSupa){ window.eaSupa.initPanel(); return; } root.innerHTML='<div class="panel-empty"><div class="pe-ic">📭</div><h3>Conectá el backend</h3></div>'; }
 function portalInit(){ const root=document.getElementById('portalRoot'); if(!root) return; if(window.eaSupa){ window.eaSupa.initPortal(); } }
 
-document.addEventListener('DOMContentLoaded',()=>{ ageGate(); headerScroll(); mobileMenu(); heroCarousel(); renderFeatured(); renderCatalog(); renderProfile(); reveals(); publishWizard(); panelInit(); portalInit(); setTimeout(reveals,120); });
+document.addEventListener('DOMContentLoaded',()=>{ ageGate(); headerScroll(); mobileMenu(); heroCarousel(); renderFeatured(); renderCatalog(); renderProfile(); reveals(); publishWizard(); panelInit(); portalInit(); aplicarConfig(); setTimeout(reveals,120); });

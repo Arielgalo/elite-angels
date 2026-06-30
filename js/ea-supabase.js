@@ -49,6 +49,10 @@
   async function getResenas(id) { const { data, error } = await client.from('resenas_aprobadas').select('*').eq('solicitud_id', id).order('created_at', { ascending: false }); return error ? [] : data; }
   async function submitResena(r) { const { error } = await client.from('resenas').insert({ solicitud_id: r.solicitud_id, autor: r.autor, texto: r.texto, estrellas: r.estrellas }); if (error) throw error; return true; }
 
+  /* ---------- Config del sitio (editor) ---------- */
+  async function getConfig() { const { data } = await client.from('sitio_config').select('data').eq('id', 1).single(); return (data && data.data) || {}; }
+  async function saveConfig(obj) { const { error } = await client.from('sitio_config').update({ data: obj, updated_at: new Date().toISOString() }).eq('id', 1); if (error) throw error; return true; }
+
   /* ---------- Formulario de edición (compartido admin/modelo) ---------- */
   function selUbic(s) {
     const L = window.EA_LOCATIONS || {};
@@ -91,7 +95,7 @@
       <div class="field"><label>Descripción</label><textarea data-ef="bio">${esc(s.bio)}</textarea></div>
       <div class="field"><label>Fotos actuales</label><div class="ed-chips">${mediaChips(s.fotos,'foto')||'<span style="color:var(--text-mute)">sin fotos</span>'}</div><input type="file" data-ef="addFotos" accept="image/*" multiple></div>
       <div class="field"><label>Videos actuales</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
-      <div class="field"><label>Mensaje de voz</label>${s.audio?`<audio controls src="${esc(s.audio)}" style="width:100%"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*"></div>
+      <div class="field"><label>Mensaje de voz / Audio</label>${s.audio?`<div class="ed-chips"><span class="ed-chip">audio <button type="button" class="ed-rm" data-tipo="audio" data-url="${esc(s.audio)}">✕</button></span></div><audio controls src="${esc(s.audio)}" style="width:100%;margin-top:8px"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*,video/*"></div>
       <div class="ed-actions"><button type="button" class="btn btn-ghost ed-cancel">Cancelar</button><button type="submit" class="btn btn-gold">Guardar cambios</button></div>
     </form>`;
   }
@@ -103,6 +107,7 @@
     let fotos = (actual?.fotos || []).filter(u => !removidos.includes(u));
     let videos = (actual?.videos || []).filter(u => !removidos.includes(u));
     let audio = actual?.audio || null;
+    if (audio && removidos.includes(audio)) audio = null;
     const fIn = formEl.querySelector('[data-ef="addFotos"]'); const vIn = formEl.querySelector('[data-ef="addVideos"]'); const aIn = formEl.querySelector('[data-ef="addAudio"]');
     const nuevos = await subirMedios(fIn?[...fIn.files]:[], vIn?[...vIn.files]:[], aIn&&aIn.files[0]?aIn.files[0]:null);
     fotos = fotos.concat(nuevos.fotos); videos = videos.concat(nuevos.videos); if (nuevos.audio) audio = nuevos.audio;
@@ -148,6 +153,7 @@
       const board = document.getElementById('eaBoard');
       document.querySelectorAll('.panel-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === filtro));
       if (filtro === 'resenas') return renderResenas(board);
+      if (filtro === 'sitio') return renderSitio(board);
       const { data, error } = await client.from('solicitudes').select('*').order('created_at', { ascending: false });
       if (error) { adminLogin(root, 'Tu usuario no es administrador.'); return; }
       const counts = { pendiente:0, publicado:0, rechazado:0 }; data.forEach(s => counts[s.estado] = (counts[s.estado]||0)+1);
@@ -201,6 +207,46 @@
       board.querySelectorAll('[data-rap]').forEach(b=>b.addEventListener('click', async()=>{ await client.from('resenas').update({estado:'aprobado'}).eq('id',b.dataset.rap); renderResenas(board); }));
       board.querySelectorAll('[data-rdel]').forEach(b=>b.addEventListener('click', async()=>{ if(confirm('¿Eliminar reseña?')){ await client.from('resenas').delete().eq('id',b.dataset.rdel); renderResenas(board); } }));
     }
+    async function renderSitio(board) {
+      let cfg = {}; try { cfg = await getConfig(); } catch (e) {}
+      const v = (k) => esc(cfg[k] || '');
+      const car = Array.isArray(cfg.carrusel) ? cfg.carrusel : [];
+      const defs = ['assets/hero/slide1.jpg','assets/hero/slide2.jpg','assets/hero/slide3.jpg','assets/hero/slide4.jpg'];
+      board.innerHTML = `<div class="form-card" style="max-width:740px">
+        <h3 style="font-size:1.5rem;margin-bottom:6px">Editor del sitio</h3>
+        <p style="color:var(--text-soft);font-size:.9rem;margin-bottom:22px">Cambiá textos, contacto, redes y las fotos del carrusel. Al guardar, se aplica en toda la web.</p>
+        <div class="field"><label>Título del hero (podés resaltar con &lt;span class="text-gold"&gt;palabra&lt;/span&gt;)</label><input id="cfg_titulo" value="${v('hero_titulo')}" placeholder="Experiencias donde el aura se expande"></div>
+        <div class="field"><label>Bajada del hero</label><textarea id="cfg_lead" placeholder="Acompañantes de alto nivel...">${v('hero_lead')}</textarea></div>
+        <div class="field-row">
+          <div class="field"><label>WhatsApp (solo números con país)</label><input id="cfg_whatsapp" value="${v('whatsapp')}" placeholder="5492214982243"></div>
+          <div class="field"><label>Teléfono (como se muestra)</label><input id="cfg_telefono" value="${v('telefono')}" placeholder="+54 9 221 498-2243"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Instagram (URL)</label><input id="cfg_instagram" value="${v('instagram')}" placeholder="https://instagram.com/tu_cuenta"></div>
+          <div class="field"><label>Telegram (URL)</label><input id="cfg_telegram" value="${v('telegram')}" placeholder="https://t.me/tu_cuenta"></div>
+        </div>
+        <label style="display:block;font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-soft);margin:20px 0 10px">Fotos del carrusel (hasta 4)</label>
+        <div class="sp-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
+          ${[0,1,2,3].map(i=>`<div class="field" style="margin:0"><div style="aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--line-soft);margin-bottom:6px;background:#1d0e28"><img id="cfg_carimg_${i}" src="${car[i]||defs[i]}" style="width:100%;height:100%;object-fit:cover"></div><input type="file" data-car="${i}" accept="image/*" style="font-size:.76rem;color:var(--text-soft)"></div>`).join('')}
+        </div>
+        <div class="ed-actions" style="margin-top:24px"><button class="btn btn-gold" id="cfg_save" style="justify-content:center">Guardar y publicar cambios</button></div>
+        <p id="cfg_msg" style="color:var(--gold);font-size:.9rem;text-align:center;margin-top:14px"></p>
+      </div>`;
+      board.querySelectorAll('input[data-car]').forEach(inp => inp.addEventListener('change', () => { const fl = inp.files[0]; if (fl) document.getElementById('cfg_carimg_' + inp.dataset.car).src = URL.createObjectURL(fl); }));
+      document.getElementById('cfg_save').addEventListener('click', async () => {
+        const btn = document.getElementById('cfg_save'), msg = document.getElementById('cfg_msg');
+        btn.textContent = 'Guardando…'; btn.disabled = true; msg.textContent = '';
+        try {
+          const carrusel = [];
+          for (let i = 0; i < 4; i++) { const inp = board.querySelector('input[data-car="' + i + '"]'); let url = car[i] || null; if (inp && inp.files[0]) { const u = await up('sitio', inp.files[0]); if (u) url = u; } carrusel.push(url); }
+          const obj = { hero_titulo: document.getElementById('cfg_titulo').value.trim(), hero_lead: document.getElementById('cfg_lead').value.trim(), whatsapp: document.getElementById('cfg_whatsapp').value.trim(), telefono: document.getElementById('cfg_telefono').value.trim(), instagram: document.getElementById('cfg_instagram').value.trim(), telegram: document.getElementById('cfg_telegram').value.trim(), carrusel: carrusel.filter(Boolean) };
+          await saveConfig(obj);
+          msg.textContent = '✓ Guardado. Los cambios ya están publicados en la web.';
+          btn.textContent = 'Guardar y publicar cambios'; btn.disabled = false;
+        } catch (err) { msg.textContent = 'Error: ' + (err.message || err); btn.textContent = 'Reintentar'; btn.disabled = false; }
+      });
+    }
+
     render();
   }
   async function initPanel() {
@@ -252,5 +298,5 @@
     client.auth.onAuthStateChange((_e, session) => { if (session) portalBoard(root, session.user.email); });
   }
 
-  window.eaSupa = { client, submitPublish, getPublicados, getPerfil, getResenas, submitResena, initPanel, initPortal, ubic, fmt };
+  window.eaSupa = { client, submitPublish, getPublicados, getPerfil, getResenas, submitResena, initPanel, initPortal, ubic, fmt, getConfig, saveConfig };
 })();
