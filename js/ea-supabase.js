@@ -28,15 +28,17 @@
   /* ---------- Publicar ---------- */
   async function submitPublish(payload, photoFiles, videoFiles, audioBlob) {
     const m = await subirMedios(photoFiles, videoFiles, audioBlob);
+    const sid = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '-' + Math.random().toString(36).slice(2));
     const row = {
+      id: sid,
       nombre: payload.nombre, edad: payload.edad, pais: payload.pais, provincia: payload.provincia,
       ciudad: payload.ciudad, altura: payload.altura, telefono: payload.telefono, email: payload.email,
       bio: payload.bio, precio: payload.precio, fotos: m.fotos, videos: m.videos, audio: m.audio, busto: payload.busto, cintura: payload.cintura, cola: payload.cola, nacionalidad: payload.nacionalidad, cabello: payload.cabello, tipo_cuerpo: payload.tipo_cuerpo,
       pago: 'pendiente', estado: 'pendiente'
     };
-    const { data: ins, error } = await client.from('solicitudes').insert(row).select('id').single();
+    const { error } = await client.from('solicitudes').insert(row);
     if (error) throw error;
-    const resp = await client.functions.invoke('crear-pago', { body: { nombre: payload.nombre, precio: payload.precio, solicitud_id: ins.id } });
+    const resp = await client.functions.invoke('crear-pago', { body: { nombre: payload.nombre, precio: payload.precio, solicitud_id: sid } });
     if (resp.error) throw resp.error;
     const ip = resp.data && (resp.data.init_point || resp.data.sandbox_init_point);
     if (ip) { window.location.href = ip; return 'redirect'; }
