@@ -32,7 +32,7 @@ function modelCard(m){
     ${cardMedia(m)}
     <div class="model-info"><h3>${m.name}</h3>
       <div class="loc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${ubicTxt(m)}</div>
-      <div class="attrs"><span>${m.age||m.edad||''} años</span><span>·</span><span style="color:var(--gold)">${planName(m.plan)}</span></div>
+      <div class="attrs"><span>${m.age||m.edad||''} años</span><span>·</span><span style="color:var(--gold)">${planName(m.plan)}</span>${m.puntos?`<span>·</span><span style="color:var(--gold)">★ ${m.puntos}</span>`:''}</div>
       <div class="model-cta"><span class="link">Ver perfil →</span></div>
     </div></a>`;
 }
@@ -117,7 +117,7 @@ async function renderProfile(){
     rateBox.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:1.3rem">Cita</h3><span class="tier-pill tier-${m.plan||'estandar'}">${pn}</span></div>
       <div class="rate-row"><span class="dur">Encuentro 30 min · desde</span><span class="pr">${fmtP(m.price)}</span></div>
       <p style="color:var(--text-soft);font-size:.86rem;margin-top:14px">El valor de la cita se acuerda y se paga <strong>directo a ${m.name}</strong> (transferencia o en efectivo). Lo que consuman —café, mates, una cena o una bebida— lo abona quien invita.</p>
-      ${m.numero?`<p style="color:var(--text-mute);font-size:.78rem;margin-top:10px">N° de modelo: <strong style="color:var(--gold)">${m.numero}</strong>${m.puntos?` · ${m.puntos} puntos`:''}</p>`:''}`; }
+      ${m.numero?`<p style="color:var(--text-mute);font-size:.78rem;margin-top:10px">N° de modelo: <strong style="color:var(--gold)">${m.numero}</strong>${m.puntos?` · <span style=\"color:var(--gold)\">★ ${m.puntos} puntos</span>`:''}</p>`:''}`; }
   const acc=document.getElementById('profileActions'); if(acc){ const tel=real?m.telefono:''; acc.innerHTML=tel?`<a href="${waLink(tel)}" target="_blank" class="btn btn-wa" style="justify-content:center">Contratar por WhatsApp</a><p style="color:var(--text-mute);font-size:.82rem;margin-top:10px">Contratación directa y privada con ${m.name}.</p>`:`<a href="https://wa.me/" target="_blank" class="btn btn-wa" style="justify-content:center">Contactar</a>`; }
   if(real&&window.eaSupa) renderResenas(m.sid);
   const rel=document.getElementById('relatedGrid'); if(rel){ const reales=await getReales(); rel.innerHTML=[...reales,...MODELS].filter(x=>(x.sid||x.id)!==(m.sid||m.id)).slice(0,4).map(modelCard).join(''); }
