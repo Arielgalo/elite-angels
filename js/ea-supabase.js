@@ -212,41 +212,68 @@
       const v = (k) => esc(cfg[k] || '');
       const car = Array.isArray(cfg.carrusel) ? cfg.carrusel : [];
       const defs = ['assets/hero/slide1.jpg','assets/hero/slide2.jpg','assets/hero/slide3.jpg','assets/hero/slide4.jpg'];
-      board.innerHTML = `<div class="form-card" style="max-width:740px">
+      const TA = ['hero_lead','feat_sub','serv_sub','serv1_text','serv2_text','serv3_text','why_text','cta_text'];
+      const tf = (key,label,ph) => TA.includes(key)
+        ? `<div class="field"><label>${label}</label><textarea id="cfg_${key}" placeholder="${ph||''}">${v(key)}</textarea></div>`
+        : `<div class="field"><label>${label}</label><input id="cfg_${key}" value="${v(key)}" placeholder="${ph||''}"></div>`;
+      const imgField = (key,label,cur,ph,contain) => `<div class="field" style="margin:0"><label>${label}</label><div style="aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--line-soft);margin-bottom:6px;background:#1d0e28;display:grid;place-items:center"><img id="prev_${key}" src="${cur||ph}" style="${contain?'max-width:70%;max-height:70%;object-fit:contain':'width:100%;height:100%;object-fit:cover'}"></div><input type="file" data-img="${key}" accept="image/*" style="font-size:.76rem;color:var(--text-soft)"></div>`;
+      const H = (t) => `<h4 style="font-family:var(--serif);font-size:1.15rem;color:var(--gold);margin:26px 0 12px;border-bottom:1px solid var(--line-soft);padding-bottom:8px">${t}</h4>`;
+      board.innerHTML = `<div class="form-card" style="max-width:780px">
         <h3 style="font-size:1.5rem;margin-bottom:6px">Editor del sitio</h3>
-        <p style="color:var(--text-soft);font-size:.9rem;margin-bottom:22px">Cambiá textos, contacto, redes y las fotos del carrusel. Al guardar, se aplica en toda la web.</p>
-        <div class="field"><label>Título del hero (podés resaltar con &lt;span class="text-gold"&gt;palabra&lt;/span&gt;)</label><input id="cfg_titulo" value="${v('hero_titulo')}" placeholder="Experiencias donde el aura se expande"></div>
-        <div class="field"><label>Bajada del hero</label><textarea id="cfg_lead" placeholder="Acompañantes de alto nivel...">${v('hero_lead')}</textarea></div>
-        <div class="field-row">
-          <div class="field"><label>WhatsApp (solo números con país)</label><input id="cfg_whatsapp" value="${v('whatsapp')}" placeholder="5492214982243"></div>
-          <div class="field"><label>Teléfono (como se muestra)</label><input id="cfg_telefono" value="${v('telefono')}" placeholder="+54 9 221 498-2243"></div>
-        </div>
-        <div class="field-row">
-          <div class="field"><label>Instagram (URL)</label><input id="cfg_instagram" value="${v('instagram')}" placeholder="https://instagram.com/tu_cuenta"></div>
-          <div class="field"><label>Telegram (URL)</label><input id="cfg_telegram" value="${v('telegram')}" placeholder="https://t.me/tu_cuenta"></div>
-        </div>
-        <label style="display:block;font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-soft);margin:20px 0 10px">Fotos del carrusel (hasta 4)</label>
+        <p style="color:var(--text-soft);font-size:.9rem;margin-bottom:6px">Cambiá textos, imágenes, logo, contacto y redes. Al guardar, se aplica en toda la web.</p>
+        ${H('Logo (ícono de la marca)')}
+        <div class="sp-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">${imgField('logo','Subí tu logo (PNG/SVG)', cfg.logo, 'assets/logo.svg', true)}</div>
+        ${H('Portada (Hero)')}
+        ${tf('hero_titulo','Título (podés resaltar con <span class="text-gold">palabra</span>)','Experiencias donde el aura se expande')}
+        ${tf('hero_lead','Bajada','Acompañantes de alto nivel...')}
+        ${H('Fotos del carrusel (hasta 4)')}
         <div class="sp-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
           ${[0,1,2,3].map(i=>`<div class="field" style="margin:0"><div style="aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--line-soft);margin-bottom:6px;background:#1d0e28"><img id="cfg_carimg_${i}" src="${car[i]||defs[i]}" style="width:100%;height:100%;object-fit:cover"></div><input type="file" data-car="${i}" accept="image/*" style="font-size:.76rem;color:var(--text-soft)"></div>`).join('')}
         </div>
-        <div class="ed-actions" style="margin-top:24px"><button class="btn btn-gold" id="cfg_save" style="justify-content:center">Guardar y publicar cambios</button></div>
+        ${H('Sección «Modelos destacadas»')}
+        <div class="field-row"><div class="field"><label>Título</label><input id="cfg_feat_title" value="${v('feat_title')}" placeholder="Modelos destacadas"></div></div>
+        ${tf('feat_sub','Subtítulo','Una cuidada selección...')}
+        ${H('Sección «Servicios»')}
+        <div class="field-row"><div class="field"><label>Título</label><input id="cfg_serv_title" value="${v('serv_title')}" placeholder="Nuestros servicios"></div></div>
+        ${tf('serv_sub','Subtítulo','Acompañamiento elegante...')}
+        <div class="field-row">${tf('serv1_title','Servicio 1 · título','Eventos & Galas')}${tf('serv2_title','Servicio 2 · título','Viajes & Travel')}</div>
+        ${tf('serv1_text','Servicio 1 · texto','')}
+        ${tf('serv2_text','Servicio 2 · texto','')}
+        <div class="field-row">${tf('serv3_title','Servicio 3 · título','Cenas privadas')}</div>
+        ${tf('serv3_text','Servicio 3 · texto','')}
+        ${H('Sección «El estándar más alto»')}
+        <div class="field-row"><div class="field"><label>Título</label><input id="cfg_why_title" value="${v('why_title')}" placeholder="El estándar más alto en compañía VIP"></div></div>
+        ${tf('why_text','Texto','Llevamos años construyendo...')}
+        <div class="sp-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">${imgField('img_estandar','Imagen de esta sección (reemplaza el logo)', cfg.img_estandar, 'assets/logo.svg', !cfg.img_estandar)}</div>
+        ${H('Sección «Nosotros»')}
+        <div class="sp-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">${imgField('img_nosotros','Imagen de Nosotros', cfg.img_nosotros, 'assets/logo.svg', !cfg.img_nosotros)}</div>
+        ${H('Llamado final (CTA)')}
+        <div class="field"><label>Título</label><input id="cfg_cta_title" value="${v('cta_title')}" placeholder="Una velada inolvidable te está esperando"></div>
+        ${tf('cta_text','Texto','Contactanos de forma discreta...')}
+        ${H('Contacto y redes')}
+        <div class="field-row"><div class="field"><label>WhatsApp (solo números con país)</label><input id="cfg_whatsapp" value="${v('whatsapp')}" placeholder="5492214982243"></div><div class="field"><label>Teléfono (como se muestra)</label><input id="cfg_telefono" value="${v('telefono')}" placeholder="+54 9 221 498-2243"></div></div>
+        <div class="field-row"><div class="field"><label>Instagram (URL)</label><input id="cfg_instagram" value="${v('instagram')}" placeholder="https://instagram.com/tu_cuenta"></div><div class="field"><label>Telegram (URL)</label><input id="cfg_telegram" value="${v('telegram')}" placeholder="https://t.me/tu_cuenta"></div></div>
+        <div class="ed-actions" style="margin-top:26px"><button class="btn btn-gold" id="cfg_save" style="justify-content:center">Guardar y publicar cambios</button></div>
         <p id="cfg_msg" style="color:var(--gold);font-size:.9rem;text-align:center;margin-top:14px"></p>
       </div>`;
+      board.querySelectorAll('input[data-img]').forEach(inp => inp.addEventListener('change', () => { const fl = inp.files[0]; if (fl) document.getElementById('prev_' + inp.dataset.img).src = URL.createObjectURL(fl); }));
       board.querySelectorAll('input[data-car]').forEach(inp => inp.addEventListener('change', () => { const fl = inp.files[0]; if (fl) document.getElementById('cfg_carimg_' + inp.dataset.car).src = URL.createObjectURL(fl); }));
+      const textKeys = ['hero_titulo','hero_lead','feat_title','feat_sub','serv_title','serv_sub','serv1_title','serv1_text','serv2_title','serv2_text','serv3_title','serv3_text','why_title','why_text','cta_title','cta_text','whatsapp','telefono','instagram','telegram'];
       document.getElementById('cfg_save').addEventListener('click', async () => {
         const btn = document.getElementById('cfg_save'), msg = document.getElementById('cfg_msg');
         btn.textContent = 'Guardando…'; btn.disabled = true; msg.textContent = '';
         try {
-          const carrusel = [];
-          for (let i = 0; i < 4; i++) { const inp = board.querySelector('input[data-car="' + i + '"]'); let url = car[i] || null; if (inp && inp.files[0]) { const u = await up('sitio', inp.files[0]); if (u) url = u; } carrusel.push(url); }
-          const obj = { hero_titulo: document.getElementById('cfg_titulo').value.trim(), hero_lead: document.getElementById('cfg_lead').value.trim(), whatsapp: document.getElementById('cfg_whatsapp').value.trim(), telefono: document.getElementById('cfg_telefono').value.trim(), instagram: document.getElementById('cfg_instagram').value.trim(), telegram: document.getElementById('cfg_telegram').value.trim(), carrusel: carrusel.filter(Boolean) };
+          const obj = Object.assign({}, cfg);
+          for (const k of textKeys) { const el = document.getElementById('cfg_' + k); if (el) obj[k] = el.value.trim(); }
+          for (const k of ['logo','img_estandar','img_nosotros']) { const inp = board.querySelector('input[data-img="' + k + '"]'); if (inp && inp.files[0]) { const u = await up('sitio', inp.files[0]); if (u) obj[k] = u; } }
+          const carr = []; for (let i = 0; i < 4; i++) { const inp = board.querySelector('input[data-car="' + i + '"]'); let url = car[i] || null; if (inp && inp.files[0]) { const u = await up('sitio', inp.files[0]); if (u) url = u; } carr.push(url); }
+          obj.carrusel = carr.filter(Boolean);
           await saveConfig(obj);
           msg.textContent = '✓ Guardado. Los cambios ya están publicados en la web.';
           btn.textContent = 'Guardar y publicar cambios'; btn.disabled = false;
         } catch (err) { msg.textContent = 'Error: ' + (err.message || err); btn.textContent = 'Reintentar'; btn.disabled = false; }
       });
     }
-
     render();
   }
   async function initPanel() {
