@@ -48,7 +48,7 @@ async function renderCatalog(){
   // cascada de ubicación en el buscador
   const L=window.EA_LOCATIONS||{}; const qP=document.getElementById('qPais'),qPr=document.getElementById('qProv'),qC=document.getElementById('qCiudad');
   const provs=Object.keys(L['Argentina']||{});
-  if(qP){ const wrap=qP.closest('.field')||qP.parentElement; if(wrap) wrap.style.display='none'; qP.innerHTML='<option value="Argentina" selected>Argentina</option>'; qP.value='Argentina'; }
+  if(qP){ qP.style.display='none'; qP.innerHTML='<option value="Argentina" selected>Argentina</option>'; qP.value='Argentina'; }
   if(qPr){ qPr.innerHTML='<option value="">Toda la Argentina</option>'+provs.map(p=>`<option>${p}</option>`).join('');
     qPr.addEventListener('change',()=>{ const cs=((L['Argentina']||{})[qPr.value])||[]; if(qC) qC.innerHTML='<option value="">Toda ciudad</option>'+cs.map(c=>`<option>${c}</option>`).join(''); }); }
   // preset por URL (?prov=)
