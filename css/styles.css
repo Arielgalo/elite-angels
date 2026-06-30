@@ -769,3 +769,26 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.12;
 .exc-art .tag{ position:absolute; bottom:0; left:0; right:0; padding:22px 20px 18px; background:linear-gradient(to top, rgba(8,8,10,.92), transparent); }
 .exc-art .tag .name{ font-family:var(--serif); font-size:1.3rem; }
 .exc-art .tag .meta{ font-size:.76rem; letter-spacing:.16em; color:var(--gold); text-transform:uppercase; margin-top:4px; }
+
+/* ===== Niveles (Premium VIP / Top / Estándar) ===== */
+.model-badge.tier-top { background:linear-gradient(135deg,#e0359a,#7b1fa2); color:#fff; border:none; }
+.model-badge.tier-std { background:rgba(10,10,12,.6); color:var(--text-soft); }
+.tier-pill { font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; padding:6px 14px; border-radius:50px; white-space:nowrap; }
+.tier-pill.tier-premium { background:var(--gold-grad); color:#1a1408; }
+.tier-pill.tier-top { background:linear-gradient(135deg,#e0359a,#7b1fa2); color:#fff; }
+.tier-pill.tier-estandar { background:rgba(212,175,110,.12); color:var(--gold); border:1px solid var(--line); }
+.model-card.plan-premium { border-color:rgba(212,175,110,.5); box-shadow:0 0 0 1px rgba(212,175,110,.25); }
+.model-price small { display:block; font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--text-mute); margin-bottom:1px; }
+
+/* ===== Planes de publicación (publicar) ===== */
+.plan-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+.plan-card { display:flex; flex-direction:column; gap:6px; padding:20px 18px; border:1px solid var(--line-soft); border-radius:var(--radius); cursor:pointer; transition:all .3s var(--ease); position:relative; background:var(--black-soft); }
+.plan-card input { position:absolute; opacity:0; }
+.plan-card:hover { border-color:var(--gold); }
+.plan-card:has(input:checked) { border-color:var(--gold); background:rgba(212,175,110,.07); box-shadow:0 0 0 1px var(--gold); }
+.plan-card.premium:has(input:checked) { box-shadow:0 0 0 1px var(--gold), var(--shadow-gold); }
+.plan-name { font-family:var(--sans); font-size:.74rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); }
+.plan-price { font-family:var(--serif); font-size:1.9rem; color:var(--text); line-height:1; }
+.plan-price small { font-size:.9rem; color:var(--text-mute); }
+.plan-desc { font-size:.84rem; color:var(--text-soft); }
+@media (max-width:560px){ .plan-grid { grid-template-columns:1fr; } }

@@ -1,8 +1,8 @@
-/* ELITE ANGELS — Catálogo de ubicaciones: País → Provincia/Estado → Ciudad */
+/* AURA EXPERIENCE — Ubicaciones (solo Argentina) */
 window.EA_LOCATIONS = {
   "Argentina": {
-    "Buenos Aires": ["La Plata","Mar del Plata","Bahía Blanca","Tandil","Pinamar","Tigre","San Isidro","Pilar","Quilmes","Morón"],
-    "Ciudad de Buenos Aires": ["Palermo","Recoleta","Belgrano","Puerto Madero","Caballito","Núñez","Villa Urquiza"],
+    "Ciudad de Buenos Aires": ["Palermo","Recoleta","Belgrano","Puerto Madero","Caballito","Núñez","Villa Urquiza","Microcentro"],
+    "Buenos Aires": ["La Plata","Mar del Plata","Bahía Blanca","Tandil","Pinamar","Tigre","San Isidro","Pilar","Quilmes","Morón","Vicente López","Lomas de Zamora"],
     "Catamarca": ["San Fernando del Valle de Catamarca","Andalgalá","Belén"],
     "Chaco": ["Resistencia","Barranqueras","Presidencia Roque Sáenz Peña"],
     "Chubut": ["Rawson","Comodoro Rivadavia","Puerto Madryn","Trelew","Esquel"],
@@ -25,46 +25,5 @@ window.EA_LOCATIONS = {
     "Santiago del Estero": ["Santiago del Estero","La Banda","Termas de Río Hondo"],
     "Tierra del Fuego": ["Ushuaia","Río Grande"],
     "Tucumán": ["San Miguel de Tucumán","Yerba Buena","Tafí Viejo"]
-  },
-  "Uruguay": {
-    "Montevideo": ["Montevideo","Pocitos","Carrasco"],
-    "Maldonado": ["Punta del Este","Maldonado","La Barra"],
-    "Canelones": ["Ciudad de la Costa","Las Piedras","Atlántida"],
-    "Colonia": ["Colonia del Sacramento","Carmelo"]
-  },
-  "Chile": {
-    "Región Metropolitana": ["Santiago","Las Condes","Providencia","Vitacura"],
-    "Valparaíso": ["Valparaíso","Viña del Mar","Reñaca"],
-    "Antofagasta": ["Antofagasta","Calama"],
-    "Biobío": ["Concepción","Talcahuano"]
-  },
-  "España": {
-    "Comunidad de Madrid": ["Madrid","Alcalá de Henares","Móstoles"],
-    "Cataluña": ["Barcelona","Sitges","Girona","Tarragona"],
-    "Andalucía": ["Sevilla","Málaga","Marbella","Granada"],
-    "Comunidad Valenciana": ["Valencia","Alicante","Benidorm"],
-    "Islas Baleares": ["Palma de Mallorca","Ibiza"]
-  },
-  "México": {
-    "Ciudad de México": ["Polanco","Condesa","Santa Fe","Roma Norte"],
-    "Jalisco": ["Guadalajara","Puerto Vallarta","Zapopan"],
-    "Nuevo León": ["Monterrey","San Pedro Garza García"],
-    "Quintana Roo": ["Cancún","Playa del Carmen","Tulum"]
-  },
-  "Brasil": {
-    "São Paulo": ["São Paulo","Campinas","Santos"],
-    "Río de Janeiro": ["Río de Janeiro","Niterói","Búzios"],
-    "Bahía": ["Salvador","Porto Seguro"],
-    "Santa Catarina": ["Florianópolis","Balneário Camboriú"]
-  },
-  "Estados Unidos": {
-    "Florida": ["Miami","Miami Beach","Orlando","Tampa"],
-    "Nueva York": ["Nueva York","Manhattan","Brooklyn"],
-    "California": ["Los Ángeles","San Francisco","San Diego"],
-    "Nevada": ["Las Vegas","Reno"]
-  },
-  "Emiratos Árabes Unidos": {
-    "Dubái": ["Dubái","Marina","Downtown"],
-    "Abu Dabi": ["Abu Dabi"]
   }
 };

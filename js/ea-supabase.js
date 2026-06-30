@@ -29,8 +29,14 @@
   async function submitPublish(payload, photoFiles, videoFiles, audioBlob) {
     const m = await subirMedios(photoFiles, videoFiles, audioBlob);
     const sid = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '-' + Math.random().toString(36).slice(2));
+    const ts = Date.now();
+    let _h = 0; const _str = (payload.email || '') + '|' + ts; for (let i = 0; i < _str.length; i++) { _h = (_h * 31 + _str.charCodeAt(i)) >>> 0; }
+    const numero = 'AE-' + ts.toString(36).slice(-4).toUpperCase() + '-' + _h.toString(36).slice(-4).toUpperCase();
+    const dias = payload.dias || 3;
     const row = {
-      id: sid,
+      id: sid, numero,
+      plan: payload.plan || 'estandar', dias, puntos: payload.puntos || 0, precio_cita: payload.precio_cita || 30000,
+      vence: new Date(ts + dias * 86400000).toISOString(),
       nombre: payload.nombre, edad: payload.edad, pais: payload.pais, provincia: payload.provincia,
       ciudad: payload.ciudad, altura: payload.altura, telefono: payload.telefono, email: payload.email,
       bio: payload.bio, precio: payload.precio, fotos: m.fotos, videos: m.videos, audio: m.audio, busto: payload.busto, cintura: payload.cintura, cola: payload.cola, nacionalidad: payload.nacionalidad, cabello: payload.cabello, tipo_cuerpo: payload.tipo_cuerpo,
@@ -80,8 +86,9 @@
       ${selUbic(s)}
       <div class="field-row">
         <div class="field"><label>Teléfono / WhatsApp</label><input data-ef="telefono" value="${esc(s.telefono)}"></div>
-        <div class="field"><label>Tarifa (ARS)${isAdmin?'':' — la edita la administración'}</label><input data-ef="precio" type="number" value="${esc(s.precio)}" ${isAdmin?'':'disabled'}></div>
+        <div class="field"><label>Tu precio de cita (ARS) · encuentro 30 min (lo cobrás vos, directo)</label><input data-ef="precio_cita" type="number" min="30000" value="${esc(s.precio_cita)}" placeholder="30000"></div>
       </div>
+      ${isAdmin?`<div class="field-row"><div class="field"><label>Nivel</label><select data-ef="plan"><option value="estandar"${s.plan==='estandar'?' selected':''}>Estándar</option><option value="top"${s.plan==='top'?' selected':''}>Top</option><option value="premium"${s.plan==='premium'?' selected':''}>Premium VIP</option></select></div><div class="field"><label>Puntos (ranking)</label><input data-ef="puntos" type="number" value="${esc(s.puntos)}"></div></div>`:''}
       <div class="field-row">
         <div class="field"><label>Nacionalidad</label><input data-ef="nacionalidad" value="${esc(s.nacionalidad)}" placeholder="Argentina"></div>
         <div class="field"><label>Cabello</label><input data-ef="cabello" value="${esc(s.cabello)}" placeholder="Morena / Rubia..."></div>
@@ -114,7 +121,8 @@
     const nuevos = await subirMedios(fIn?[...fIn.files]:[], vIn?[...vIn.files]:[], aIn&&aIn.files[0]?aIn.files[0]:null);
     fotos = fotos.concat(nuevos.fotos); videos = videos.concat(nuevos.videos); if (nuevos.audio) audio = nuevos.audio;
     const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), fotos, videos, audio };
-    if (isAdmin) patch.precio = +get('precio')||0;
+    patch.precio_cita = +get('precio_cita')||30000;
+    if (isAdmin) { patch.plan = get('plan'); patch.puntos = +get('puntos')||0; }
     const { error } = await client.from('solicitudes').update(patch).eq('id', id);
     if (error) throw error;
     return true;
@@ -167,7 +175,7 @@
         const fecha = new Date(s.created_at).toLocaleString('es-AR');
         return `<article class="review-card" data-row="${s.id}"><div class="rev-media"><div class="rev-photos">${fotos}</div></div>
           <div class="rev-body"><div class="rev-head"><div><h3>${esc(s.nombre)||'Sin nombre'} <span class="rev-price">${fmt(s.precio)}</span></h3>
-          <div class="rev-meta">${esc(ubic(s))||'—'} · ${s.edad||'—'} años · ${esc(s.altura)||'—'} · ${fecha}</div></div>
+          <div class="rev-meta">${esc(ubic(s))||'—'} · ${s.edad||'—'} años · <strong style="color:var(--gold)">${(s.plan||'estandar')}</strong>${s.puntos?(' · '+s.puntos+' pts'):''}${s.numero?(' · '+esc(s.numero)):''} · ${fecha}</div></div>
           <span class="status-badge ${s.pago==='pagado'?'ready':'incomplete'}">Pago: ${esc(s.pago)}</span></div>
           <div class="rev-contact"><span>📞 ${esc(s.telefono)||'—'}</span><span>✉ ${esc(s.email)||'—'}</span><span>🎬 ${(s.videos||[]).length} video(s)</span><span>🎤 ${s.audio?'voz ✓':'sin voz'}</span></div>
           ${s.bio?`<p class="rev-bio">"${esc(s.bio)}"</p>`:''}

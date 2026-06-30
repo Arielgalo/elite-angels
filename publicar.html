@@ -115,15 +115,31 @@
           </div>
 
           <div class="wizard-step" data-step="2">
-            <h3 style="font-size:1.6rem;margin-bottom:8px">Definí tu valor</h3>
-            <p style="color:var(--text-soft);margin-bottom:26px;font-size:.95rem">Elegí tu espacio según lo que vas a cobrar por cita privada. Ese mismo monto es el valor de tu publicación: lo comprás por única vez y tu perfil queda activo 30 días.</p>
+            <h3 style="font-size:1.6rem;margin-bottom:8px">Tu precio de cita</h3>
+            <p style="color:var(--text-soft);margin-bottom:18px;font-size:.95rem">Esto lo cobrás <strong>vos</strong>, directo (transferencia o efectivo). El mínimo para un encuentro de 30 min es $30.000. Lo podés cambiar cuando quieras desde tu perfil.</p>
             <div class="field">
-              <label>Tu tarifa por cita privada / valor de tu espacio (ARS)</label>
-              <div class="price-input-wrap"><span class="cur">$</span><input type="number" name="precio" id="precioInput" min="100000" step="10000" placeholder="400000" value="" required></div>
-              <div class="price-chips"><button type="button" data-price="100000">$100.000</button><button type="button" data-price="200000">$200.000</button><button type="button" data-price="400000">$400.000</button><button type="button" data-price="600000">$600.000</button><button type="button" data-price="800000">$800.000</button></div>
-              <div class="price-hint">Espacios desde $100.000. Podés cambiarlo más adelante.</div>
-              <div class="msg" style="margin-top:8px">Elegí un espacio (mínimo $100.000)</div>
+              <label>Precio de tu cita · encuentro 30 min (ARS)</label>
+              <div class="price-input-wrap"><span class="cur">$</span><input type="number" name="precio_cita" id="citaInput" min="30000" step="1000" placeholder="30000" value="30000" required></div>
+              <div class="price-hint">Ejemplos: charla 10 min $10.000 · café/encuentro 30 min $30.000 · cena 1 h $50.000. Vos definís tus valores y tiempos.</div>
+              <div class="msg" style="margin-top:8px">El mínimo es $30.000</div>
             </div>
+            <h3 style="font-size:1.4rem;margin:30px 0 6px">Tu plan de publicación</h3>
+            <p style="color:var(--text-soft);margin-bottom:16px;font-size:.95rem">Es lo único que le pagás a <strong>Aura</strong> para aparecer en la web. Mínimo 3 días.</p>
+            <div class="plan-grid">
+              <label class="plan-card"><input type="radio" name="plan" value="dias" checked><span class="plan-name">Top / Estándar</span><span class="plan-price">$15.000</span><span class="plan-desc">3 días de publicación. Sumá puntos para destacarte y subir a Top.</span></label>
+              <label class="plan-card premium"><input type="radio" name="plan" value="premium"><span class="plan-name">Premium VIP</span><span class="plan-price">$150.000 <small>/mes</small></span><span class="plan-desc">30 días, máxima distinción y prioridad arriba de todo.</span></label>
+            </div>
+            <div class="field-row" id="diasExtraField">
+              <div class="field"><label>Días extra (+$5.000 c/u)</label><input type="number" id="diasExtra" min="0" step="1" value="0"></div>
+              <div class="field"><label>Puntos para destacarte (+$1.000 c/u)</label><input type="number" id="puntosInput" min="0" step="1" value="0"></div>
+            </div>
+            <div class="pay-summary" style="margin-top:6px">
+              <div class="row"><span id="planLabel">Top / Estándar · 3 días</span><span id="planBase">$15.000</span></div>
+              <div class="row"><span>Días extra</span><span id="diasExtraAmt">$0</span></div>
+              <div class="row"><span>Puntos</span><span id="puntosAmt">$0</span></div>
+              <div class="row total"><span class="lbl">Total publicación</span><span class="amt" id="pubTotal">$15.000</span></div>
+            </div>
+            <input type="hidden" name="precio" id="precioInput" value="15000">
             <div class="wizard-actions"><button type="button" class="btn btn-ghost" data-prev="1">← Volver</button><button type="button" class="btn btn-gold" data-next="3">Ir al pago →</button></div>
           </div>
 
@@ -133,7 +149,7 @@
               <p style="color:var(--text-soft);margin-bottom:24px;font-size:.95rem">Pagá con <strong>tarjeta de débito o crédito</strong> de forma segura. No necesitás tener cuenta de Mercado Pago: al continuar podés elegir «Pagar con tarjeta» como invitada.</p>
               <div class="pay-summary">
                 <div class="row"><span>Publicación de perfil VIP</span><span id="sumName">—</span></div>
-                <div class="row"><span>Vigencia</span><span>30 días</span></div>
+                <div class="row"><span>Publicación</span><span>según tu plan</span></div>
                 <div class="row total"><span class="lbl">Total a pagar</span><span class="amt"><span id="sumAmount">$0</span></span></div>
               </div>
               <div class="pay-type">
