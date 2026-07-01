@@ -39,12 +39,13 @@ function modelCard(m){
 function fromPublicado(p){ return { sid:p.id, name:p.nombre, pais:'Argentina', provincia:p.provincia, ciudad:p.ciudad, edad:p.edad, age:p.edad, height:p.altura, busto:p.busto, cintura:p.cintura, cola:p.cola, nacionalidad:p.nacionalidad, cabello:p.cabello, tipo:p.tipo_cuerpo, price:(p.precio_cita||p.precio), precio_cita:(p.precio_cita||p.precio), plan:(p.plan||'estandar'), puntos:(p.puntos||0), numero:p.numero, foto:(Array.isArray(p.fotos)&&p.fotos[0])||null, fotos:p.fotos||[], videos:p.videos||[], audio:p.audio, telefono:p.telefono, bio:p.bio }; }
 async function getReales(){ try { return window.eaSupa ? (await window.eaSupa.getPublicados()).map(fromPublicado) : []; } catch(e){ return []; } }
 
-async function renderFeatured(){ const el=document.getElementById('featuredGrid'); if(!el) return; const reales=await getReales(); el.innerHTML=[...reales,...MODELS].sort((a,b)=>tierRank(a)-tierRank(b)||(b.puntos||0)-(a.puntos||0)).slice(0,8).map(modelCard).join(''); }
+function setHeroStats(list){ const n=document.getElementById('statModelos'); if(n) n.textContent=list.length; const c=document.getElementById('statCiudades'); if(c){ const ciu=new Set(list.map(m=>m.provincia).filter(Boolean)); c.textContent=ciu.size||1; } }
+async function renderFeatured(){ const reales=await getReales(); const base=(reales.length?reales:MODELS).slice().sort((a,b)=>tierRank(a)-tierRank(b)||(b.puntos||0)-(a.puntos||0)); setHeroStats(base); const el=document.getElementById('featuredGrid'); if(!el) return; el.innerHTML=base.slice(0,8).map(modelCard).join(''); }
 
 let CATALOGO=[];
 async function renderCatalog(){
   const el=document.getElementById('modelsGrid'); if(!el) return;
-  const reales=await getReales(); CATALOGO=[...reales,...MODELS].sort((a,b)=>tierRank(a)-tierRank(b)||(b.puntos||0)-(a.puntos||0));
+  const reales=await getReales(); CATALOGO=(reales.length?reales:MODELS).slice().sort((a,b)=>tierRank(a)-tierRank(b)||(b.puntos||0)-(a.puntos||0)); setHeroStats(CATALOGO);
   // cascada de ubicación en el buscador
   const L=window.EA_LOCATIONS||{}; const qP=document.getElementById('qPais'),qPr=document.getElementById('qProv'),qC=document.getElementById('qCiudad');
   const provs=Object.keys(L['Argentina']||{});
@@ -119,15 +120,16 @@ async function renderProfile(){
       <p style="color:var(--text-soft);font-size:.86rem;margin-top:14px">El valor de la cita se acuerda y se paga <strong>directo a ${m.name}</strong> (transferencia o en efectivo). Lo que consuman —café, mates, una cena o una bebida— lo abona quien invita.</p>
       ${m.numero?`<p style="color:var(--text-mute);font-size:.78rem;margin-top:10px">N° de modelo: <strong style="color:var(--gold)">${m.numero}</strong>${m.puntos?` · <span style=\"color:var(--gold)\">★ ${m.puntos} puntos</span>`:''}</p>`:''}`; }
   const acc=document.getElementById('profileActions'); if(acc){ const tel=real?m.telefono:''; acc.innerHTML=tel?`<a href="${waLink(tel)}" target="_blank" class="btn btn-wa" style="justify-content:center">Contratar por WhatsApp</a><p style="color:var(--text-mute);font-size:.82rem;margin-top:10px">Contratación directa y privada con ${m.name}.</p>`:`<a href="https://wa.me/" target="_blank" class="btn btn-wa" style="justify-content:center">Contactar</a>`; }
-  if(real&&window.eaSupa) renderResenas(m.sid);
+  if(real&&window.eaSupa) renderResenas(m.sid, m);
   const rel=document.getElementById('relatedGrid'); if(rel){ const reales=await getReales(); rel.innerHTML=[...reales,...MODELS].filter(x=>(x.sid||x.id)!==(m.sid||m.id)).slice(0,4).map(modelCard).join(''); }
 }
 
-async function renderResenas(sid){
+async function renderResenas(sid, modelo){
   const cont=document.getElementById('resenasSection'); if(!cont) return;
   let lista=[]; try{ lista=await window.eaSupa.getResenas(sid); }catch(e){}
   const items=lista.length?lista.map(r=>`<div class="resena"><div class="resena-top"><span class="resena-av">${(r.autor||'?').slice(0,1).toUpperCase()}</span><div><div class="resena-nm">${r.autor||'Anónimo'}</div><div class="resena-stars">${'★'.repeat(r.estrellas)}${'☆'.repeat(5-r.estrellas)}</div></div></div><p>${(r.texto||'').replace(/</g,'&lt;')}</p></div>`).join(''):'<p style="color:var(--text-mute)">Todavía no hay reseñas. ¡Sé el primero!</p>';
-  cont.innerHTML=`<div class="section-head" style="margin-bottom:30px"><span class="eyebrow">Experiencias</span><h2 style="font-size:clamp(1.8rem,4vw,2.6rem);margin-top:10px">Reseñas</h2><div class="divider"></div></div>
+  const numNota = (modelo&&modelo.numero)?`<div class="pts-nota"><strong>¿Te gustó ${modelo.name}?</strong> Valorala con estrellas. Cada estrella suma <strong>1 punto</strong> a su ranking. Para potenciar su lugar podés reconocerla con <strong>$1.000 por punto</strong>, asignados a su número de modelo <span class="num-chip">${modelo.numero}</span>.</div>`:'';
+  cont.innerHTML=`<div class="section-head" style="margin-bottom:22px"><span class="eyebrow">Experiencias</span><h2 style="font-size:clamp(1.8rem,4vw,2.6rem);margin-top:10px">Reseñas</h2><div class="divider"></div></div>${numNota}
     <div class="resenas-grid">${items}</div>
     <div class="form-card" style="max-width:560px;margin:34px auto 0"><h3 style="font-size:1.3rem;margin-bottom:6px">Dejá tu reseña</h3><p style="color:var(--text-soft);font-size:.88rem;margin-bottom:18px">Se publica luego de ser revisada.</p>
       <div class="field-row"><div class="field"><label>Tu nombre</label><input id="rsAutor" placeholder="Cómo querés aparecer"></div>

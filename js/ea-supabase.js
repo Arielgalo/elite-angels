@@ -77,6 +77,30 @@
   function mediaChips(arr, tipo) {
     return (arr||[]).map((u,i)=>`<span class="ed-chip">${tipo}${i+1} <button type="button" class="ed-rm" data-tipo="${tipo}" data-url="${esc(u)}">✕</button></span>`).join('');
   }
+  function fotoGrid(fotos) {
+    const arr = fotos || [];
+    if (!arr.length) return '<div class="ed-fotos" data-fotos><span style="color:var(--text-mute)">sin fotos</span></div>';
+    return `<div class="ed-fotos" data-fotos>${arr.map((u, i) => `<div class="ed-foto" draggable="true" data-url="${esc(u)}"><img src="${esc(u)}"><span class="ed-foto-n">${i + 1}</span><button type="button" class="ed-rm-foto" data-url="${esc(u)}" title="Eliminar">✕</button></div>`).join('')}</div>`;
+  }
+  function enableFotoSort(grid) {
+    if (!grid) return; let drag = null;
+    const renum = () => grid.querySelectorAll('.ed-foto').forEach((el, i) => { const n = el.querySelector('.ed-foto-n'); if (n) n.textContent = i + 1; });
+    grid.querySelectorAll('.ed-foto').forEach(el => {
+      el.addEventListener('dragstart', e => { drag = el; el.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+      el.addEventListener('dragend', () => { el.classList.remove('dragging'); renum(); });
+    });
+    grid.addEventListener('dragover', e => {
+      e.preventDefault(); if (!drag) return;
+      const els = [...grid.querySelectorAll('.ed-foto:not(.dragging)')]; let after = null, best = -Infinity;
+      els.forEach(c => { const b = c.getBoundingClientRect(); const off = e.clientX - b.left - b.width / 2; if (off < 0 && off > best) { best = off; after = c; } });
+      if (after == null) grid.appendChild(drag); else grid.insertBefore(drag, after);
+    });
+  }
+  function wireEdit(slot, removidos) {
+    slot.querySelectorAll('.ed-rm').forEach(x => x.addEventListener('click', () => { removidos.push(x.dataset.url); x.closest('.ed-chip').remove(); }));
+    slot.querySelectorAll('.ed-rm-foto').forEach(x => x.addEventListener('click', () => { x.closest('.ed-foto').remove(); }));
+    enableFotoSort(slot.querySelector('.ed-fotos'));
+  }
   function editForm(s, isAdmin) {
     return `<form class="ed-form" data-id="${s.id}">
       <div class="field-row">
@@ -102,7 +126,7 @@
         <div class="field"><label>Cola</label><input data-ef="cola" value="${esc(s.cola)}" placeholder="95 cm"></div>
       </div>
       <div class="field"><label>Descripción</label><textarea data-ef="bio">${esc(s.bio)}</textarea></div>
-      <div class="field"><label>Fotos actuales</label><div class="ed-chips">${mediaChips(s.fotos,'foto')||'<span style="color:var(--text-mute)">sin fotos</span>'}</div><input type="file" data-ef="addFotos" accept="image/*" multiple></div>
+      <div class="field"><label>Fotos actuales (arrastrá para ordenar · ✕ para borrar)</label>${fotoGrid(s.fotos)}<input type="file" data-ef="addFotos" accept="image/*" multiple style="margin-top:10px"></div>
       <div class="field"><label>Videos actuales</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
       <div class="field"><label>Mensaje de voz / Audio</label>${s.audio?`<div class="ed-chips"><span class="ed-chip">audio <button type="button" class="ed-rm" data-tipo="audio" data-url="${esc(s.audio)}">✕</button></span></div><audio controls src="${esc(s.audio)}" style="width:100%;margin-top:8px"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*,video/*"></div>
       <div class="ed-actions"><button type="button" class="btn btn-ghost ed-cancel">Cancelar</button><button type="submit" class="btn btn-gold">Guardar cambios</button></div>
@@ -113,7 +137,7 @@
     const get = (k) => { const el = formEl.querySelector(`[data-ef="${k}"]`); return el ? el.value.trim() : undefined; };
     // cargar fila actual para fusionar media
     const { data: actual } = await client.from('solicitudes').select('fotos,videos,audio').eq('id', id).single();
-    let fotos = (actual?.fotos || []).filter(u => !removidos.includes(u));
+    const _grid = formEl.querySelector('.ed-fotos'); let fotos = _grid ? [...formEl.querySelectorAll('.ed-fotos .ed-foto')].map(e => e.dataset.url) : (actual?.fotos || []).filter(u => !removidos.includes(u));
     let videos = (actual?.videos || []).filter(u => !removidos.includes(u));
     let audio = actual?.audio || null;
     if (audio && removidos.includes(audio)) audio = null;
@@ -155,8 +179,17 @@
   async function adminBoard(root, email) {
     root.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
       <span style="color:var(--text-soft);font-size:.88rem">Admin: <strong style="color:var(--gold)">${esc(email)}</strong></span>
-      <button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div><div id="eaBoard"></div>`;
+      <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nueva modelo</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="eaBoard"></div>`;
     document.getElementById('aOut').addEventListener('click', async () => { await client.auth.signOut(); location.reload(); });
+    document.getElementById('aNew').addEventListener('click', async () => {
+      const nsid = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '');
+      const nts = Date.now(); let nh = 0; const nstr = 'nueva|' + nts; for (let i = 0; i < nstr.length; i++) { nh = (nh * 31 + nstr.charCodeAt(i)) >>> 0; }
+      const nnum = 'AE-' + nts.toString(36).slice(-4).toUpperCase() + '-' + nh.toString(36).slice(-4).toUpperCase();
+      const { error } = await client.from('solicitudes').insert({ id: nsid, numero: nnum, nombre: 'Nueva modelo', pais: 'Argentina', plan: 'estandar', puntos: 0, dias: 30, precio_cita: 30000, precio: 0, estado: 'publicado', pago: 'pagado' });
+      if (error) { alert('Error al crear: ' + error.message); return; }
+      filtro = 'publicado'; await render();
+      alert('Modelo creada gratis y publicada (N° ' + nnum + '). Tocá «Editar» en su tarjeta para cargar fotos, ubicación, tarifa de cita y datos.');
+    });
     let filtro = 'pendiente';
     document.querySelectorAll('.panel-tab').forEach(t => t.addEventListener('click', () => { filtro = t.dataset.tab; render(); }));
     async function render() {
@@ -196,7 +229,7 @@
         const { data: s } = await client.from('solicitudes').select('*').eq('id', b.dataset.ed).single();
         slot.innerHTML = editForm(s, true);
         const removidos = [];
-        slot.querySelectorAll('.ed-rm').forEach(x=>x.addEventListener('click',()=>{ removidos.push(x.dataset.url); x.closest('.ed-chip').remove(); }));
+        wireEdit(slot, removidos);
         slot.querySelector('.ed-cancel').addEventListener('click',()=>slot.innerHTML='');
         slot.querySelector('.ed-form').addEventListener('submit', async (e)=>{ e.preventDefault(); const btn=e.target.querySelector('button[type="submit"]'); btn.textContent='Guardando…'; btn.disabled=true; try{ await recolectarYGuardar(e.target, removidos, true); render(); }catch(err){ alert('Error al guardar: '+err.message); btn.textContent='Guardar cambios'; btn.disabled=false; } });
       }));
@@ -290,7 +323,11 @@
     const root = document.getElementById('panelRoot'); if (!root) return;
     const { data } = await client.auth.getSession();
     if (data.session) adminBoard(root, data.session.user.email); else adminLogin(root);
-    client.auth.onAuthStateChange((_e, session) => { if (session) adminBoard(root, session.user.email); });
+    client.auth.onAuthStateChange((event, session) => { if (event === 'PASSWORD_RECOVERY') { setPasswordForm(root); return; } if (session) adminBoard(root, session.user.email); });
+  }
+  function setPasswordForm(root) {
+    root.innerHTML = `<div class="form-card" style="max-width:420px;margin:0 auto"><img src="assets/logo.svg" class="logo-emblem" style="margin:0 auto 16px"><h3 style="font-size:1.5rem;text-align:center;margin-bottom:6px">Defin\u00ed tu contrase\u00f1a</h3><p style="color:var(--text-soft);font-size:.9rem;text-align:center;margin-bottom:18px">Eleg\u00ed una contrase\u00f1a para entrar y salir desde cualquier dispositivo.</p><div class="field"><label>Nueva contrase\u00f1a</label><input type="password" id="npass" placeholder="m\u00ednimo 6 caracteres"></div><button class="btn btn-gold" id="nsave" style="width:100%;justify-content:center">Guardar contrase\u00f1a</button><p id="nmsg" style="color:var(--gold);font-size:.88rem;text-align:center;margin-top:12px"></p></div>`;
+    document.getElementById('nsave').addEventListener('click', async () => { const p = document.getElementById('npass').value; const m = document.getElementById('nmsg'); if (p.length < 6) { m.textContent = 'La contrase\u00f1a debe tener al menos 6 caracteres.'; return; } const { error } = await client.auth.updateUser({ password: p }); if (error) { m.textContent = 'Error: ' + error.message; } else { m.textContent = '\u2713 Contrase\u00f1a guardada. Ya pod\u00e9s entrar con tu email y contrase\u00f1a.'; setTimeout(() => location.reload(), 1600); } });
   }
 
   /* ---------- Portal de la modelo ---------- */
@@ -323,7 +360,7 @@
       const slot = root.querySelector(`.ed-slot[data-for="${s.id}"]`);
       slot.innerHTML = editForm(s, false);
       const removidos = [];
-      slot.querySelectorAll('.ed-rm').forEach(x=>x.addEventListener('click',()=>{ removidos.push(x.dataset.url); x.closest('.ed-chip').remove(); }));
+      wireEdit(slot, removidos);
       const cancel = slot.querySelector('.ed-cancel'); if(cancel) cancel.style.display='none';
       slot.querySelector('.ed-form').addEventListener('submit', async (e)=>{ e.preventDefault(); const btn=e.target.querySelector('button[type="submit"]'); btn.textContent='Guardando…'; btn.disabled=true; try{ await recolectarYGuardar(e.target, removidos, false); btn.textContent='✓ Guardado'; setTimeout(()=>{btn.textContent='Guardar cambios';btn.disabled=false;},1500); }catch(err){ alert('Error: '+err.message); btn.textContent='Guardar cambios'; btn.disabled=false; } });
     }
