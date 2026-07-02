@@ -60,6 +60,18 @@
   /* ---------- Config del sitio (editor) ---------- */
   async function getConfig() { const { data } = await client.from('sitio_config').select('data').eq('id', 1).single(); return (data && data.data) || {}; }
   async function saveConfig(obj) { const { error } = await client.from('sitio_config').update({ data: obj, updated_at: new Date().toISOString() }).eq('id', 1); if (error) throw error; return true; }
+  async function getMovimientos() { const { data } = await client.from('movimientos_puntos').select('*').order('created_at', { ascending: false }); return data || []; }
+  async function addMovimiento(m) { const { error } = await client.from('movimientos_puntos').insert(m); if (error) throw error; return true; }
+  async function setMovimientoEstado(id, estado) { const { error } = await client.from('movimientos_puntos').update({ estado }).eq('id', id); if (error) throw error; return true; }
+  async function delMovimiento(id) { const { error } = await client.from('movimientos_puntos').delete().eq('id', id); if (error) throw error; return true; }
+  async function getFinanzas() {
+    const { data: sols } = await client.from('solicitudes').select('precio,pago').eq('pago', 'pagado');
+    const totalPub = (sols || []).reduce((a, s) => a + Number(s.precio || 0), 0);
+    const { data: mov } = await client.from('movimientos_puntos').select('monto,estado');
+    const totalPuntos = (mov || []).filter(m => m.estado === 'verificado').reduce((a, m) => a + Number(m.monto || 0), 0);
+    const pend = (mov || []).filter(m => m.estado === 'pendiente').length;
+    return { totalPub, totalPuntos, pend, count: (mov || []).length };
+  }
 
   /* ---------- Formulario de edición (compartido admin/modelo) ---------- */
   function selUbic(s) {
@@ -126,6 +138,10 @@
         <div class="field"><label>Cola</label><input data-ef="cola" value="${esc(s.cola)}" placeholder="95 cm"></div>
       </div>
       <div class="field"><label>Descripción</label><textarea data-ef="bio">${esc(s.bio)}</textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Idiomas (separados por coma)</label><input data-ef="idiomas" value="${esc(s.idiomas)}" placeholder="Español, Inglés, Portugués"></div>
+        <div class="field"><label>Estilo (separados por coma)</label><input data-ef="estilo" value="${esc(s.estilo)}" placeholder="Elegante, Culta, Sensual"></div>
+      </div>
       <div class="field"><label>Fotos actuales (arrastrá para ordenar · ✕ para borrar)</label>${fotoGrid(s.fotos)}<input type="file" data-ef="addFotos" accept="image/*" multiple style="margin-top:10px"></div>
       <div class="field"><label>Videos actuales</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
       <div class="field"><label>Mensaje de voz / Audio</label>${s.audio?`<div class="ed-chips"><span class="ed-chip">audio <button type="button" class="ed-rm" data-tipo="audio" data-url="${esc(s.audio)}">✕</button></span></div><audio controls src="${esc(s.audio)}" style="width:100%;margin-top:8px"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*,video/*"></div>
@@ -144,7 +160,7 @@
     const fIn = formEl.querySelector('[data-ef="addFotos"]'); const vIn = formEl.querySelector('[data-ef="addVideos"]'); const aIn = formEl.querySelector('[data-ef="addAudio"]');
     const nuevos = await subirMedios(fIn?[...fIn.files]:[], vIn?[...vIn.files]:[], aIn&&aIn.files[0]?aIn.files[0]:null);
     fotos = fotos.concat(nuevos.fotos); videos = videos.concat(nuevos.videos); if (nuevos.audio) audio = nuevos.audio;
-    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), fotos, videos, audio };
+    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), fotos, videos, audio };
     patch.precio_cita = +get('precio_cita')||30000;
     if (isAdmin) { patch.plan = get('plan'); patch.puntos = +get('puntos')||0; }
     const { error } = await client.from('solicitudes').update(patch).eq('id', id);
@@ -197,6 +213,7 @@
       document.querySelectorAll('.panel-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === filtro));
       if (filtro === 'resenas') return renderResenas(board);
       if (filtro === 'sitio') return renderSitio(board);
+      if (filtro === 'movimientos') return renderMovimientos(board);
       const { data, error } = await client.from('solicitudes').select('*').order('created_at', { ascending: false });
       if (error) { adminLogin(root, 'Tu usuario no es administrador.'); return; }
       const counts = { pendiente:0, publicado:0, rechazado:0 }; data.forEach(s => counts[s.estado] = (counts[s.estado]||0)+1);
@@ -316,6 +333,51 @@
           btn.textContent = 'Guardar y publicar cambios'; btn.disabled = false;
         } catch (err) { msg.textContent = 'Error: ' + (err.message || err); btn.textContent = 'Reintentar'; btn.disabled = false; }
       });
+    }
+    async function renderMovimientos(board) {
+      let fin = { totalPub: 0, totalPuntos: 0, pend: 0, count: 0 };
+      let movs = [];
+      try { fin = await getFinanzas(); movs = await getMovimientos(); }
+      catch (e) { board.innerHTML = '<div class="panel-empty"><div class="pe-ic">🔒</div><h3>Solo administradores</h3></div>'; return; }
+      board.innerHTML = `
+      <div class="fin-grid">
+        <div class="fin-card"><div class="fin-lbl">Recaudado · publicaciones</div><div class="fin-num">${fmt(fin.totalPub)}</div><div class="fin-sub">lo que pagan las modelos a Aura</div></div>
+        <div class="fin-card"><div class="fin-lbl">Recaudado · puntos</div><div class="fin-num">${fmt(fin.totalPuntos)}</div><div class="fin-sub">clientes potenciando modelos</div></div>
+        <div class="fin-card fin-total"><div class="fin-lbl">Total recaudado</div><div class="fin-num">${fmt(fin.totalPub + fin.totalPuntos)}</div><div class="fin-sub">${fin.pend} pago(s) de puntos pendientes</div></div>
+      </div>
+      <div class="form-card" style="margin:22px 0">
+        <h3 style="font-size:1.3rem;margin-bottom:6px">Registrar pago de puntos de un cliente</h3>
+        <p style="color:var(--text-soft);font-size:.88rem;margin-bottom:16px"><strong>$1.000 = 1 punto.</strong> Verificás el pago y los puntos se acreditan solos a la modelo por su número.</p>
+        <div class="field-row"><div class="field"><label>N° de modelo</label><input id="mvNum" placeholder="AE-XXXX-XXXX"></div><div class="field"><label>Monto pagado (ARS)</label><input id="mvMonto" type="number" min="1000" step="1000" placeholder="5000"></div></div>
+        <div class="field-row"><div class="field"><label>Cliente (nombre / alias)</label><input id="mvCli" placeholder="Cómo identificás al cliente"></div><div class="field"><label>Referencia de pago</label><input id="mvRef" placeholder="WhatsApp, alias, N° de operación"></div></div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:4px"><span id="mvPts" style="color:var(--gold);font-family:var(--serif);font-size:1.2rem">0 puntos</span><span style="flex:1"></span><button class="btn btn-ghost" id="mvAddPend" style="padding:11px 20px">Guardar pendiente</button><button class="btn btn-gold" id="mvAddVer" style="padding:11px 20px">Verificar y acreditar</button></div>
+        <p id="mvMsg" style="color:var(--gold);font-size:.86rem;margin-top:12px"></p>
+        <div style="border-top:1px solid var(--line-soft);margin-top:18px;padding-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><button class="btn btn-ghost" disabled style="opacity:.45;cursor:not-allowed;padding:11px 20px">⚡ Cobro automático con N° de modelo</button><span style="color:var(--text-mute);font-size:.82rem">Próximamente — integración de pago directo (en desarrollo)</span></div>
+      </div>
+      <h3 style="font-size:1.2rem;margin:10px 0 12px">Planilla de movimientos</h3>
+      <div id="mvList"></div>`;
+      const calc = () => { const mo = +document.getElementById('mvMonto').value || 0; document.getElementById('mvPts').textContent = Math.floor(mo / 1000) + ' puntos'; };
+      document.getElementById('mvMonto').addEventListener('input', calc);
+      async function guardar(estado) {
+        const num = document.getElementById('mvNum').value.trim().toUpperCase();
+        const monto = +document.getElementById('mvMonto').value || 0;
+        const cli = document.getElementById('mvCli').value.trim();
+        const ref = document.getElementById('mvRef').value.trim();
+        const msg = document.getElementById('mvMsg');
+        if (!num || monto < 1000) { msg.textContent = 'Completá N° de modelo y monto (mínimo $1.000).'; return; }
+        const puntos = Math.floor(monto / 1000);
+        try {
+          await addMovimiento({ numero_modelo: num, monto, puntos, cliente_nombre: cli, cliente_contacto: ref, estado });
+          renderMovimientos(board);
+        } catch (e) { msg.textContent = 'Error: ' + (e.message || e); }
+      }
+      document.getElementById('mvAddPend').addEventListener('click', () => guardar('pendiente'));
+      document.getElementById('mvAddVer').addEventListener('click', () => guardar('verificado'));
+      const list = document.getElementById('mvList');
+      if (!movs.length) { list.innerHTML = '<div class="panel-empty"><div class="pe-ic">💠</div><h3>Sin movimientos todavía</h3><p>Cuando un cliente pague puntos, registralo arriba.</p></div>'; return; }
+      list.innerHTML = `<div class="mv-table"><div class="mv-row mv-head"><span>Fecha</span><span>N° modelo</span><span>Cliente</span><span>Monto</span><span>Pts</span><span>Estado</span><span></span></div>` + movs.map(m => `<div class="mv-row"><span>${new Date(m.created_at).toLocaleDateString('es-AR')}</span><span style="color:var(--gold)">${esc(m.numero_modelo) || '—'}</span><span>${esc(m.cliente_nombre) || '—'}${m.cliente_contacto ? `<br><small style="color:var(--text-mute)">${esc(m.cliente_contacto)}</small>` : ''}</span><span>${fmt(m.monto)}</span><span>${m.puntos}</span><span><span class="status-badge ${m.estado === 'verificado' ? 'ready' : 'incomplete'}">${esc(m.estado)}</span></span><span style="display:flex;gap:6px;justify-content:flex-end">${m.estado !== 'verificado' ? `<button class="btn btn-gold mv-ver" data-id="${m.id}" style="padding:6px 12px;font-size:.7rem">Verificar</button>` : ''}<button class="btn btn-ghost mv-del" data-id="${m.id}" style="padding:6px 10px;font-size:.7rem">✕</button></span></div>`).join('') + `</div>`;
+      list.querySelectorAll('.mv-ver').forEach(b => b.addEventListener('click', async () => { await setMovimientoEstado(b.dataset.id, 'verificado'); renderMovimientos(board); }));
+      list.querySelectorAll('.mv-del').forEach(b => b.addEventListener('click', async () => { if (confirm('¿Eliminar este movimiento?')) { await delMovimiento(b.dataset.id); renderMovimientos(board); } }));
     }
     render();
   }

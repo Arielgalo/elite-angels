@@ -36,7 +36,7 @@ function modelCard(m){
       <div class="model-cta"><span class="link">Ver perfil →</span></div>
     </div></a>`;
 }
-function fromPublicado(p){ return { sid:p.id, name:p.nombre, pais:'Argentina', provincia:p.provincia, ciudad:p.ciudad, edad:p.edad, age:p.edad, height:p.altura, busto:p.busto, cintura:p.cintura, cola:p.cola, nacionalidad:p.nacionalidad, cabello:p.cabello, tipo:p.tipo_cuerpo, price:(p.precio_cita||p.precio), precio_cita:(p.precio_cita||p.precio), plan:(p.plan||'estandar'), puntos:(p.puntos||0), numero:p.numero, foto:(Array.isArray(p.fotos)&&p.fotos[0])||null, fotos:p.fotos||[], videos:p.videos||[], audio:p.audio, telefono:p.telefono, bio:p.bio }; }
+function fromPublicado(p){ return { sid:p.id, name:p.nombre, pais:'Argentina', provincia:p.provincia, ciudad:p.ciudad, edad:p.edad, age:p.edad, height:p.altura, busto:p.busto, cintura:p.cintura, cola:p.cola, nacionalidad:p.nacionalidad, cabello:p.cabello, tipo:p.tipo_cuerpo, price:(p.precio_cita||p.precio), precio_cita:(p.precio_cita||p.precio), plan:(p.plan||'estandar'), puntos:(p.puntos||0), numero:p.numero, foto:(Array.isArray(p.fotos)&&p.fotos[0])||null, fotos:p.fotos||[], videos:p.videos||[], audio:p.audio, telefono:p.telefono, bio:p.bio, idiomas:p.idiomas, estilo:p.estilo, langs:(p.idiomas?String(p.idiomas).split(',').map(x=>x.trim()).filter(Boolean):[]), style:(p.estilo?String(p.estilo).split(',').map(x=>x.trim()).filter(Boolean):[]) }; }
 async function getReales(){ try { return window.eaSupa ? (await window.eaSupa.getPublicados()).map(fromPublicado) : []; } catch(e){ return []; } }
 
 function setHeroStats(list){ const n=document.getElementById('statModelos'); if(n) n.textContent=list.length; const c=document.getElementById('statCiudades'); if(c){ const ciu=new Set(list.map(m=>m.provincia).filter(Boolean)); c.textContent=ciu.size||1; } }
@@ -113,7 +113,9 @@ async function renderProfile(){
   if(m.busto) specs.push(['Busto',m.busto]); if(m.cintura) specs.push(['Cintura',m.cintura]); if(m.cola) specs.push(['Cola',m.cola]);
   if(m.cabello) specs.push(['Cabello',m.cabello]); if(m.tipo) specs.push(['Cuerpo',m.tipo]); if(m.nacionalidad) specs.push(['Nacionalidad',m.nacionalidad]);
   document.getElementById('specGrid').innerHTML=specs.map(s=>`<div class="spec"><div class="k">${s[0]}</div><div class="v">${s[1]}</div></div>`).join('');
-  document.getElementById('pChips').innerHTML=[...(m.langs||[]),...(m.style||[])].map(c=>`<span class="chip">${c}</span>`).join('');
+  const _idi=(m.langs||[]).length?`<div class="chip-group"><span class="chip-label">Idiomas</span>${(m.langs).map(c=>`<span class="chip chip-lang">${c}</span>`).join('')}</div>`:'';
+  const _est=(m.style||[]).length?`<div class="chip-group"><span class="chip-label">Estilo</span>${(m.style).map(c=>`<span class="chip">${c}</span>`).join('')}</div>`:'';
+  document.getElementById('pChips').innerHTML=(_idi+_est)||'<span style="color:var(--text-mute)">Sin especificar todavía</span>';
   const rateBox=document.getElementById('rateBox'); if(rateBox){ const pn=planName(m.plan);
     rateBox.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:1.3rem">Cita</h3><span class="tier-pill tier-${m.plan||'estandar'}">${pn}</span></div>
       <div class="rate-row"><span class="dur">Encuentro 30 min · desde</span><span class="pr">${fmtP(m.price)}</span></div>

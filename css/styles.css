@@ -817,3 +817,21 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.12;
 .cv-auto { content-visibility:auto; contain-intrinsic-size:1px 900px; }
 .footer { content-visibility:auto; contain-intrinsic-size:1px 600px; }
 .trust-track { will-change:transform; }
+
+/* ===== Idiomas / Estilo (perfil) ===== */
+.chip-group { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.chip-label { font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:var(--text-mute); margin-right:4px; }
+.chip-lang { border-color:var(--gold); color:var(--gold-bright); background:rgba(212,175,110,.08); }
+
+/* ===== Seguimiento financiero (panel) ===== */
+.fin-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+.fin-card { background:linear-gradient(160deg,var(--black-card),var(--black-soft)); border:1px solid var(--line-soft); border-radius:var(--radius-lg); padding:24px 26px; }
+.fin-card.fin-total { border-color:var(--line); background:linear-gradient(160deg,#1a1510,#12100c); }
+.fin-lbl { font-size:.74rem; letter-spacing:.16em; text-transform:uppercase; color:var(--text-mute); }
+.fin-num { font-family:var(--serif); font-size:2.2rem; color:var(--gold); line-height:1.1; margin:8px 0 4px; }
+.fin-sub { font-size:.82rem; color:var(--text-soft); }
+.mv-table { border:1px solid var(--line-soft); border-radius:var(--radius); overflow:hidden; }
+.mv-row { display:grid; grid-template-columns:1fr 1.2fr 1.6fr .9fr .5fr .9fr 1.3fr; gap:10px; align-items:center; padding:12px 16px; border-bottom:1px solid var(--line-soft); font-size:.86rem; }
+.mv-row:last-child { border-bottom:none; }
+.mv-head { background:var(--black-soft); color:var(--text-mute); font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; }
+@media (max-width:760px){ .mv-row { grid-template-columns:1fr 1fr; } .mv-head { display:none; } .mv-row span:nth-child(4)::before{content:'Monto: ';color:var(--text-mute)} }
