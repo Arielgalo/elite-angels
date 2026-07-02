@@ -835,3 +835,12 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.12;
 .mv-row:last-child { border-bottom:none; }
 .mv-head { background:var(--black-soft); color:var(--text-mute); font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; }
 @media (max-width:760px){ .mv-row { grid-template-columns:1fr 1fr; } .mv-head { display:none; } .mv-row span:nth-child(4)::before{content:'Monto: ';color:var(--text-mute)} }
+
+/* ===== Comprar puntos (perfil) ===== */
+.pts-buy { display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:16px; }
+.pts-buy .cur { color:var(--gold); font-family:var(--serif); font-size:1.2rem; }
+.pts-buy input { width:120px; background:var(--black-soft); border:1px solid var(--line-soft); border-radius:10px; padding:10px 12px; color:var(--text); font-family:var(--serif); font-size:1.1rem; text-align:center; }
+.pts-buy input:focus { outline:none; border-color:var(--gold); }
+.pts-buy #ptsCalc { color:var(--gold); font-size:.9rem; min-width:70px; }
+.pts-buy .btn { padding:11px 22px; }
+.pts-msg { color:var(--gold); font-size:.85rem; text-align:center; margin-top:8px; }

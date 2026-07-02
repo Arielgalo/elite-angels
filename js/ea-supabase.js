@@ -8,6 +8,20 @@
   const ubic = (s) => [s.ciudad, s.provincia, s.pais].filter(Boolean).join(', ');
   const esc = (t) => (t == null ? '' : String(t)).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
+  async function comprimirFoto(file) {
+    try {
+      if (!file || !((file.type || '').startsWith('image/'))) return file;
+      const bmp = await createImageBitmap(file);
+      const maxW = 1600;
+      const scale = Math.min(1, maxW / bmp.width);
+      const w = Math.round(bmp.width * scale), h = Math.round(bmp.height * scale);
+      const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      cv.getContext('2d').drawImage(bmp, 0, 0, w, h);
+      const blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.74));
+      if (blob && blob.size < (file.size || Infinity)) return new File([blob], (file.name || 'foto').replace(/\\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' });
+      return file;
+    } catch (e) { return file; }
+  }
   async function up(bucket, file, nameHint) {
     const base = (file && file.name) || nameHint || 'archivo';
     const ext = (base.split('.').pop() || 'dat').toLowerCase();
@@ -18,7 +32,7 @@
   }
   async function subirMedios(photoFiles, videoFiles, audioBlob) {
     const fotos = [], videos = [];
-    for (const f of (photoFiles || []).slice(0, 8)) { const u = await up('fotos', f); if (u) fotos.push(u); }
+    for (const f of (photoFiles || []).slice(0, 8)) { const c = await comprimirFoto(f); const u = await up('fotos', c); if (u) fotos.push(u); }
     for (const f of (videoFiles || []).slice(0, 4)) { const u = await up('medios', f); if (u) videos.push(u); }
     let audio = null;
     if (audioBlob) audio = await up('medios', audioBlob, 'voz.webm');
@@ -375,7 +389,7 @@
       document.getElementById('mvAddVer').addEventListener('click', () => guardar('verificado'));
       const list = document.getElementById('mvList');
       if (!movs.length) { list.innerHTML = '<div class="panel-empty"><div class="pe-ic">💠</div><h3>Sin movimientos todavía</h3><p>Cuando un cliente pague puntos, registralo arriba.</p></div>'; return; }
-      list.innerHTML = `<div class="mv-table"><div class="mv-row mv-head"><span>Fecha</span><span>N° modelo</span><span>Cliente</span><span>Monto</span><span>Pts</span><span>Estado</span><span></span></div>` + movs.map(m => `<div class="mv-row"><span>${new Date(m.created_at).toLocaleDateString('es-AR')}</span><span style="color:var(--gold)">${esc(m.numero_modelo) || '—'}</span><span>${esc(m.cliente_nombre) || '—'}${m.cliente_contacto ? `<br><small style="color:var(--text-mute)">${esc(m.cliente_contacto)}</small>` : ''}</span><span>${fmt(m.monto)}</span><span>${m.puntos}</span><span><span class="status-badge ${m.estado === 'verificado' ? 'ready' : 'incomplete'}">${esc(m.estado)}</span></span><span style="display:flex;gap:6px;justify-content:flex-end">${m.estado !== 'verificado' ? `<button class="btn btn-gold mv-ver" data-id="${m.id}" style="padding:6px 12px;font-size:.7rem">Verificar</button>` : ''}<button class="btn btn-ghost mv-del" data-id="${m.id}" style="padding:6px 10px;font-size:.7rem">✕</button></span></div>`).join('') + `</div>`;
+      list.innerHTML = `<div class="mv-table"><div class="mv-row mv-head"><span>Fecha</span><span>N° modelo</span><span>Cliente</span><span>Monto</span><span>Pts</span><span>Estado</span><span></span></div>` + movs.map(m => `<div class="mv-row"><span>${new Date(m.created_at).toLocaleDateString('es-AR')}</span><span style="color:var(--gold)">${esc(m.numero_modelo) || '—'}</span><span>${m.origen==='cliente'?'\ud83d\udcb3 ':''}${esc(m.cliente_nombre) || '—'}${m.cliente_contacto ? `<br><small style="color:var(--text-mute)">${esc(m.cliente_contacto)}</small>` : ''}</span><span>${fmt(m.monto)}</span><span>${m.puntos}</span><span>${m.origen==='cliente' ? (m.pagado ? '<span class="status-badge ready">pagado \u2713</span>' : '<span class="status-badge incomplete">sin pago</span>') : ''}<span class="status-badge ${m.estado === 'verificado' ? 'ready' : 'incomplete'}">${esc(m.estado)}</span></span><span style="display:flex;gap:6px;justify-content:flex-end">${m.estado !== 'verificado' ? `<button class="btn btn-gold mv-ver" data-id="${m.id}" style="padding:6px 12px;font-size:.7rem">Verificar</button>` : ''}<button class="btn btn-ghost mv-del" data-id="${m.id}" style="padding:6px 10px;font-size:.7rem">✕</button></span></div>`).join('') + `</div>`;
       list.querySelectorAll('.mv-ver').forEach(b => b.addEventListener('click', async () => { await setMovimientoEstado(b.dataset.id, 'verificado'); renderMovimientos(board); }));
       list.querySelectorAll('.mv-del').forEach(b => b.addEventListener('click', async () => { if (confirm('¿Eliminar este movimiento?')) { await delMovimiento(b.dataset.id); renderMovimientos(board); } }));
     }
@@ -434,5 +448,12 @@
     client.auth.onAuthStateChange((_e, session) => { if (session) portalBoard(root, session.user.email); });
   }
 
-  window.eaSupa = { client, submitPublish, getPublicados, getPerfil, getResenas, submitResena, initPanel, initPortal, ubic, fmt, getConfig, saveConfig };
+  async function crearPagoPuntos(numero, monto, cliente_nombre, cliente_contacto) {
+    const resp = await client.functions.invoke('crear-pago-puntos', { body: { numero_modelo: numero, monto: monto, cliente_nombre: cliente_nombre, cliente_contacto: cliente_contacto } });
+    if (resp.error) throw resp.error;
+    const ip = resp.data && (resp.data.init_point || resp.data.sandbox_init_point);
+    if (ip) { window.location.href = ip; return 'redirect'; }
+    throw new Error((resp.data && resp.data.error) || 'No se pudo iniciar el pago de puntos.');
+  }
+  window.eaSupa = { client, submitPublish, crearPagoPuntos, getPublicados, getPerfil, getResenas, submitResena, initPanel, initPortal, ubic, fmt, getConfig, saveConfig };
 })();
