@@ -53,7 +53,7 @@
       vence: new Date(ts + dias * 86400000).toISOString(),
       nombre: payload.nombre, edad: payload.edad, pais: payload.pais, provincia: payload.provincia,
       ciudad: payload.ciudad, altura: payload.altura, telefono: payload.telefono, email: payload.email,
-      bio: payload.bio, precio: payload.precio, fotos: m.fotos, videos: m.videos, audio: m.audio, busto: payload.busto, cintura: payload.cintura, cola: payload.cola, nacionalidad: payload.nacionalidad, cabello: payload.cabello, tipo_cuerpo: payload.tipo_cuerpo,
+      bio: payload.bio, genero: payload.genero, precio: payload.precio, fotos: m.fotos, videos: m.videos, audio: m.audio, busto: payload.busto, cintura: payload.cintura, cola: payload.cola, nacionalidad: payload.nacionalidad, cabello: payload.cabello, tipo_cuerpo: payload.tipo_cuerpo,
       pago: 'pendiente', estado: 'pendiente'
     };
     const { error } = await client.from('solicitudes').insert(row);
@@ -133,6 +133,10 @@
         <div class="field"><label>Nombre</label><input data-ef="nombre" value="${esc(s.nombre)}"></div>
         <div class="field"><label>Edad</label><input data-ef="edad" type="number" value="${esc(s.edad)}"></div>
       </div>
+      <div class="field-row">
+        <div class="field"><label>Género</label><select data-ef="genero"><option value="">Sin especificar</option><option value="Mujer"${s.genero==='Mujer'?' selected':''}>Mujer</option><option value="Varón"${s.genero==='Varón'?' selected':''}>Varón</option><option value="No binarie"${s.genero==='No binarie'?' selected':''}>No binarie</option><option value="Trans femenina"${s.genero==='Trans femenina'?' selected':''}>Trans femenina</option><option value="Trans masculino"${s.genero==='Trans masculino'?' selected':''}>Trans masculino</option><option value="Crossdresser"${s.genero==='Crossdresser'?' selected':''}>Crossdresser</option><option value="Otro / prefiero no decir"${s.genero==='Otro / prefiero no decir'?' selected':''}>Otro / prefiero no decir</option></select></div>
+        <div class="field"></div>
+      </div>
       ${selUbic(s)}
       <div class="field-row">
         <div class="field"><label>Teléfono / WhatsApp</label><input data-ef="telefono" value="${esc(s.telefono)}"></div>
@@ -174,7 +178,7 @@
     const fIn = formEl.querySelector('[data-ef="addFotos"]'); const vIn = formEl.querySelector('[data-ef="addVideos"]'); const aIn = formEl.querySelector('[data-ef="addAudio"]');
     const nuevos = await subirMedios(fIn?[...fIn.files]:[], vIn?[...vIn.files]:[], aIn&&aIn.files[0]?aIn.files[0]:null);
     fotos = fotos.concat(nuevos.fotos); videos = videos.concat(nuevos.videos); if (nuevos.audio) audio = nuevos.audio;
-    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), fotos, videos, audio };
+    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), fotos, videos, audio };
     patch.precio_cita = +get('precio_cita')||30000;
     if (isAdmin) { patch.plan = get('plan'); patch.puntos = +get('puntos')||0; }
     const { error } = await client.from('solicitudes').update(patch).eq('id', id);
