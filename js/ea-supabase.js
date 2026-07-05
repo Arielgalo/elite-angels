@@ -307,7 +307,7 @@
         ${tf('hero_eyebrow','Texto chico sobre el título (arriba del título grande)','Plataforma inclusiva · modelos, coequipers...')}
         ${H('Fotos del carrusel (hasta 4)')}
         <div class="sp-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
-          ${[0,1,2,3].map(i=>`<div class="field" style="margin:0"><div style="aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--line-soft);margin-bottom:6px;background:#1d0e28"><img id="cfg_carimg_${i}" src="${car[i]||defs[i]}" style="width:100%;height:100%;object-fit:cover"></div><input type="file" data-car="${i}" accept="image/*" style="font-size:.76rem;color:var(--text-soft)"></div>`).join('')}
+          ${[0,1,2,3,4,5,6,7,8].map(i=>`<div class="field" style="margin:0"><div style="aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--line-soft);margin-bottom:6px;background:#1d0e28"><img id="cfg_carimg_${i}" src="${car[i]||defs[i%4]}" style="width:100%;height:100%;object-fit:cover"></div><input type="file" data-car="${i}" accept="image/*" style="font-size:.76rem;color:var(--text-soft)"></div>`).join('')}
         </div>
         ${H('Sección grande del inicio (arriba del catálogo)')}
         <div class="field-row"><div class="field"><label>Título grande (ej: «Modelos y Asistentes Empresariales por tiempo»)</label><input id="cfg_feat_title" value="${v('feat_title')}" placeholder="Modelos destacadas"></div></div>
