@@ -345,7 +345,7 @@
           const obj = Object.assign({}, cfg);
           for (const k of textKeys) { const el = document.getElementById('cfg_' + k); if (el) obj[k] = el.value.trim(); }
           for (const k of ['logo','img_estandar','img_nosotros']) { const inp = board.querySelector('input[data-img="' + k + '"]'); if (inp && inp.files[0]) { const u = await up('sitio', inp.files[0]); if (u) obj[k] = u; } }
-          const carr = []; for (let i = 0; i < 4; i++) { const inp = board.querySelector('input[data-car="' + i + '"]'); let url = car[i] || null; if (inp && inp.files[0]) { const u = await up('sitio', inp.files[0]); if (u) url = u; } carr.push(url); }
+          const carr = []; for (let i = 0; i < 9; i++) { const inp = board.querySelector('input[data-car="' + i + '"]'); let url = car[i] || null; if (inp && inp.files[0]) { const u = await up('sitio', inp.files[0]); if (u) url = u; } carr.push(url); }
           obj.carrusel = carr.filter(Boolean);
           await saveConfig(obj);
           msg.textContent = '✓ Guardado. Los cambios ya están publicados en la web.';
