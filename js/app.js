@@ -36,10 +36,18 @@ function modelCard(m){
       <div class="model-cta"><span class="link">Ver perfil →</span></div>
     </div></a>`;
 }
-function fromPublicado(p){ return { sid:p.id, name:p.nombre, pais:'Argentina', provincia:p.provincia, ciudad:p.ciudad, edad:p.edad, age:p.edad, height:p.altura, busto:p.busto, cintura:p.cintura, cola:p.cola, nacionalidad:p.nacionalidad, cabello:p.cabello, tipo:p.tipo_cuerpo, price:(p.precio_cita||p.precio), precio_cita:(p.precio_cita||p.precio), plan:(p.plan||'estandar'), puntos:(p.puntos||0), numero:p.numero, foto:(Array.isArray(p.fotos)&&p.fotos[0])||null, fotos:p.fotos||[], videos:p.videos||[], audio:p.audio, telefono:p.telefono, bio:p.bio, idiomas:p.idiomas, estilo:p.estilo, genero:p.genero, langs:(p.idiomas?String(p.idiomas).split(',').map(x=>x.trim()).filter(Boolean):[]), style:(p.estilo?String(p.estilo).split(',').map(x=>x.trim()).filter(Boolean):[]) }; }
-async function getReales(){ try { return window.eaSupa ? (await window.eaSupa.getPublicados()).map(fromPublicado) : []; } catch(e){ return []; } }
+function fromPublicado(p){ return { sid:p.id, name:p.nombre, pais:'Argentina', provincia:p.provincia, ciudad:p.ciudad, edad:p.edad, age:p.edad, height:p.altura, busto:p.busto, cintura:p.cintura, cola:p.cola, nacionalidad:p.nacionalidad, cabello:p.cabello, tipo:p.tipo_cuerpo, price:(p.precio_cita||p.precio), precio_cita:(p.precio_cita||p.precio), plan:(p.plan||'estandar'), puntos:(p.puntos||0), numero:p.numero, foto:(Array.isArray(p.fotos)&&p.fotos[0])||null, fotos:p.fotos||[], videos:p.videos||[], audio:p.audio, telefono:p.telefono, bio:p.bio, idiomas:p.idiomas, estilo:p.estilo, genero:p.genero, created:p.created_at, langs:(p.idiomas?String(p.idiomas).split(',').map(x=>x.trim()).filter(Boolean):[]), style:(p.estilo?String(p.estilo).split(',').map(x=>x.trim()).filter(Boolean):[]) }; }
+let _realesCache=null; async function getReales(){ if(_realesCache) return _realesCache; try { _realesCache = window.eaSupa ? (await window.eaSupa.getPublicados()).map(fromPublicado) : []; } catch(e){ _realesCache=[]; } return _realesCache; }
 
 function setHeroStats(list){ const n=document.getElementById('statModelos'); if(n) n.textContent=list.length; const c=document.getElementById('statCiudades'); if(c){ const ciu=new Set(list.map(m=>m.provincia).filter(Boolean)); c.textContent=ciu.size||1; } }
+async function renderDestacados(){
+  const nEl=document.getElementById('nuevosGrid'), sEl=document.getElementById('subenGrid'); if(!nEl&&!sEl) return;
+  const reales=await getReales();
+  const sec=document.getElementById('destSection');
+  if(!reales.length){ if(sec) sec.style.display='none'; return; }
+  if(nEl){ const nuevos=reales.slice().sort((a,b)=>new Date(b.created||0)-new Date(a.created||0)).slice(0,4); nEl.innerHTML=nuevos.map(modelCard).join(''); }
+  if(sEl){ const suben=reales.slice().filter(m=>(m.puntos||0)>0).sort((a,b)=>(b.puntos||0)-(a.puntos||0)).slice(0,4); sEl.innerHTML=suben.map(modelCard).join(''); }
+}
 async function renderFeatured(){ const reales=await getReales(); const base=(reales.length?reales:MODELS).slice().sort((a,b)=>tierRank(a)-tierRank(b)||(b.puntos||0)-(a.puntos||0)); setHeroStats(base); const el=document.getElementById('featuredGrid'); if(!el) return; el.innerHTML=base.slice(0,8).map(modelCard).join(''); }
 
 let CATALOGO=[];
@@ -197,4 +205,4 @@ async function aplicarConfig(){
 function panelInit(){ const root=document.getElementById('panelRoot'); if(!root) return; if(window.eaSupa){ window.eaSupa.initPanel(); return; } root.innerHTML='<div class="panel-empty"><div class="pe-ic">📭</div><h3>Conectá el backend</h3></div>'; }
 function portalInit(){ const root=document.getElementById('portalRoot'); if(!root) return; if(window.eaSupa){ window.eaSupa.initPortal(); } }
 
-document.addEventListener('DOMContentLoaded',()=>{ ageGate(); headerScroll(); mobileMenu(); heroCarousel(); renderFeatured(); renderCatalog(); renderProfile(); reveals(); publishWizard(); panelInit(); portalInit(); aplicarConfig(); setTimeout(reveals,120); });
+document.addEventListener('DOMContentLoaded',()=>{ ageGate(); headerScroll(); mobileMenu(); heroCarousel(); renderFeatured(); renderDestacados(); renderCatalog(); renderProfile(); reveals(); publishWizard(); panelInit(); portalInit(); aplicarConfig(); setTimeout(reveals,120); });

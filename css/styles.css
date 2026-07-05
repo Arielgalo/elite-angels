@@ -844,3 +844,7 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.12;
 .pts-buy #ptsCalc { color:var(--gold); font-size:.9rem; min-width:70px; }
 .pts-buy .btn { padding:11px 22px; }
 .pts-msg { color:var(--gold); font-size:.85rem; text-align:center; margin-top:8px; }
+
+/* ===== Módulo Nuevos hoy / En ascenso ===== */
+.dest-title { font-family:var(--serif); font-size:1.5rem; color:var(--gold-bright); margin-bottom:20px; display:flex; align-items:center; gap:12px; }
+.dest-ic { color:var(--gold); font-size:1.1rem; }
