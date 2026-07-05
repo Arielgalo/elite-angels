@@ -848,3 +848,10 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.12;
 /* ===== Módulo Nuevos hoy / En ascenso ===== */
 .dest-title { font-family:var(--serif); font-size:1.5rem; color:var(--gold-bright); margin-bottom:20px; display:flex; align-items:center; gap:12px; }
 .dest-ic { color:var(--gold); font-size:1.1rem; }
+
+/* ===== Perfil privado (sin foto) ===== */
+.figure.priv{background:linear-gradient(135deg,#241233,#170b21)}
+.priv-lock{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:radial-gradient(ellipse at center,rgba(20,10,28,.35),rgba(20,10,28,.78));text-align:center;padding:14px}
+.priv-ic{font-size:1.7rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
+.priv-t{font-family:var(--serif);color:var(--gold-bright);font-size:1.02rem;letter-spacing:.03em}
+.priv-s{color:var(--text-soft);font-size:.7rem;text-transform:uppercase;letter-spacing:.14em}
