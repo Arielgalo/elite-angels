@@ -213,16 +213,16 @@
   async function adminBoard(root, email) {
     root.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
       <span style="color:var(--text-soft);font-size:.88rem">Admin: <strong style="color:var(--gold)">${esc(email)}</strong></span>
-      <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nueva modelo</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="eaBoard"></div>`;
+      <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nuevo perfil</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="eaBoard"></div>`;
     document.getElementById('aOut').addEventListener('click', async () => { await client.auth.signOut(); location.reload(); });
     document.getElementById('aNew').addEventListener('click', async () => {
       const nsid = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '');
       const nts = Date.now(); let nh = 0; const nstr = 'nueva|' + nts; for (let i = 0; i < nstr.length; i++) { nh = (nh * 31 + nstr.charCodeAt(i)) >>> 0; }
       const nnum = 'AE-' + nts.toString(36).slice(-4).toUpperCase() + '-' + nh.toString(36).slice(-4).toUpperCase();
-      const { error } = await client.from('solicitudes').insert({ id: nsid, numero: nnum, nombre: 'Nueva modelo', pais: 'Argentina', plan: 'estandar', puntos: 0, dias: 30, precio_cita: 30000, precio: 0, estado: 'publicado', pago: 'pagado' });
+      const { error } = await client.from('solicitudes').insert({ id: nsid, numero: nnum, nombre: 'Nuevo perfil', pais: 'Argentina', plan: 'estandar', puntos: 0, dias: 30, precio_cita: 30000, precio: 0, estado: 'publicado', pago: 'pagado' });
       if (error) { alert('Error al crear: ' + error.message); return; }
       filtro = 'publicado'; await render();
-      alert('Modelo creada gratis y publicada (N° ' + nnum + '). Tocá «Editar» en su tarjeta para cargar fotos, ubicación, tarifa de cita y datos.');
+      alert('Perfil creado gratis y publicado (N° ' + nnum + '). Tocá «Editar» en su tarjeta para cargar fotos, ubicación, tarifa de cita y datos.');
     });
     let filtro = 'pendiente';
     document.querySelectorAll('.panel-tab').forEach(t => t.addEventListener('click', () => { filtro = t.dataset.tab; render(); }));
