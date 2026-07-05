@@ -290,7 +290,7 @@
       const v = (k) => esc(cfg[k] || '');
       const car = Array.isArray(cfg.carrusel) ? cfg.carrusel : [];
       const defs = ['assets/hero/slide1.jpg','assets/hero/slide2.jpg','assets/hero/slide3.jpg','assets/hero/slide4.jpg'];
-      const TA = ['hero_lead','hero_eyebrow','feat_sub','serv_sub','serv1_text','serv2_text','serv3_text','why_text','cta_text'];
+      const TA = ['hero_lead','feat_sub','serv_sub','serv1_text','serv2_text','serv3_text','why_text','cta_text'];
       const tf = (key,label,ph) => TA.includes(key)
         ? `<div class="field"><label>${label}</label><textarea id="cfg_${key}" placeholder="${ph||''}">${v(key)}</textarea></div>`
         : `<div class="field"><label>${label}</label><input id="cfg_${key}" value="${v(key)}" placeholder="${ph||''}"></div>`;
@@ -304,7 +304,6 @@
         ${H('Portada (Hero)')}
         ${tf('hero_titulo','Título (podés resaltar con <span class="text-gold">palabra</span>)','Experiencias donde el aura se expande')}
         ${tf('hero_lead','Bajada','Acompañantes de alto nivel...')}
-        ${tf('hero_eyebrow','Texto chico sobre el título (arriba del título grande)','Plataforma inclusiva · modelos, coequipers...')}
         ${H('Fotos del carrusel (hasta 4)')}
         <div class="sp-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
           ${[0,1,2,3].map(i=>`<div class="field" style="margin:0"><div style="aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--line-soft);margin-bottom:6px;background:#1d0e28"><img id="cfg_carimg_${i}" src="${car[i]||defs[i]}" style="width:100%;height:100%;object-fit:cover"></div><input type="file" data-car="${i}" accept="image/*" style="font-size:.76rem;color:var(--text-soft)"></div>`).join('')}
@@ -337,7 +336,7 @@
       </div>`;
       board.querySelectorAll('input[data-img]').forEach(inp => inp.addEventListener('change', () => { const fl = inp.files[0]; if (fl) document.getElementById('prev_' + inp.dataset.img).src = URL.createObjectURL(fl); }));
       board.querySelectorAll('input[data-car]').forEach(inp => inp.addEventListener('change', () => { const fl = inp.files[0]; if (fl) document.getElementById('cfg_carimg_' + inp.dataset.car).src = URL.createObjectURL(fl); }));
-      const textKeys = ['hero_titulo','hero_lead','hero_eyebrow','feat_title','feat_sub','serv_title','serv_sub','serv1_title','serv1_text','serv2_title','serv2_text','serv3_title','serv3_text','why_title','why_text','cta_title','cta_text','whatsapp','telefono','instagram','telegram'];
+      const textKeys = ['hero_titulo','hero_lead','feat_title','feat_sub','serv_title','serv_sub','serv1_title','serv1_text','serv2_title','serv2_text','serv3_title','serv3_text','why_title','why_text','cta_title','cta_text','whatsapp','telefono','instagram','telegram'];
       document.getElementById('cfg_save').addEventListener('click', async () => {
         const btn = document.getElementById('cfg_save'), msg = document.getElementById('cfg_msg');
         btn.textContent = 'Guardando…'; btn.disabled = true; msg.textContent = '';
