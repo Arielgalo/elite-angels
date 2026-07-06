@@ -235,7 +235,7 @@
   async function adminBoard(root, email) {
     root.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
       <span style="color:var(--text-soft);font-size:.88rem">Admin: <strong style="color:var(--gold)">${esc(email)}</strong></span>
-      <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nuevo perfil</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="eaBoard"></div>`;
+      <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nuevo perfil</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="admDesbloq"></div><div id="eaBoard"></div>`;
     document.getElementById('aOut').addEventListener('click', async () => { await client.auth.signOut(); location.reload(); });
     document.getElementById('aNew').addEventListener('click', async () => {
       const nsid = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '');
@@ -246,6 +246,15 @@
       filtro = 'publicado'; await render();
       alert('Perfil creado gratis y publicado (N° ' + nnum + '). Tocá «Editar» en su tarjeta para cargar fotos, ubicación, tarifa de cita y datos.');
     });
+    async function renderAdmDesbloq() {
+      const el = document.getElementById('admDesbloq'); if (!el) return;
+      const { data } = await client.from('desbloqueos').select('*, solicitudes(nombre)').eq('estado','solicitado').order('created_at',{ascending:false});
+      const pend = data || [];
+      if (!pend.length) { el.innerHTML = ''; return; }
+      el.innerHTML = `<div class="form-card" style="margin-bottom:18px;border:1px solid var(--gold)"><h3 style="color:var(--gold);font-size:1.2rem;margin-bottom:12px">🔓 Desbloqueos pendientes (${pend.length})</h3>` + pend.map(d=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line-soft);flex-wrap:wrap"><span style="font-size:.92rem"><strong>${esc((d.solicitudes&&d.solicitudes.nombre)||d.numero_modelo||'Perfil')}</strong> — lo pidió <strong>${esc(d.cliente_nombre||'Cliente')}</strong> · ${esc(d.cliente_contacto||'')} <span style="color:var(--text-mute)">(el perfil gana $${(d.monto_perfil||5000).toLocaleString('es-AR')})</span></span><span style="display:flex;gap:6px"><button class="btn btn-gold dqa-ok" data-id="${d.id}" style="padding:7px 14px">Aprobar</button><button class="btn btn-ghost dqa-no" data-id="${d.id}" style="padding:7px 14px">Rechazar</button></span></div>`).join('') + `</div>`;
+      el.querySelectorAll('.dqa-ok,.dqa-no').forEach(b=>b.addEventListener('click', async ()=>{ b.disabled=true; b.textContent='…'; try{ await aprobarDesbloqueo(b.dataset.id, b.classList.contains('dqa-no')?'rechazar':'aprobar'); renderAdmDesbloq(); }catch(e){ alert('Error: '+(e.message||e)); b.disabled=false; b.textContent=b.classList.contains('dqa-no')?'Rechazar':'Aprobar'; } }));
+    }
+    renderAdmDesbloq();
     let filtro = 'pendiente';
     document.querySelectorAll('.panel-tab').forEach(t => t.addEventListener('click', () => { filtro = t.dataset.tab; render(); }));
     async function render() {
