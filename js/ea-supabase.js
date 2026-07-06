@@ -39,15 +39,6 @@
     return { fotos, videos, audio };
   }
 
-  async function upPrivate(file) {
-    const base = (file && file.name) || 'foto.jpg';
-    const ext = (base.split('.').pop() || 'jpg').toLowerCase();
-    const path = Date.now() + '_' + Math.random().toString(36).slice(2, 8) + '.' + ext;
-    const { error } = await client.storage.from('privadas').upload(path, file, { upsert: false, contentType: file.type || undefined });
-    if (error) { console.error('upPriv', error); return null; }
-    return path;
-  }
-
   /* ---------- Publicar ---------- */
   async function submitPublish(payload, photoFiles, videoFiles, audioBlob) {
     const m = await subirMedios(photoFiles, videoFiles, audioBlob);
@@ -172,11 +163,6 @@
       <div class="field"><label>Fotos actuales (arrastrá para ordenar · ✕ para borrar)</label>${fotoGrid(s.fotos)}<input type="file" data-ef="addFotos" accept="image/*" multiple style="margin-top:10px"></div>
       <div class="field"><label>Videos actuales</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
       <div class="field"><label>Mensaje de voz / Audio</label>${s.audio?`<div class="ed-chips"><span class="ed-chip">audio <button type="button" class="ed-rm" data-tipo="audio" data-url="${esc(s.audio)}">✕</button></span></div><audio controls src="${esc(s.audio)}" style="width:100%;margin-top:8px"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*,video/*"></div>
-      <div class="field" style="border-top:1px solid var(--line-soft);margin-top:8px;padding-top:16px">
-        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer"><input type="checkbox" data-ef="confidencial" ${s.confidencial?'checked':''} style="width:auto;margin-top:3px"> <span><strong>Perfil confidencial</strong> — mostrás solo 1 foto pública; las privadas se desbloquean con pago ($10.000: $5.000 para vos, $5.000 para Aura). Vos aprobás cada desbloqueo.</span></label>
-      </div>
-      <div class="field"><label>Foto pública moderada (la única visible sin desbloquear)</label>${s.foto_perfil?`<div class="ed-chips"><img src="${esc(s.foto_perfil)}" style="width:70px;height:90px;object-fit:cover;border-radius:8px"></div>`:''}<input type="file" data-ef="fotoPerfil" accept="image/*" style="margin-top:8px"></div>
-      <div class="field"><label>Fotos privadas (se desbloquean con pago) — ${Array.isArray(s.fotos_privadas)?s.fotos_privadas.length:0} cargada(s)</label><div class="ed-chips">${(Array.isArray(s.fotos_privadas)?s.fotos_privadas:[]).map((p,i)=>`<span class="ed-chip" data-path="${esc(p)}">🔒 privada ${i+1} <button type="button" onclick="this.closest('.ed-chip').remove()">✕</button></span>`).join('')||'<span style="color:var(--text-mute)">sin fotos privadas</span>'}</div><input type="file" data-ef="addPrivadas" accept="image/*" multiple style="margin-top:8px"></div>
       <div class="ed-actions"><button type="button" class="btn btn-ghost ed-cancel">Cancelar</button><button type="submit" class="btn btn-gold">Guardar cambios</button></div>
     </form>`;
   }
@@ -184,7 +170,7 @@
     const id = formEl.dataset.id;
     const get = (k) => { const el = formEl.querySelector(`[data-ef="${k}"]`); return el ? el.value.trim() : undefined; };
     // cargar fila actual para fusionar media
-    const { data: actual } = await client.from('solicitudes').select('fotos,videos,audio,foto_perfil,fotos_privadas').eq('id', id).single();
+    const { data: actual } = await client.from('solicitudes').select('fotos,videos,audio').eq('id', id).single();
     const _grid = formEl.querySelector('.ed-fotos'); let fotos = _grid ? [...formEl.querySelectorAll('.ed-fotos .ed-foto')].map(e => e.dataset.url) : (actual?.fotos || []).filter(u => !removidos.includes(u));
     let videos = (actual?.videos || []).filter(u => !removidos.includes(u));
     let audio = actual?.audio || null;
@@ -195,14 +181,6 @@
     const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), fotos, videos, audio };
     patch.precio_cita = +get('precio_cita')||30000;
     if (isAdmin) { patch.plan = get('plan'); patch.puntos = +get('puntos')||0; }
-    const _conf = formEl.querySelector('[data-ef="confidencial"]'); if (_conf) patch.confidencial = _conf.checked;
-    const _fp = formEl.querySelector('[data-ef="fotoPerfil"]'); if (_fp && _fp.files[0]) { const c = await comprimirFoto(_fp.files[0]); const u = await up('fotos', c); if (u) patch.foto_perfil = u; }
-    const _keep = [...formEl.querySelectorAll('.ed-chip[data-path]')].map(e => e.dataset.path);
-    let _priv = (actual && Array.isArray(actual.fotos_privadas) ? actual.fotos_privadas : []).filter(p => _keep.includes(p));
-    const _pp = formEl.querySelector('[data-ef="addPrivadas"]');
-    if (_pp) { for (const f of [..._pp.files].slice(0, 12)) { const c = await comprimirFoto(f); const path = await upPrivate(c); if (path) _priv.push(path); } }
-    patch.fotos_privadas = _priv;
-
     const { error } = await client.from('solicitudes').update(patch).eq('id', id);
     if (error) throw error;
     return true;
@@ -457,7 +435,7 @@
       <span style="color:var(--text-soft);font-size:.88rem">Conectada como <strong style="color:var(--gold)">${esc(email)}</strong></span>
       <button class="btn btn-ghost" id="mOut" style="padding:9px 18px">Cerrar sesión</button></div>`;
     if (!filas || !filas.length) { root.innerHTML = header + `<div class="panel-empty"><div class="pe-ic">🔍</div><h3>No encontramos perfiles con este email</h3><p>Asegurate de usar el mismo email con el que publicaste, o <a href="publicar.html" style="color:var(--gold)">publicá tu perfil</a>.</p></div>`; document.getElementById('mOut').addEventListener('click',async()=>{await client.auth.signOut();location.reload();}); return; }
-    root.innerHTML = header + filas.map(s=>`<div class="form-card" style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:1.3rem">${esc(s.nombre)}</h3><span class="status-badge ${s.estado==='publicado'?'ready':'incomplete'}">${esc(s.estado)}</span></div><div class="desbloq-slot" data-for="${s.id}"></div><div class="ed-slot" data-for="${s.id}"></div></div>`).join('');
+    root.innerHTML = header + filas.map(s=>`<div class="form-card" style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:1.3rem">${esc(s.nombre)}</h3><span class="status-badge ${s.estado==='publicado'?'ready':'incomplete'}">${esc(s.estado)}</span></div><div class="ed-slot" data-for="${s.id}"></div></div>`).join('');
     document.getElementById('mOut').addEventListener('click',async()=>{await client.auth.signOut();location.reload();});
     for (const s of filas) {
       const slot = root.querySelector(`.ed-slot[data-for="${s.id}"]`);
@@ -466,13 +444,6 @@
       wireEdit(slot, removidos);
       const cancel = slot.querySelector('.ed-cancel'); if(cancel) cancel.style.display='none';
       slot.querySelector('.ed-form').addEventListener('submit', async (e)=>{ e.preventDefault(); const btn=e.target.querySelector('button[type="submit"]'); btn.textContent='Guardando…'; btn.disabled=true; try{ await recolectarYGuardar(e.target, removidos, false); btn.textContent='✓ Guardado'; setTimeout(()=>{btn.textContent='Guardar cambios';btn.disabled=false;},1500); }catch(err){ alert('Error: '+err.message); btn.textContent='Guardar cambios'; btn.disabled=false; } });
-      const dslot = root.querySelector(`.desbloq-slot[data-for="${s.id}"]`);
-      if (dslot) { const pend = await getDesbloqueosPendientes(s.id);
-        if (pend.length) {
-          dslot.innerHTML = `<div class="form-card" style="margin-bottom:12px;border:1px solid var(--gold)"><h4 style="color:var(--gold);margin-bottom:10px">🔓 Solicitudes de desbloqueo (${pend.length})</h4>` + pend.map(d=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line-soft);flex-wrap:wrap"><span style="font-size:.9rem">${esc(d.cliente_nombre||'Cliente')} · ${esc(d.cliente_contacto||'')} <span style="color:var(--text-mute)">— ganás $${(d.monto_perfil||5000).toLocaleString('es-AR')}</span></span><span style="display:flex;gap:6px"><button class="btn btn-gold dq-ok" data-id="${d.id}" style="padding:7px 14px">Aprobar</button><button class="btn btn-ghost dq-no" data-id="${d.id}" style="padding:7px 14px">Rechazar</button></span></div>`).join('') + `</div>`;
-          dslot.querySelectorAll('.dq-ok,.dq-no').forEach(b=>b.addEventListener('click', async ()=>{ b.disabled=true; b.textContent='…'; try{ await aprobarDesbloqueo(b.dataset.id, b.classList.contains('dq-no')?'rechazar':'aprobar'); portalBoard(root, email); }catch(e){ alert('Error: '+(e.message||e)); b.disabled=false; } }));
-        }
-      }
     }
   }
   async function initPortal() {
@@ -489,27 +460,5 @@
     if (ip) { window.location.href = ip; return 'redirect'; }
     throw new Error((resp.data && resp.data.error) || 'No se pudo iniciar el pago de puntos.');
   }
-  async function crearSolicitudDesbloqueo(sid, nombre, contacto) {
-    const r = await client.functions.invoke('crear-solicitud-desbloqueo', { body: { sid, cliente_nombre: nombre, cliente_contacto: contacto } });
-    if (r.error) throw r.error; if (r.data && r.data.error) throw new Error(r.data.error); return r.data.token;
-  }
-  async function aprobarDesbloqueo(id, accion) {
-    const r = await client.functions.invoke('aprobar-desbloqueo', { body: { id, accion } });
-    if (r.error) throw r.error; if (r.data && r.data.error) throw new Error(r.data.error); return r.data;
-  }
-  async function crearPagoDesbloqueo(token) {
-    const r = await client.functions.invoke('crear-pago-desbloqueo', { body: { token } });
-    if (r.error) throw r.error; const ip = r.data && (r.data.init_point || r.data.sandbox_init_point);
-    if (ip) { window.location.href = ip; return 'redirect'; }
-    throw new Error((r.data && r.data.error) || 'No se pudo iniciar el pago.');
-  }
-  async function verDesbloqueo(token) {
-    const r = await client.functions.invoke('ver-desbloqueo', { body: { token } });
-    if (r.error) throw r.error; return r.data;
-  }
-  async function getDesbloqueosPendientes(solicitudId) {
-    const { data } = await client.from('desbloqueos').select('*').eq('solicitud_id', solicitudId).eq('estado', 'solicitado').order('created_at', { ascending: false });
-    return data || [];
-  }
-  window.eaSupa = { client, submitPublish, crearPagoPuntos, crearSolicitudDesbloqueo, aprobarDesbloqueo, crearPagoDesbloqueo, verDesbloqueo, getPublicados, getPerfil, getResenas, submitResena, initPanel, initPortal, ubic, fmt, getConfig, saveConfig };
+  window.eaSupa = { client, submitPublish, crearPagoPuntos, getPublicados, getPerfil, getResenas, submitResena, initPanel, initPortal, ubic, fmt, getConfig, saveConfig };
 })();
