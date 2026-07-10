@@ -22,6 +22,8 @@ function planBadge(m){ const p=m.plan||'estandar'; const cls=p==='premium'?'mode
 function planName(p){ return p==='premium'?'Premium VIP':(p==='top'?'Top':'Estándar'); }
 
 function cardMedia(m){ return m.foto ? `<div class="figure" style="position:absolute;inset:0"><img src="${m.foto}" alt="${m.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"></div>` : `<div class="figure" style="position:absolute;inset:0">${figureSVG(m.tone||'#d4af6e')}</div>`; }
+const ROLES_LBL={citas:'Citas & Compañía',amigos:'Amigos & Salidas',eventos:'Eventos, Roles & Presencia'};
+const ROLES_SHORT={citas:'Citas',amigos:'Amigos',eventos:'Eventos'};
 function modelCard(m){
   const href = m.sid ? `perfil.html?sid=${m.sid}` : `perfil.html?id=${m.id}`;
   const vid = (m.videos && m.videos.length) ? '<span class="card-flag">▶ Video</span>' : '';
@@ -33,10 +35,10 @@ function modelCard(m){
     <div class="model-info"><h3>${m.name}</h3>
       <div class="loc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${ubicTxt(m)}</div>
       <div class="attrs"><span>${m.age||m.edad||''} años</span>${m.genero?`<span>·</span><span>${m.genero}</span>`:''}<span>·</span><span style="color:var(--gold)">${planName(m.plan)}</span>${m.puntos?`<span>·</span><span style="color:var(--gold)">★ ${m.puntos}</span>`:''}</div>
-      <div class="model-cta"><span class="link">Ver perfil →</span></div>
+      ${(m.roles&&m.roles.length)?`<div class="role-tags">${m.roles.map(r=>`<span class="role-tag">${ROLES_SHORT[r]||r}</span>`).join('')}</div>`:''}<div class="model-cta"><span class="link">Ver perfil →</span></div>
     </div></a>`;
 }
-function fromPublicado(p){ return { sid:p.id, name:p.nombre, pais:'Argentina', provincia:p.provincia, ciudad:p.ciudad, edad:p.edad, age:p.edad, height:p.altura, busto:p.busto, cintura:p.cintura, cola:p.cola, nacionalidad:p.nacionalidad, cabello:p.cabello, tipo:p.tipo_cuerpo, price:(p.precio_cita||p.precio), precio_cita:(p.precio_cita||p.precio), plan:(p.plan||'estandar'), puntos:(p.puntos||0), numero:p.numero, foto:(Array.isArray(p.fotos)&&p.fotos[0])||null, fotos:p.fotos||[], videos:p.videos||[], audio:p.audio, telefono:p.telefono, bio:p.bio, idiomas:p.idiomas, estilo:p.estilo, genero:p.genero, created:p.created_at, langs:(p.idiomas?String(p.idiomas).split(',').map(x=>x.trim()).filter(Boolean):[]), style:(p.estilo?String(p.estilo).split(',').map(x=>x.trim()).filter(Boolean):[]) }; }
+function fromPublicado(p){ return { sid:p.id, name:p.nombre, pais:'Argentina', provincia:p.provincia, ciudad:p.ciudad, edad:p.edad, age:p.edad, height:p.altura, busto:p.busto, cintura:p.cintura, cola:p.cola, nacionalidad:p.nacionalidad, cabello:p.cabello, tipo:p.tipo_cuerpo, price:(p.precio_cita||p.precio), precio_cita:(p.precio_cita||p.precio), plan:(p.plan||'estandar'), puntos:(p.puntos||0), numero:p.numero, foto:(Array.isArray(p.fotos)&&p.fotos[0])||null, fotos:p.fotos||[], videos:p.videos||[], audio:p.audio, telefono:p.telefono, bio:p.bio, idiomas:p.idiomas, estilo:p.estilo, genero:p.genero, roles:(p.roles||[]), created:p.created_at, langs:(p.idiomas?String(p.idiomas).split(',').map(x=>x.trim()).filter(Boolean):[]), style:(p.estilo?String(p.estilo).split(',').map(x=>x.trim()).filter(Boolean):[]) }; }
 let _realesCache=null; async function getReales(){ if(_realesCache) return _realesCache; try { _realesCache = window.eaSupa ? (await window.eaSupa.getPublicados()).map(fromPublicado) : []; } catch(e){ _realesCache=[]; } return _realesCache; }
 
 function setHeroStats(list){ const n=document.getElementById('statModelos'); if(n) n.textContent=list.length; const c=document.getElementById('statCiudades'); if(c){ const ciu=new Set(list.map(m=>m.provincia).filter(Boolean)); c.textContent=ciu.size||1; } }
@@ -64,6 +66,7 @@ async function renderCatalog(){
   const presetProv=new URLSearchParams(location.search).get('prov'); if(presetProv&&qPr){ qPr.value=presetProv; qPr.dispatchEvent(new Event('change')); }
   const buscar=document.getElementById('qBuscar'), limpiar=document.getElementById('qLimpiar');
   if(buscar) buscar.addEventListener('click',aplicar);
+  const qrol=document.getElementById('qRol'); if(qrol) qrol.addEventListener('change',aplicar);
   if(limpiar) limpiar.addEventListener('click',()=>{ document.querySelectorAll('.search-panel input,.search-panel select').forEach(i=>i.value=''); aplicar(); });
   aplicar();
 }
@@ -73,7 +76,7 @@ function aplicar(){
   const texto=v('qText').toLowerCase(), fp=v('qPais'), fpr=v('qProv'), fc=v('qCiudad');
   const emin=+v('qEdadMin')||0, emax=+v('qEdadMax')||999, pmin=+v('qPrecioMin')||0, pmax=+v('qPrecioMax')||1e12;
   const halt=numCm(v('qAltura'))||0, fb=v('qBusto').toLowerCase(), fci=v('qCintura').toLowerCase(), fco=v('qCola').toLowerCase();
-  const fcab=v('qCabello'), ftipo=v('qTipo'), fgen=v('qGenero');
+  const fcab=v('qCabello'), ftipo=v('qTipo'), fgen=v('qGenero'), frol=v('qRol');
   const res=CATALOGO.filter(m=>{
     const edad=+(m.age||m.edad||0); const alt=numCm(m.height)||0;
     if(texto){ const blob=[m.name,m.ciudad,m.provincia,m.pais,m.nacionalidad,m.genero,m.bio].join(' ').toLowerCase(); if(!blob.includes(texto)) return false; }
@@ -87,6 +90,7 @@ function aplicar(){
     if(fco && !String(m.cola||'').toLowerCase().includes(fco)) return false;
     if(fcab && (m.cabello||'')!==fcab) return false;
     if(fgen && (m.genero||'')!==fgen) return false;
+    if(frol && !((m.roles||[]).includes(frol))) return false;
     if(ftipo && (m.tipo||'')!==ftipo) return false;
     return true;
   });
@@ -123,8 +127,9 @@ async function renderProfile(){
   if(m.genero) specs.push(['Género',m.genero]); if(m.cabello) specs.push(['Cabello',m.cabello]); if(m.tipo) specs.push(['Cuerpo',m.tipo]); if(m.nacionalidad) specs.push(['Nacionalidad',m.nacionalidad]);
   document.getElementById('specGrid').innerHTML=specs.map(s=>`<div class="spec"><div class="k">${s[0]}</div><div class="v">${s[1]}</div></div>`).join('');
   const _idi=(m.langs||[]).length?`<div class="chip-group"><span class="chip-label">Idiomas</span>${(m.langs).map(c=>`<span class="chip chip-lang">${c}</span>`).join('')}</div>`:'';
+  const _rol=(m.roles||[]).length?`<div class="chip-group"><span class="chip-label">Ofrece</span>${m.roles.map(r=>`<span class="chip chip-lang">${ROLES_LBL[r]||r}</span>`).join('')}</div>`:'';
   const _est=(m.style||[]).length?`<div class="chip-group"><span class="chip-label">Estilo</span>${(m.style).map(c=>`<span class="chip">${c}</span>`).join('')}</div>`:'';
-  document.getElementById('pChips').innerHTML=(_idi+_est)||'<span style="color:var(--text-mute)">Sin especificar todavía</span>';
+  document.getElementById('pChips').innerHTML=(_rol+_idi+_est)||'<span style="color:var(--text-mute)">Sin especificar todavía</span>';
   const rateBox=document.getElementById('rateBox'); if(rateBox){ const pn=planName(m.plan);
     rateBox.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:1.3rem">Cita</h3><span class="tier-pill tier-${m.plan||'estandar'}">${pn}</span></div>
       <div class="rate-row"><span class="dur">Encuentro 30 min · desde</span><span class="pr">${fmtP(m.price)}</span></div>
@@ -182,7 +187,7 @@ function publishWizard(){
   const aInput=document.getElementById('audioInput'),aPrev=document.getElementById('audioPreview'); if(aInput){ aInput.addEventListener('change',()=>{ if(aPrev) aPrev.textContent=aInput.files[0]?'Audio listo ✓':''; }); }
   const usingMP=!!window.eaSupa;
   if(usingMP){ const cc=document.querySelector('.credit-card'); if(cc)cc.style.display='none'; const pt=document.querySelector('.pay-type'); if(pt)pt.style.display='none'; ['cardNumber','cardName','cardExp','cardCvc'].forEach(id=>{ const el=document.getElementById(id); const f=el&&el.closest('.field'); if(f)f.style.display='none'; }); const sr=document.querySelector('.secure-row'); if(sr) sr.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Tarjeta de d\u00e9bito o cr\u00e9dito \u00b7 no necesit\u00e1s cuenta de Mercado Pago'; const pb=document.getElementById('payBtn'); if(pb) pb.innerHTML='Comprar mi espacio · <span id="payBtnAmount"></span> con Mercado Pago'; }
-  form.addEventListener('submit',(e)=>{ e.preventDefault(); if(!usingMP){ alert('Conectá el backend.'); return; } const g=(id)=>{ const el=document.getElementById(id); return el?el.value.trim():''; }; const sP=document.getElementById('selPais'),sPr=document.getElementById('selProvincia'),sC=document.getElementById('selCiudad'); const btn=document.getElementById('payBtn'); btn.textContent='Procesando…'; btn.disabled=true; const planSel=((form.querySelector('input[name="plan"]:checked')||{}).value)||'dias'; const puntos=Math.max(0,+((document.getElementById('puntosInput')||{}).value||0)); const diasExtra=Math.max(0,+((document.getElementById('diasExtra')||{}).value||0)); const dias= planSel==='premium'?30:(3+diasExtra); const tier= planSel==='premium'?'premium':(puntos>=10?'top':'estandar'); const precioCita=+((document.getElementById('citaInput')||{}).value||15000); const payload={ nombre:form.nombre.value.trim(), edad:+form.edad.value||null, pais:'Argentina', provincia:sPr?sPr.value:'', ciudad:sC?sC.value:'', altura:form.altura.value.trim(), busto:g('busto'), cintura:g('cintura'), cola:g('cola'), nacionalidad:g('nacionalidad'), cabello:g('cabello'), tipo_cuerpo:g('tipo_cuerpo'), telefono:form.telefono.value.trim(), email:form.email.value.trim(), bio:form.bio.value.trim(), genero:(form.genero?form.genero.value:''), precio:amount, precio_cita:precioCita, plan:tier, dias:dias, puntos:puntos }; const fail=(msg)=>{ btn.textContent='Reintentar'; btn.disabled=false; alert(msg); }; window.eaSupa.submitPublish(payload, photoFiles, videoFiles, aInput&&aInput.files[0]?aInput.files[0]:null).then(r=>{ if(r!=='redirect'){ document.getElementById('payArea').style.display='none'; document.getElementById('payDone').classList.add('show'); } }).catch(err=>{ console.error(err); fail('No se pudo iniciar el pago. Probá de nuevo.'); }); });
+  form.addEventListener('submit',(e)=>{ e.preventDefault(); if(!usingMP){ alert('Conectá el backend.'); return; } const g=(id)=>{ const el=document.getElementById(id); return el?el.value.trim():''; }; const sP=document.getElementById('selPais'),sPr=document.getElementById('selProvincia'),sC=document.getElementById('selCiudad'); const btn=document.getElementById('payBtn'); btn.textContent='Procesando…'; btn.disabled=true; const planSel=((form.querySelector('input[name="plan"]:checked')||{}).value)||'dias'; const puntos=Math.max(0,+((document.getElementById('puntosInput')||{}).value||0)); const diasExtra=Math.max(0,+((document.getElementById('diasExtra')||{}).value||0)); const dias= planSel==='premium'?30:(3+diasExtra); const tier= planSel==='premium'?'premium':(puntos>=10?'top':'estandar'); const precioCita=+((document.getElementById('citaInput')||{}).value||15000); const payload={ nombre:form.nombre.value.trim(), edad:+form.edad.value||null, pais:'Argentina', provincia:sPr?sPr.value:'', ciudad:sC?sC.value:'', altura:form.altura.value.trim(), busto:g('busto'), cintura:g('cintura'), cola:g('cola'), nacionalidad:g('nacionalidad'), cabello:g('cabello'), tipo_cuerpo:g('tipo_cuerpo'), telefono:form.telefono.value.trim(), email:form.email.value.trim(), bio:form.bio.value.trim(), genero:(form.genero?form.genero.value:''), roles:[...form.querySelectorAll('input[name="rol"]:checked')].map(x=>x.value), precio:amount, precio_cita:precioCita, plan:tier, dias:dias, puntos:puntos }; const fail=(msg)=>{ btn.textContent='Reintentar'; btn.disabled=false; alert(msg); }; window.eaSupa.submitPublish(payload, photoFiles, videoFiles, aInput&&aInput.files[0]?aInput.files[0]:null).then(r=>{ if(r!=='redirect'){ document.getElementById('payArea').style.display='none'; document.getElementById('payDone').classList.add('show'); } }).catch(err=>{ console.error(err); fail('No se pudo iniciar el pago. Probá de nuevo.'); }); });
 }
 
 

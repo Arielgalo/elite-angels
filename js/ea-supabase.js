@@ -53,7 +53,7 @@
       vence: new Date(ts + dias * 86400000).toISOString(),
       nombre: payload.nombre, edad: payload.edad, pais: payload.pais, provincia: payload.provincia,
       ciudad: payload.ciudad, altura: payload.altura, telefono: payload.telefono, email: payload.email,
-      bio: payload.bio, genero: payload.genero, precio: payload.precio, fotos: m.fotos, videos: m.videos, audio: m.audio, busto: payload.busto, cintura: payload.cintura, cola: payload.cola, nacionalidad: payload.nacionalidad, cabello: payload.cabello, tipo_cuerpo: payload.tipo_cuerpo,
+      bio: payload.bio, genero: payload.genero, roles: payload.roles || [], precio: payload.precio, fotos: m.fotos, videos: m.videos, audio: m.audio, busto: payload.busto, cintura: payload.cintura, cola: payload.cola, nacionalidad: payload.nacionalidad, cabello: payload.cabello, tipo_cuerpo: payload.tipo_cuerpo,
       pago: 'pendiente', estado: 'pendiente'
     };
     const { error } = await client.from('solicitudes').insert(row);
@@ -135,6 +135,7 @@
       </div>
       <div class="field-row">
         <div class="field"><label>Género</label><select data-ef="genero"><option value="">Sin especificar</option><option value="Mujer"${s.genero==='Mujer'?' selected':''}>Mujer</option><option value="Varón"${s.genero==='Varón'?' selected':''}>Varón</option><option value="No binarie"${s.genero==='No binarie'?' selected':''}>No binarie</option><option value="Trans femenina"${s.genero==='Trans femenina'?' selected':''}>Trans femenina</option><option value="Trans masculino"${s.genero==='Trans masculino'?' selected':''}>Trans masculino</option><option value="Crossdresser"${s.genero==='Crossdresser'?' selected':''}>Crossdresser</option><option value="Otro / prefiero no decir"${s.genero==='Otro / prefiero no decir'?' selected':''}>Otro / prefiero no decir</option></select></div>
+        <div class="field"><label>Roles que ofrece (más roles = más búsquedas)</label><div class="roles-pick">${['citas','amigos','eventos'].map(r=>`<label class="role-chk"><input type="checkbox" data-rol="${r}" ${(Array.isArray(s.roles)&&s.roles.includes(r))?'checked':''}> <span>${({citas:'Citas & Compañía',amigos:'Amigos & Salidas',eventos:'Eventos, Roles & Presencia'})[r]}</span></label>`).join('')}</div></div>
         <div class="field"></div>
       </div>
       ${selUbic(s)}
@@ -180,6 +181,7 @@
     fotos = fotos.concat(nuevos.fotos); videos = videos.concat(nuevos.videos); if (nuevos.audio) audio = nuevos.audio;
     const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), fotos, videos, audio };
     patch.precio_cita = +get('precio_cita')||15000;
+    patch.roles = [...formEl.querySelectorAll('input[data-rol]:checked')].map(e => e.dataset.rol);
     if (isAdmin) { patch.plan = get('plan'); patch.puntos = +get('puntos')||0; }
     const { error } = await client.from('solicitudes').update(patch).eq('id', id);
     if (error) throw error;

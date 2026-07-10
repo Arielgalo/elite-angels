@@ -859,3 +859,12 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.12;
   .age-box .actions { flex-direction: column; align-items: stretch; }
   .age-box .actions .btn, .age-box .actions .age-deny { width: 100%; justify-content: center; text-align: center; }
 }
+
+/* ===== Roles (Fase 2) ===== */
+.role-tags { display:flex; flex-wrap:wrap; gap:5px; margin:8px 0 2px; }
+.role-tag { font-size:.64rem; text-transform:uppercase; letter-spacing:.08em; color:var(--gold-bright); border:1px solid var(--line); background:rgba(212,175,110,.08); padding:2px 8px; border-radius:999px; }
+.roles-pick { display:flex; flex-wrap:wrap; gap:10px; margin-top:6px; }
+.role-chk { display:flex; align-items:center; gap:8px; cursor:pointer; border:1px solid var(--line-soft); border-radius:10px; padding:10px 14px; font-size:.9rem; color:var(--text-soft); transition:border-color .2s, background .2s; }
+.role-chk:hover { border-color:var(--gold); background:rgba(212,175,110,.05); }
+.role-chk input { width:auto; accent-color:var(--gold); }
+.role-hint { color:var(--text-mute); font-size:.8rem; margin-top:8px; }
