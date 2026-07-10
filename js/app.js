@@ -35,10 +35,10 @@ function modelCard(m){
     <div class="model-info"><h3>${m.name}</h3>
       <div class="loc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${ubicTxt(m)}</div>
       <div class="attrs"><span>${m.age||m.edad||''} años</span>${m.genero?`<span>·</span><span>${m.genero}</span>`:''}<span>·</span><span style="color:var(--gold)">${planName(m.plan)}</span>${m.puntos?`<span>·</span><span style="color:var(--gold)">★ ${m.puntos}</span>`:''}</div>
-      ${(m.roles&&m.roles.length)?`<div class="role-tags">${m.roles.map(r=>`<span class="role-tag">${ROLES_SHORT[r]||r}</span>`).join('')}</div>`:''}<div class="model-cta"><span class="link">Ver perfil →</span></div>
+      ${(m.roles&&m.roles.length)?`<div class="role-tags">${m.roles.map(r=>`<span class="role-tag">${ROLES_SHORT[r]||r}</span>`).join('')}</div>`:''}${m.verificado?`<div class="verif-badge">✓ Verificado</div>`:``}<div class="model-cta"><span class="link">Ver perfil →</span></div>
     </div></a>`;
 }
-function fromPublicado(p){ return { sid:p.id, name:p.nombre, pais:'Argentina', provincia:p.provincia, ciudad:p.ciudad, edad:p.edad, age:p.edad, height:p.altura, busto:p.busto, cintura:p.cintura, cola:p.cola, nacionalidad:p.nacionalidad, cabello:p.cabello, tipo:p.tipo_cuerpo, price:(p.precio_cita||p.precio), precio_cita:(p.precio_cita||p.precio), plan:(p.plan||'estandar'), puntos:(p.puntos||0), numero:p.numero, foto:(Array.isArray(p.fotos)&&p.fotos[0])||null, fotos:p.fotos||[], videos:p.videos||[], audio:p.audio, telefono:p.telefono, bio:p.bio, idiomas:p.idiomas, estilo:p.estilo, genero:p.genero, roles:(p.roles||[]), created:p.created_at, langs:(p.idiomas?String(p.idiomas).split(',').map(x=>x.trim()).filter(Boolean):[]), style:(p.estilo?String(p.estilo).split(',').map(x=>x.trim()).filter(Boolean):[]) }; }
+function fromPublicado(p){ return { sid:p.id, name:p.nombre, pais:'Argentina', provincia:p.provincia, ciudad:p.ciudad, edad:p.edad, age:p.edad, height:p.altura, busto:p.busto, cintura:p.cintura, cola:p.cola, nacionalidad:p.nacionalidad, cabello:p.cabello, tipo:p.tipo_cuerpo, price:(p.precio_cita||p.precio), precio_cita:(p.precio_cita||p.precio), plan:(p.plan||'estandar'), puntos:(p.puntos||0), numero:p.numero, foto:(Array.isArray(p.fotos)&&p.fotos[0])||null, fotos:p.fotos||[], videos:p.videos||[], audio:p.audio, telefono:p.telefono, bio:p.bio, idiomas:p.idiomas, estilo:p.estilo, genero:p.genero, roles:(p.roles||[]), verificado:p.verificado, created:p.created_at, langs:(p.idiomas?String(p.idiomas).split(',').map(x=>x.trim()).filter(Boolean):[]), style:(p.estilo?String(p.estilo).split(',').map(x=>x.trim()).filter(Boolean):[]) }; }
 let _realesCache=null; async function getReales(){ if(_realesCache) return _realesCache; try { _realesCache = window.eaSupa ? (await window.eaSupa.getPublicados()).map(fromPublicado) : []; } catch(e){ _realesCache=[]; } return _realesCache; }
 
 function setHeroStats(list){ const n=document.getElementById('statModelos'); if(n) n.textContent=list.length; const c=document.getElementById('statCiudades'); if(c){ const ciu=new Set(list.map(m=>m.provincia).filter(Boolean)); c.textContent=ciu.size||1; } }
@@ -67,6 +67,7 @@ async function renderCatalog(){
   const buscar=document.getElementById('qBuscar'), limpiar=document.getElementById('qLimpiar');
   if(buscar) buscar.addEventListener('click',aplicar);
   const qrol=document.getElementById('qRol'); if(qrol) qrol.addEventListener('change',aplicar);
+  const qver=document.getElementById('qVerif'); if(qver) qver.addEventListener('change',aplicar);
   if(limpiar) limpiar.addEventListener('click',()=>{ document.querySelectorAll('.search-panel input,.search-panel select').forEach(i=>i.value=''); aplicar(); });
   aplicar();
 }
@@ -91,6 +92,7 @@ function aplicar(){
     if(fcab && (m.cabello||'')!==fcab) return false;
     if(fgen && (m.genero||'')!==fgen) return false;
     if(frol && !((m.roles||[]).includes(frol))) return false;
+    const qv=document.getElementById('qVerif'); if(qv&&qv.checked && !m.verificado) return false;
     if(ftipo && (m.tipo||'')!==ftipo) return false;
     return true;
   });
@@ -108,7 +110,7 @@ async function renderProfile(){
   if(!m){ const id=params.get('id')||'valentina'; m=MODELS.find(x=>x.id===id)||MODELS[0]; }
   document.title=`${m.name} · Aura Experience`;
   document.getElementById('crumbName').textContent=m.name;
-  document.getElementById('pName').textContent=m.name;
+  document.getElementById('pName').textContent=m.name; if(m.verificado){ const _pn=document.getElementById('pName'); if(_pn && !_pn.parentElement.querySelector('.verif-badge')) _pn.insertAdjacentHTML('afterend','<span class="verif-badge" style="margin-top:6px">✓ Perfil verificado</span>'); }
   document.getElementById('pLoc').textContent=ubicTxt(m);
   document.getElementById('pBio').textContent=m.bio||'';
   const fotos=(m.fotos&&m.fotos.length)?m.fotos:null;

@@ -126,6 +126,19 @@
     slot.querySelectorAll('.ed-rm').forEach(x => x.addEventListener('click', () => { removidos.push(x.dataset.url); x.closest('.ed-chip').remove(); }));
     slot.querySelectorAll('.ed-rm-foto').forEach(x => x.addEventListener('click', () => { x.closest('.ed-foto').remove(); }));
     enableFotoSort(slot.querySelector('.ed-fotos'));
+    const vbtn = slot.querySelector('[data-verif-send]');
+    if (vbtn) vbtn.addEventListener('click', async () => {
+      const id = vbtn.dataset.verifSend; const msg = slot.querySelector('.verif-msg');
+      const files = {}; slot.querySelectorAll('[data-verif]').forEach(i => { if (i.files[0]) files[i.dataset.verif] = i.files[0]; });
+      if (!files.dni_frente || !files.dni_dorso || !files.selfie) { msg.textContent = 'Subí las 3 imágenes: DNI frente, dorso y selfie con el DNI.'; return; }
+      vbtn.disabled = true; vbtn.textContent = 'Subiendo…';
+      try {
+        const docs = {};
+        for (const k of ['dni_frente','dni_dorso','selfie']) { const c = await comprimirFoto(files[k]); const p = await upPriv('verificaciones', c); if (!p) throw new Error('No se pudo subir ' + k); docs[k] = p; }
+        await solicitarVerificacion(id, docs);
+        msg.textContent = '✓ Enviado. Tu perfil quedó En revisión. Te avisamos cuando esté verificado.'; vbtn.textContent = 'Enviado ✓';
+      } catch (e) { msg.textContent = 'Error: ' + (e.message || e); vbtn.disabled = false; vbtn.textContent = 'Enviar a verificación'; }
+    });
   }
   function editForm(s, isAdmin) {
     return `<form class="ed-form" data-id="${s.id}">
@@ -164,6 +177,14 @@
       <div class="field"><label>Fotos actuales (arrastrá para ordenar · ✕ para borrar)</label>${fotoGrid(s.fotos)}<input type="file" data-ef="addFotos" accept="image/*" multiple style="margin-top:10px"></div>
       <div class="field"><label>Videos actuales</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
       <div class="field"><label>Mensaje de voz / Audio</label>${s.audio?`<div class="ed-chips"><span class="ed-chip">audio <button type="button" class="ed-rm" data-tipo="audio" data-url="${esc(s.audio)}">✕</button></span></div><audio controls src="${esc(s.audio)}" style="width:100%;margin-top:8px"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*,video/*"></div>
+      <div class="field" style="border-top:1px solid var(--line-soft);margin-top:8px;padding-top:16px">
+        <label>Verificación de identidad — <span class="verif-state verif-${s.verif_estado||'sin_verificar'}">${estadoVerifLbl(s.verif_estado)}</span></label>
+        <p style="color:var(--text-soft);font-size:.85rem;margin:6px 0 12px">Subí tu <strong>DNI (frente y dorso)</strong> y una <strong>selfie sosteniendo el DNI</strong> junto a tu cara. Cuando el equipo confirme que coincidís con tus fotos, tu perfil queda <strong>Verificado ✓</strong>. Tus documentos son privados: solo los ve el equipo de Aura.</p>
+        <div class="field-row"><div class="field"><label>DNI · frente</label><input type="file" data-verif="dni_frente" accept="image/*"></div><div class="field"><label>DNI · dorso</label><input type="file" data-verif="dni_dorso" accept="image/*"></div></div>
+        <div class="field"><label>Selfie sosteniendo el DNI</label><input type="file" data-verif="selfie" accept="image/*"></div>
+        <button type="button" class="btn btn-gold" data-verif-send="${s.id}" style="margin-top:4px">Enviar a verificación</button>
+        <div class="verif-msg" style="color:var(--gold);font-size:.86rem;margin-top:8px"></div>
+      </div>
       <div class="ed-actions"><button type="button" class="btn btn-ghost ed-cancel">Cancelar</button><button type="submit" class="btn btn-gold">Guardar cambios</button></div>
     </form>`;
   }
@@ -215,7 +236,7 @@
   async function adminBoard(root, email) {
     root.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
       <span style="color:var(--text-soft);font-size:.88rem">Admin: <strong style="color:var(--gold)">${esc(email)}</strong></span>
-      <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nuevo perfil</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="eaBoard"></div>`;
+      <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nuevo perfil</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="admVerif"></div><div id="eaBoard"></div>`;
     document.getElementById('aOut').addEventListener('click', async () => { await client.auth.signOut(); location.reload(); });
     document.getElementById('aNew').addEventListener('click', async () => {
       const nsid = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '');
@@ -226,6 +247,22 @@
       filtro = 'publicado'; await render();
       alert('Perfil creado gratis y publicado (N° ' + nnum + '). Tocá «Editar» en su tarjeta para cargar fotos, ubicación, tarifa de cita y datos.');
     });
+    async function renderAdmVerif() {
+      const el = document.getElementById('admVerif'); if (!el) return;
+      const { data } = await client.from('solicitudes').select('id,nombre,numero,verif_docs').eq('verif_estado','en_revision').order('created_at',{ascending:false});
+      const pend = data || []; if (!pend.length) { el.innerHTML=''; return; }
+      const cards = [];
+      for (const s of pend) {
+        const d = s.verif_docs || {}; const imgs = [];
+        for (const k of ['dni_frente','dni_dorso','selfie']) {
+          if (d[k]) { const { data:su } = await client.storage.from('verificaciones').createSignedUrl(d[k], 3600); if (su&&su.signedUrl) imgs.push(`<a href="${su.signedUrl}" target="_blank" title="${k}"><img src="${su.signedUrl}" style="width:96px;height:74px;object-fit:cover;border-radius:8px;border:1px solid var(--line)"></a>`); }
+        }
+        cards.push(`<div style="padding:12px 0;border-bottom:1px solid var(--line-soft)"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><strong>${esc(s.nombre)||'Perfil'} <span style="color:var(--text-mute)">${esc(s.numero||'')}</span></strong><span style="display:flex;gap:6px"><button class="btn btn-gold vf-ok" data-id="${s.id}" style="padding:7px 14px">✓ Verificar</button><button class="btn btn-ghost vf-no" data-id="${s.id}" style="padding:7px 14px">Rechazar</button></span></div><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">${imgs.join('')||'<span style=\'color:var(--text-mute)\'>Sin documentos legibles</span>'}</div></div>`);
+      }
+      el.innerHTML = `<div class="form-card" style="margin-bottom:18px;border:1px solid var(--gold)"><h3 style="color:var(--gold);font-size:1.2rem;margin-bottom:6px">🪪 Verificaciones pendientes (${pend.length})</h3><p style="color:var(--text-soft);font-size:.84rem;margin-bottom:8px">Compará la selfie con la foto del DNI y con las fotos del perfil. Si coinciden, verificá.</p>${cards.join('')}</div>`;
+      el.querySelectorAll('.vf-ok,.vf-no').forEach(b=>b.addEventListener('click', async ()=>{ b.disabled=true; b.textContent='…'; const nuevo=b.classList.contains('vf-no')?'rechazado':'verificado'; try{ await client.from('solicitudes').update({ verif_estado:nuevo }).eq('id', b.dataset.id); renderAdmVerif(); }catch(e){ alert('Error: '+(e.message||e)); b.disabled=false; } }));
+    }
+    renderAdmVerif();
     let filtro = 'pendiente';
     document.querySelectorAll('.panel-tab').forEach(t => t.addEventListener('click', () => { filtro = t.dataset.tab; render(); }));
     async function render() {
@@ -462,5 +499,16 @@
     if (ip) { window.location.href = ip; return 'redirect'; }
     throw new Error((resp.data && resp.data.error) || 'No se pudo iniciar el pago de puntos.');
   }
+  async function upPriv(bucket, file) {
+    const base=(file&&file.name)||'doc.jpg'; const ext=(base.split('.').pop()||'jpg').toLowerCase();
+    const path=Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;
+    const { error }=await client.storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type||undefined});
+    if(error){console.error('upPriv',error);return null;} return path;
+  }
+  async function solicitarVerificacion(id, docs) {
+    const r=await client.functions.invoke('solicitar-verificacion',{ body:{ id, docs } });
+    if(r.error) throw r.error; if(r.data&&r.data.error) throw new Error(r.data.error); return r.data;
+  }
+  function estadoVerifLbl(e){ return ({sin_verificar:'Sin verificar', en_revision:'En revisión ⏳', verificado:'Verificado ✓', rechazado:'Rechazado — volvé a subir'})[e||'sin_verificar']||'Sin verificar'; }
   window.eaSupa = { client, submitPublish, crearPagoPuntos, getPublicados, getPerfil, getResenas, submitResena, initPanel, initPortal, ubic, fmt, getConfig, saveConfig };
 })();

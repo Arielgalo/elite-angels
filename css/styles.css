@@ -868,3 +868,10 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.12;
 .role-chk:hover { border-color:var(--gold); background:rgba(212,175,110,.05); }
 .role-chk input { width:auto; accent-color:var(--gold); }
 .role-hint { color:var(--text-mute); font-size:.8rem; margin-top:8px; }
+
+/* ===== Verificación (Fase 3) ===== */
+.verif-badge { display:inline-flex; align-items:center; gap:4px; font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; color:#7be3a0; border:1px solid rgba(123,227,160,.4); background:rgba(123,227,160,.1); padding:2px 8px; border-radius:999px; margin-top:6px; width:fit-content; }
+.verif-state.verif-verificado{ color:#7be3a0; }
+.verif-state.verif-en_revision{ color:var(--gold); }
+.verif-state.verif-rechazado{ color:#e08aa0; }
+.verif-state.verif-sin_verificar{ color:var(--text-mute); }
