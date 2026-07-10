@@ -49,7 +49,7 @@
     const dias = payload.dias || 3;
     const row = {
       id: sid, numero,
-      plan: payload.plan || 'estandar', dias, puntos: payload.puntos || 0, precio_cita: payload.precio_cita || 30000,
+      plan: payload.plan || 'estandar', dias, puntos: payload.puntos || 0, precio_cita: payload.precio_cita || 15000,
       vence: new Date(ts + dias * 86400000).toISOString(),
       nombre: payload.nombre, edad: payload.edad, pais: payload.pais, provincia: payload.provincia,
       ciudad: payload.ciudad, altura: payload.altura, telefono: payload.telefono, email: payload.email,
@@ -140,7 +140,7 @@
       ${selUbic(s)}
       <div class="field-row">
         <div class="field"><label>Teléfono / WhatsApp</label><input data-ef="telefono" value="${esc(s.telefono)}"></div>
-        <div class="field"><label>Tu precio de cita (ARS) · encuentro 30 min (lo cobrás vos, directo)</label><input data-ef="precio_cita" type="number" min="30000" value="${esc(s.precio_cita)}" placeholder="30000"></div>
+        <div class="field"><label>Tu precio de cita (ARS) · encuentro 30 min (lo cobrás vos, directo)</label><input data-ef="precio_cita" type="number" min="15000" value="${esc(s.precio_cita)}" placeholder="15000"></div>
       </div>
       ${isAdmin?`<div class="field-row"><div class="field"><label>Nivel</label><select data-ef="plan"><option value="estandar"${s.plan==='estandar'?' selected':''}>Estándar</option><option value="top"${s.plan==='top'?' selected':''}>Top</option><option value="premium"${s.plan==='premium'?' selected':''}>Premium VIP</option></select></div><div class="field"><label>Puntos (ranking)</label><input data-ef="puntos" type="number" value="${esc(s.puntos)}"></div></div>`:''}
       <div class="field-row">
@@ -179,7 +179,7 @@
     const nuevos = await subirMedios(fIn?[...fIn.files]:[], vIn?[...vIn.files]:[], aIn&&aIn.files[0]?aIn.files[0]:null);
     fotos = fotos.concat(nuevos.fotos); videos = videos.concat(nuevos.videos); if (nuevos.audio) audio = nuevos.audio;
     const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), fotos, videos, audio };
-    patch.precio_cita = +get('precio_cita')||30000;
+    patch.precio_cita = +get('precio_cita')||15000;
     if (isAdmin) { patch.plan = get('plan'); patch.puntos = +get('puntos')||0; }
     const { error } = await client.from('solicitudes').update(patch).eq('id', id);
     if (error) throw error;
