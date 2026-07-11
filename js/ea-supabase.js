@@ -468,13 +468,21 @@
     document.getElementById('mSignup').addEventListener('click', async()=>{ const email=document.getElementById('mEmail').value.trim(), p=document.getElementById('mPass').value; if(p.length<6){M('La contraseña debe tener al menos 6 caracteres.');return;} const {error}=await client.auth.signUp({email,password:p,options:{emailRedirectTo:location.href}}); M(error?('Error: '+error.message):'¡Listo! Revisá tu email para confirmar la cuenta y luego ingresá.'); });
     document.getElementById('mReset').addEventListener('click', async(e)=>{ e.preventDefault(); const email=document.getElementById('mEmail').value.trim(); if(!email){M('Escribí tu email primero.');return;} await client.auth.resetPasswordForEmail(email,{redirectTo:location.href}); M('Te enviamos un email para restablecer tu contraseña.'); });
   }
+  async function renderComentariosMod(el, sid){
+    let list=[];
+    try{ const { data } = await client.from('comentarios').select('*').eq('solicitud_id', sid).order('created_at',{ascending:false}).limit(200); list=data||[]; }catch(e){ el.innerHTML=''; return; }
+    if(!list.length){ el.innerHTML=''; return; }
+    el.innerHTML = `<div class="form-card" style="margin-top:12px;border:1px solid var(--line-soft)"><h4 style="color:var(--gold);font-size:1.05rem;margin-bottom:4px">💬 Comentarios en tus publicaciones (${list.length})</h4><p style="color:var(--text-soft);font-size:.82rem;margin-bottom:10px">Ocultá o borrá lo que no quieras que se vea. Vos moderás tu espacio.</p>`+list.map(c=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--line-soft)"><div style="min-width:0"><strong style="color:var(--gold);font-size:.85rem">${esc(c.autor||'Anónimo')}</strong>${c.estado==='oculto'?' <span style=\'color:var(--text-mute);font-size:.74rem\'>(oculto)</span>':''}<div style="font-size:.9rem;color:var(--text-soft);word-break:break-word">${esc(c.texto)}</div></div><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn btn-ghost cm-tog" data-id="${c.id}" data-estado="${esc(c.estado)}" style="padding:5px 12px;font-size:.78rem">${c.estado==='oculto'?'Mostrar':'Ocultar'}</button><button class="btn btn-ghost cm-del" data-id="${c.id}" style="padding:5px 10px;font-size:.78rem">✕</button></div></div>`).join('')+`</div>`;
+    el.querySelectorAll('.cm-tog').forEach(b=>b.addEventListener('click', async ()=>{ const nuevo=b.dataset.estado==='oculto'?'visible':'oculto'; b.disabled=true; try{ await client.from('comentarios').update({estado:nuevo}).eq('id',b.dataset.id); }catch(e){ alert('Error: '+(e.message||e)); } renderComentariosMod(el, sid); }));
+    el.querySelectorAll('.cm-del').forEach(b=>b.addEventListener('click', async ()=>{ if(!confirm('¿Borrar este comentario?')) return; try{ await client.from('comentarios').delete().eq('id',b.dataset.id); }catch(e){ alert('Error: '+(e.message||e)); } renderComentariosMod(el, sid); }));
+  }
   async function portalBoard(root, email) {
     const { data: filas } = await client.from('solicitudes').select('*').eq('email', email).order('created_at',{ascending:false});
     const header = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
       <span style="color:var(--text-soft);font-size:.88rem">Conectada como <strong style="color:var(--gold)">${esc(email)}</strong></span>
       <button class="btn btn-ghost" id="mOut" style="padding:9px 18px">Cerrar sesión</button></div>`;
     if (!filas || !filas.length) { root.innerHTML = header + `<div class="panel-empty"><div class="pe-ic">🔍</div><h3>No encontramos perfiles con este email</h3><p>Asegurate de usar el mismo email con el que publicaste, o <a href="publicar.html" style="color:var(--gold)">publicá tu perfil</a>.</p></div>`; document.getElementById('mOut').addEventListener('click',async()=>{await client.auth.signOut();location.reload();}); return; }
-    root.innerHTML = header + filas.map(s=>`<div class="form-card" style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:1.3rem">${esc(s.nombre)}</h3><span class="status-badge ${s.estado==='publicado'?'ready':'incomplete'}">${esc(s.estado)}</span></div><div class="ed-slot" data-for="${s.id}"></div></div>`).join('');
+    root.innerHTML = header + filas.map(s=>`<div class="form-card" style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:1.3rem">${esc(s.nombre)}</h3><span class="status-badge ${s.estado==='publicado'?'ready':'incomplete'}">${esc(s.estado)}</span></div><div class="ed-slot" data-for="${s.id}"></div><div class="cmod-slot" data-for="${s.id}"></div></div>`).join('');
     document.getElementById('mOut').addEventListener('click',async()=>{await client.auth.signOut();location.reload();});
     for (const s of filas) {
       const slot = root.querySelector(`.ed-slot[data-for="${s.id}"]`);
@@ -483,6 +491,7 @@
       wireEdit(slot, removidos);
       const cancel = slot.querySelector('.ed-cancel'); if(cancel) cancel.style.display='none';
       slot.querySelector('.ed-form').addEventListener('submit', async (e)=>{ e.preventDefault(); const btn=e.target.querySelector('button[type="submit"]'); btn.textContent='Guardando…'; btn.disabled=true; try{ await recolectarYGuardar(e.target, removidos, false); btn.textContent='✓ Guardado'; setTimeout(()=>{btn.textContent='Guardar cambios';btn.disabled=false;},1500); }catch(err){ alert('Error: '+err.message); btn.textContent='Guardar cambios'; btn.disabled=false; } });
+      const cslot=root.querySelector(`.cmod-slot[data-for="${s.id}"]`); if(cslot) renderComentariosMod(cslot, s.id);
     }
   }
   async function initPortal() {
