@@ -34,8 +34,8 @@
   --text-mute: #8a8780;
 
   /* Tipografía */
-  --serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
-  --sans: 'Jost', 'Montserrat', system-ui, sans-serif;
+  --serif: 'Helvetica Neue', Helvetica, Arial, 'Inter', sans-serif;
+  --sans: 'Helvetica Neue', Helvetica, Arial, 'Inter', system-ui, sans-serif;
 
   /* Medidas */
   --container: 1240px;

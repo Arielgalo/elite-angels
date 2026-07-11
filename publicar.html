@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/styles.css?v=5">
+<link rel="stylesheet" href="css/styles.css?v=6">
 </head>
 <body>
 
@@ -54,7 +54,7 @@
   <div class="container page-hero-content">
     <span class="eyebrow">Sumate a Aura Experience</span>
     <h1>Publicá tu <span class="text-gold">perfil</span></h1>
-    <p><strong>Convertí tu tiempo en plata.</strong> Publicá tu perfil por <strong>$15.000 (30 días)</strong> y aparecé para gente que busca compañía, una cita, un amigo para no ir solo o presencia para un evento. Contá todo lo que ofrecés —cuantas más ocasiones cubras, más propuestas recibís— y definí tu tarifa desde <strong>$15.000 por salida</strong>. Los interesados te contactan directo. Vos decidís con quién, cuándo y hasta dónde.</p>
+    <p><strong>Postulate y creá tu perfil.</strong> Comentá tus atributos y empezá a generar ingresos cuando personalizás cada encuentro con pautas de tiempo acordadas. Publicar cuesta <strong>$15.000 por 15 días</strong> o <strong>$30.000 por 30 días</strong>; definí tu tarifa desde <strong>$15.000 por salida</strong>. Los encuentros pueden ser <strong>por internet o presenciales</strong>. Vos decidís con quién, cuándo y hasta dónde.</p>
     <div class="breadcrumb"><a href="index.html">Inicio</a> · Publicar</div>
   </div>
 </section>
@@ -125,21 +125,19 @@
               <label>Precio de tu cita · encuentro 30 min (ARS)</label>
               <div class="price-input-wrap"><span class="cur">$</span><input type="number" name="precio_cita" id="citaInput" min="15000" step="1000" placeholder="15000" value="15000" required></div>
               <div class="price-hint">Ejemplos: charla 10 min $10.000 · café/encuentro 30 min $30.000 · cena 1 h $50.000. Vos definís tus valores y tiempos.</div>
-              <div class="msg" style="margin-top:8px">El mínimo es $30.000</div>
+              <div class="msg" style="margin-top:8px">El mínimo es $15.000</div>
             </div>
             <h3 style="font-size:1.4rem;margin:30px 0 6px">Tu plan de publicación</h3>
-            <p style="color:var(--text-soft);margin-bottom:16px;font-size:.95rem">Es lo único que le pagás a <strong>Aura</strong> para aparecer en la web. Mínimo 3 días.</p>
+            <p style="color:var(--text-soft);margin-bottom:16px;font-size:.95rem">Es lo único que le pagás a <strong>Aura</strong> para aparecer en la web.</p>
             <div class="plan-grid">
-              <label class="plan-card"><input type="radio" name="plan" value="dias" checked><span class="plan-name">Top / Estándar</span><span class="plan-price">$15.000</span><span class="plan-desc">3 días de publicación. Sumá puntos para destacarte y subir a Top.</span></label>
-              <label class="plan-card premium"><input type="radio" name="plan" value="premium"><span class="plan-name">Premium VIP</span><span class="plan-price">$150.000 <small>/mes</small></span><span class="plan-desc">30 días, máxima distinción y prioridad arriba de todo.</span></label>
+              <label class="plan-card"><input type="radio" name="plan" value="d15" checked><span class="plan-name">15 días</span><span class="plan-price">$15.000</span><span class="plan-desc">Publicá tu perfil por 15 días. Ideal para empezar.</span></label>
+              <label class="plan-card premium"><input type="radio" name="plan" value="d30"><span class="plan-name">30 días · mejor valor</span><span class="plan-price">$30.000</span><span class="plan-desc">El doble de tiempo y más visibilidad. Aparecés todo el mes.</span></label>
             </div>
             <div class="field-row" id="diasExtraField">
-              <div class="field"><label>Días extra (+$5.000 c/u)</label><input type="number" id="diasExtra" min="0" step="1" value="0"></div>
-              <div class="field"><label>Puntos para destacarte (+$1.000 c/u)</label><input type="number" id="puntosInput" min="0" step="1" value="0"></div>
+              <div class="field"><label>Puntos para destacarte y subir a Top (+$1.000 c/u)</label><input type="number" id="puntosInput" min="0" step="1" value="0"></div>
             </div>
             <div class="pay-summary" style="margin-top:6px">
-              <div class="row"><span id="planLabel">Top / Estándar · 3 días</span><span id="planBase">$15.000</span></div>
-              <div class="row"><span>Días extra</span><span id="diasExtraAmt">$0</span></div>
+              <div class="row"><span id="planLabel">15 días de publicación</span><span id="planBase">$15.000</span></div>
               <div class="row"><span>Puntos</span><span id="puntosAmt">$0</span></div>
               <div class="row total"><span class="lbl">Total publicación</span><span class="amt" id="pubTotal">$15.000</span></div>
             </div>
@@ -213,6 +211,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="js/ea-supabase.js?v=10" defer></script>
 <script src="js/locations.js" defer></script>
-<script src="js/app.js?v=10" defer></script>
+<script src="js/app.js?v=11" defer></script>
 </body>
 </html>
