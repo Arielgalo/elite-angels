@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Feed · Aura Experience</title>
+<meta name="description" content="Descubrí perfiles reales en video: presencia humana a demanda. Scrolleá, conocé y conectá.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  html,body{margin:0;background:#0a0a0c;font-family:'Helvetica Neue',Helvetica,Arial,'Inter',sans-serif;overscroll-behavior:none;}
+  #root{height:100dvh;}
+  .no-sb::-webkit-scrollbar{display:none;}
+  .no-sb{-ms-overflow-style:none;scrollbar-width:none;}
+  @keyframes auraspin{to{transform:rotate(360deg)}}
+  @keyframes kb{0%{transform:scale(1)}100%{transform:scale(1.12)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+const SUPA_URL='https://fsjrimmurtnrorqhnbwu.supabase.co';
+const SUPA_KEY='sb_publishable_2lWllWfVLWsPnnko4TEa4Q_2sx0kdI4';
+const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+const AURAS=[['#f59e0b','#f43f5e','#a855f7'],['#22d3ee','#3b82f6','#8b5cf6'],['#34d399','#10b981','#f59e0b'],['#e879f9','#d946ef','#f43f5e'],['#fbbf24','#f97316','#ef4444'],['#60a5fa','#818cf8','#c084fc']];
+const ROLES={citas:'Citas & Compañía',amigos:'Amigos & Salidas',eventos:'Eventos, Roles & Presencia'};
+
+function Ico({d,fill}){return <svg width="27" height="27" viewBox="0 0 24 24" fill={fill||'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;}
+const HEART="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z";
+const CHAT="M21 11.5a8.4 8.4 0 0 1-11.9 7.6L3 21l1.9-6A8.4 8.4 0 1 1 21 11.5z";
+const SHARE="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7 M16 6l-4-4-4 4 M12 2v13";
+
+function AuraRing({colors,size,active}){
+  return (
+    <div className="relative shrink-0" style={{width:size,height:size}}>
+      <div className="absolute rounded-full" style={{inset:0,background:`conic-gradient(from 0deg, ${colors[0]}, ${colors[1]}, ${colors[2]}, ${colors[0]})`,animation:`auraspin ${active?3.5:9}s linear infinite`,boxShadow:active?`0 0 20px 3px ${colors[1]}99`:'none'}}/>
+      <div className="absolute rounded-full overflow-hidden bg-neutral-900" style={{inset:3}}>
+        {colors.img
+          ? <img src={colors.img} className="w-full h-full object-cover" alt=""/>
+          : <div className="w-full h-full" style={{background:`radial-gradient(circle at 30% 25%, ${colors[0]}66, transparent 60%), radial-gradient(circle at 70% 80%, ${colors[2]}66, transparent 60%)`}}/>}
+      </div>
+    </div>
+  );
+}
+
+function Card({p, aura}){
+  const ref=useRef(null), vidRef=useRef(null);
+  const [active,setActive]=useState(false);
+  const [liked,setLiked]=useState(false);
+  useEffect(()=>{
+    const el=ref.current; if(!el) return;
+    const io=new IntersectionObserver(([e])=>{
+      const vis=e.intersectionRatio>0.6; setActive(vis);
+      const v=vidRef.current; if(v){ if(vis){ v.play().catch(()=>{}); } else { v.pause(); } }
+    },{threshold:[0,0.6,1]});
+    io.observe(el); return ()=>io.disconnect();
+  },[]);
+  const avatarColors=Object.assign([...aura],{img:p.foto});
+  return (
+    <section ref={ref} className="relative h-full w-full shrink-0 snap-start snap-always overflow-hidden bg-neutral-950">
+      {p.video
+        ? <video ref={vidRef} src={p.video} poster={p.foto||undefined} loop muted playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover"/>
+        : (p.foto
+            ? <img src={p.foto} alt={p.name} className="absolute inset-0 w-full h-full object-cover" style={{animation:active?'kb 12s ease-out forwards':'none'}}/>
+            : <div className="absolute inset-0" style={{background:`linear-gradient(160deg, ${aura[0]}33, #0a0a0c 70%)`}}/>) }
+      <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(0,0,0,.82) 4%, rgba(0,0,0,0) 42%, rgba(0,0,0,.25))'}}/>
+      {!p.video && p.foto && <div className="absolute left-1/2 -translate-x-1/2 top-4 text-[10px] tracking-widest uppercase text-white/50">Foto · sumá tu video</div>}
+
+      <div className="absolute right-2.5 bottom-32 flex flex-col items-center gap-5 z-10 text-white">
+        <div className="relative flex flex-col items-center">
+          <AuraRing colors={avatarColors} size={54} active={active}/>
+          <span className="w-5 h-5 -mt-2 rounded-full flex items-center justify-center text-neutral-950 text-sm font-bold" style={{background:aura[1]}}>+</span>
+        </div>
+        <button onClick={()=>setLiked(v=>!v)} className="flex flex-col items-center gap-1 active:scale-90 transition" style={{color:liked?'#f43f5e':'#fff'}}><Ico d={HEART} fill={liked?'#f43f5e':'none'}/><span className="text-[11px] font-semibold">{(p.puntos||0)+ (liked?1:0)}</span></button>
+        <button className="flex flex-col items-center gap-1 active:scale-90 transition"><Ico d={CHAT}/><span className="text-[11px] font-semibold">Chat</span></button>
+        <a href={p.href} className="flex flex-col items-center gap-1 active:scale-90 transition"><Ico d={SHARE}/><span className="text-[11px] font-semibold">Ver</span></a>
+      </div>
+
+      <div className="absolute left-4 right-20 bottom-24 z-10 text-white">
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <span className="font-bold text-[16px]">{p.name}{p.edad?`, ${p.edad}`:''}</span>
+          {p.verificado && <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-300 border border-emerald-400/40 bg-emerald-400/10 rounded-full px-1.5 py-0.5">✓ Verificado</span>}
+        </div>
+        {p.ciudad && <div className="text-[12px] text-white/70 mb-1.5">📍 {p.ciudad}</div>}
+        {p.bio && <p className="text-[14px] leading-snug text-white/95 mb-2 line-clamp-3">{p.bio}</p>}
+        {p.roles && p.roles.length>0 && <div className="flex flex-wrap gap-1.5">{p.roles.map(r=><span key={r} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border border-amber-300/40 text-amber-200 bg-amber-300/10">{ROLES[r]||r}</span>)}</div>}
+      </div>
+
+      <a href={p.href} className="absolute left-4 bottom-12 z-10 px-5 py-2 rounded-full text-[13px] font-semibold text-neutral-950" style={{background:`linear-gradient(90deg, ${aura[0]}, ${aura[1]})`}}>Conocer a {p.name} →</a>
+    </section>
+  );
+}
+
+function Gate({onOk}){
+  return (
+    <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur flex items-center justify-center p-5">
+      <div className="max-w-sm w-full text-center rounded-3xl border border-white/10 bg-neutral-900 p-8">
+        <img src="assets/logo.svg" className="w-16 h-16 mx-auto mb-4" alt="Aura"/>
+        <h2 className="text-white text-2xl font-bold mb-3">Acceso exclusivo +18</h2>
+        <p className="text-white/70 text-sm mb-6">Contenido para mayores de edad. Al ingresar confirmás que tenés 18 años o más y aceptás los términos y la política de privacidad.</p>
+        <button onClick={onOk} className="w-full py-3 rounded-full font-semibold text-neutral-950" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>Soy mayor de 18 · Ingresar</button>
+        <a href="index.html" className="block mt-3 text-white/50 text-sm">Salir</a>
+      </div>
+    </div>
+  );
+}
+
+function App(){
+  const [items,setItems]=useState(null);
+  const [ok,setOk]=useState(()=>{ try{return sessionStorage.getItem('ea_age_ok')==='1';}catch(e){return false;} });
+  useEffect(()=>{ (async()=>{
+    try{
+      const { data, error } = await sb.from('perfiles_publicados').select('id,nombre,bio,ciudad,edad,roles,verificado,videos,fotos,puntos').limit(60);
+      if(error) throw error;
+      const rows=(data||[]).map(r=>({
+        id:r.id, name:r.nombre, bio:r.bio, ciudad:r.ciudad, edad:r.edad, roles:r.roles||[], verificado:r.verificado, puntos:r.puntos||0,
+        video:(Array.isArray(r.videos)&&r.videos[0])||null, foto:(Array.isArray(r.fotos)&&r.fotos[0])||null,
+        href:'perfil.html?sid='+r.id
+      }));
+      // los que tienen video primero, después el resto; sin foto ni video al final
+      rows.sort((a,b)=> (b.video?2:b.foto?1:0) - (a.video?2:a.foto?1:0) || (b.puntos-a.puntos));
+      setItems(rows);
+    }catch(e){ setItems([]); }
+  })(); },[]);
+
+  if(!ok) return <Gate onOk={()=>{ try{sessionStorage.setItem('ea_age_ok','1');}catch(e){} setOk(true); }}/>;
+
+  return (
+    <div className="h-full w-full flex justify-center bg-black">
+      <div className="relative h-full w-full max-w-[460px] bg-neutral-950">
+        <div className="absolute top-0 inset-x-0 z-30 flex items-center justify-between px-4 pt-4 pointer-events-none">
+          <a href="index.html" className="pointer-events-auto text-white/90 text-xl">‹</a>
+          <div className="text-white font-semibold text-[15px] flex items-center gap-2"><span className="text-white/50">Siguiendo</span><span className="relative">Para vos<span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}/></span></div>
+          <a href="publicar.html" className="pointer-events-auto text-white/90 text-sm font-semibold">Publicá</a>
+        </div>
+
+        {items===null && <div className="h-full flex items-center justify-center text-white/60">Cargando feed…</div>}
+        {items && items.length===0 && <div className="h-full flex flex-col items-center justify-center text-white/60 gap-3 px-8 text-center"><p>Todavía no hay perfiles para mostrar.</p><a href="publicar.html" className="px-5 py-2 rounded-full text-neutral-950 font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>Publicá tu perfil</a></div>}
+
+        {items && items.length>0 &&
+          <div className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">
+            {items.map((p,i)=><div key={p.id} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]}/></div>)}
+          </div>}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
