@@ -175,7 +175,7 @@
         <div class="field"><label>Estilo (separados por coma)</label><input data-ef="estilo" value="${esc(s.estilo)}" placeholder="Elegante, Culta, Sensual"></div>
       </div>
       <div class="field"><label>Fotos actuales (arrastrá para ordenar · ✕ para borrar)</label>${fotoGrid(s.fotos)}<input type="file" data-ef="addFotos" accept="image/*" multiple style="margin-top:10px"></div>
-      <div class="field"><label>Videos actuales</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
+      <div class="field"><label>Videos para el feed (verticales, tipo TikTok)</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
       <div class="field"><label>Mensaje de voz / Audio</label>${s.audio?`<div class="ed-chips"><span class="ed-chip">audio <button type="button" class="ed-rm" data-tipo="audio" data-url="${esc(s.audio)}">✕</button></span></div><audio controls src="${esc(s.audio)}" style="width:100%;margin-top:8px"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*,video/*"></div>
       <div class="field" style="border-top:1px solid var(--line-soft);margin-top:8px;padding-top:16px">
         <label>Verificación de identidad — <span class="verif-state verif-${s.verif_estado||'sin_verificar'}">${estadoVerifLbl(s.verif_estado)}</span></label>
