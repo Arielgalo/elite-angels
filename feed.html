@@ -6,6 +6,9 @@
 <title>Feed · Aura Experience</title>
 <meta name="description" content="Descubrí perfiles reales en video: presencia humana a demanda.">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0a0c">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -106,7 +109,7 @@ function ModeBar(props){
       <div className="flex bg-black/40 backdrop-blur rounded-full p-1 border border-white/10">
         {MODES.map(function(m){ const on=props.mode===m.k; return <button key={m.k} onClick={function(){props.setMode(m.k);}} className={"px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition "+(on?'text-neutral-950':'text-white/70')} style={on?{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}:{}}>{m.label}</button>; })}
       </div>
-      <a href="publicar.html" className="text-white/90 text-[13px] font-semibold w-8 text-right">＋</a>
+      <div className="flex items-center gap-2 w-8 justify-end"><button onClick={function(){ if(window.auraNotif) window.auraNotif(); }} className="text-white/90 text-[15px]" title="Notificaciones">🔔</button><a href="publicar.html" className="text-white/90 text-[13px] font-semibold">＋</a></div>
     </div>
     <div key={props.mode} className="mx-auto mt-2 w-fit px-4 py-1 rounded-full text-[12px] font-bold text-white/95" style={{background:'rgba(0,0,0,.35)',animation:'modepop .25s ease-out'}}>
       {(MODES.find(function(x){return x.k===props.mode;})||{}).big} <span className="text-white/50 font-normal">· deslizá para cambiar</span>
@@ -157,5 +160,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 <script>
 (function(){ try{ var src=document.getElementById('app-src').textContent; var out=Babel.transform(src,{presets:[['react',{runtime:'classic'}]]}).code; var sc=document.createElement('script'); sc.textContent=out; document.body.appendChild(sc); }catch(e){ console.error(e); document.getElementById('root').innerHTML='<div style="color:#fff;padding:24px">No se pudo cargar: '+(e&&e.message||e)+'</div>'; } })();
 </script>
+<script src="js/pwa.js?v=1" defer></script>
 </body>
 </html>

@@ -263,6 +263,19 @@
       el.querySelectorAll('.vf-ok,.vf-no').forEach(b=>b.addEventListener('click', async ()=>{ b.disabled=true; b.textContent='…'; const nuevo=b.classList.contains('vf-no')?'rechazado':'verificado'; try{ await client.from('solicitudes').update({ verif_estado:nuevo }).eq('id', b.dataset.id); renderAdmVerif(); }catch(e){ alert('Error: '+(e.message||e)); b.disabled=false; } }));
     }
     renderAdmVerif();
+    function renderAdmNotif(){
+      const el=document.getElementById('admNotif'); if(!el) return;
+      el.innerHTML=`<div class="form-card" style="margin-bottom:18px;border:1px solid var(--gold)"><h3 style="color:var(--gold);font-size:1.2rem;margin-bottom:4px">🔔 Enviar notificación push</h3><p style="color:var(--text-soft);font-size:.84rem;margin-bottom:12px">Llega al celular de quienes instalaron la app y activaron avisos.</p><div class="field"><label>Título</label><input id="ntfTitle" placeholder="Novedad en Aura ✨" maxlength="60"></div><div class="field"><label>Mensaje</label><input id="ntfBody" placeholder="Entrá a ver los nuevos perfiles de hoy" maxlength="140"></div><div class="field"><label>Link al tocar (opcional)</label><input id="ntfUrl" placeholder="/feed.html"></div><div style="display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap"><button class="btn btn-gold" id="ntfSend">Enviar a todos</button><span id="ntfMsg" style="color:var(--gold);font-size:.86rem"></span></div></div>`;
+      document.getElementById('ntfSend').addEventListener('click', async ()=>{
+        const t=document.getElementById('ntfTitle').value.trim(); const b=document.getElementById('ntfBody').value.trim(); const u=document.getElementById('ntfUrl').value.trim();
+        const msg=document.getElementById('ntfMsg'); if(!t&&!b){ msg.textContent='Escribí un título o mensaje.'; return; }
+        const btn=document.getElementById('ntfSend'); btn.disabled=true; btn.textContent='Enviando…';
+        try{ const r=await client.functions.invoke('enviar-notificacion',{ body:{ title:t, body:b, url:u||'/feed.html' } }); if(r.error) throw r.error; if(r.data&&r.data.error) throw new Error(r.data.error); msg.textContent='✓ Enviadas: '+(r.data.enviados||0)+' de '+(r.data.total||0)+' suscriptas'; }
+        catch(e){ msg.textContent='Error: '+(e.message||e); }
+        btn.disabled=false; btn.textContent='Enviar a todos';
+      });
+    }
+    renderAdmNotif();
     let filtro = 'pendiente';
     document.querySelectorAll('.panel-tab').forEach(t => t.addEventListener('click', () => { filtro = t.dataset.tab; render(); }));
     async function render() {
