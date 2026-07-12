@@ -8,6 +8,17 @@
   var deferred=null;
   function isStandalone(){ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true; }
   function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+  function inApp(){ var ua=navigator.userAgent||''; return /FBAN|FBAV|FB_IAB|Instagram|Line\/|Twitter|WhatsApp|; wv\)|GSA\//i.test(ua); }
+  function fullUrl(){ return 'https://auraexperience.com.ar'+location.pathname+location.search; }
+  function openBrowser(){
+    var url=fullUrl();
+    if(isIOS()){ try{navigator.clipboard.writeText(url);}catch(_){}
+      sheet('Abrila en Safari 🧭','<p>Estás viendo Aura dentro de otra app (Instagram/WhatsApp), y desde ahí no se puede instalar.</p><p style="margin-top:10px"><b>Copié el link.</b> Abrí <b>Safari</b>, pegalo en la barra de arriba y entrá. Ahí vas a poder instalar Aura como app.</p><p style="margin-top:10px;color:#f6d79b;word-break:break-all;font-size:.85rem">'+url+'</p>', null);
+    } else {
+      try{ location.href='intent://auraexperience.com.ar'+location.pathname+'#Intent;scheme=https;package=com.android.chrome;end'; }
+      catch(e){ try{navigator.clipboard.writeText(url);}catch(_){}; sheet('Abrila en Chrome','<p>Copié el link. Abrí <b>Chrome</b>, pegalo y desde ahí instalás Aura.</p>', null); }
+    }
+  }
   function u8(b){ var pad='='.repeat((4-b.length%4)%4); var s=(b+pad).replace(/-/g,'+').replace(/_/g,'/'); var raw=atob(s); var a=new Uint8Array(raw.length); for(var i=0;i<raw.length;i++)a[i]=raw.charCodeAt(i); return a; }
 
   // estilos del panel
@@ -45,6 +56,7 @@
   }
 
   window.auraInstall=function(){
+    if(inApp()){ openBrowser(); return; }
     if(deferred){ deferred.prompt(); deferred.userChoice.finally(function(){ deferred=null; var b=document.getElementById('aura-pwa-bar'); if(b) b.remove(); }); return; }
     if(isIOS()){ iosGuide(); return; }
     sheet('Instalá Aura', '<p>Abrí el menú del navegador (⋮ o ⋯) y elegí <b>"Instalar app"</b> o <b>"Agregar a pantalla de inicio"</b>.</p>', null);
@@ -86,5 +98,13 @@
       '<button onclick="(function(){try{localStorage.setItem(\'aura_pwa_dismiss\',\'1\')}catch(e){};var b=document.getElementById(\'aura-pwa-bar\');if(b)b.remove();})()" style="background:transparent;color:#fff8;border:0;font-size:16px;padding:4px 6px;cursor:pointer">✕</button>';
     document.body.appendChild(bar);
   }
-  window.addEventListener('load', function(){ setTimeout(renderBar, 1400); });
+  function renderInApp(){
+    if(!inApp() || isStandalone()) return;
+    if(document.getElementById('aura-inapp')) return;
+    var b=document.createElement('div'); b.id='aura-inapp';
+    b.style.cssText='position:fixed;left:10px;right:10px;top:10px;z-index:99998;display:flex;gap:8px;align-items:center;background:linear-gradient(90deg,#f59e0b,#f43f5e);color:#0a0a0c;border-radius:14px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.4);font-family:Helvetica,Arial,sans-serif;font-weight:600;font-size:13px';
+    b.innerHTML='<span style="flex:1">Para instalar Aura, abrila en tu navegador</span><button onclick="auraInstall()" style="background:#0a0a0c;color:#fff;border:0;border-radius:999px;padding:7px 14px;font-weight:700;font-size:13px">Abrir</button>';
+    document.body.appendChild(b);
+  }
+  window.addEventListener('load', function(){ renderInApp(); setTimeout(renderBar, 1400); });
 })();
