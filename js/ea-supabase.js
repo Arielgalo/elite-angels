@@ -187,6 +187,24 @@
         <div class="field"><label>Idiomas (separados por coma)</label><input data-ef="idiomas" value="${esc(s.idiomas)}" placeholder="Español, Inglés, Portugués"></div>
         <div class="field"><label>Estilo (separados por coma)</label><input data-ef="estilo" value="${esc(s.estilo)}" placeholder="Elegante, Culta, Carismática"></div>
       </div>
+      <div style="border-top:1px solid var(--line-soft);margin-top:8px;padding-top:16px">
+        <label style="color:var(--gold-bright);font-size:1.02rem">🎓 Perfil profesional (para tu currículum)</label>
+        <p style="color:var(--text-soft);font-size:.83rem;margin:4px 0 12px">Se muestra en tu perfil y podés descargarlo como CV en PDF (3 diseños).</p>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Nivel educativo</label><select data-ef="nivel_educativo"><option value="">Seleccionar</option>${['Primario','Secundario','Terciario','Universitario'].map(o=>`<option ${s.nivel_educativo===o?'selected':''}>${o}</option>`).join('')}</select></div>
+        <div class="field"><label>Estado</label><select data-ef="edu_estado"><option value="">Seleccionar</option>${['Completo','En curso','En transición'].map(o=>`<option ${s.edu_estado===o?'selected':''}>${o}</option>`).join('')}</select></div>
+      </div>
+      <div class="field"><label>Carrera / qué estudiás o estudiaste</label><input data-ef="estudio" value="${esc(s.estudio)}" placeholder="Ej: Diseño gráfico, Enfermería, Marketing..."></div>
+      <div class="field"><label>Cursos y capacitaciones (uno por línea; aclará si están en transición)</label><textarea data-ef="cursos" placeholder="Community Manager (en transición) — redes y contenido&#10;Inglés B2 — Cultural Inglesa">${esc(s.cursos)}</textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Habilidades</label><input data-ef="habilidades" value="${esc(s.habilidades)}" placeholder="fotografía, ventas, oratoria"></div>
+        <div class="field"><label>Hobbies e intereses</label><input data-ef="hobbies" value="${esc(s.hobbies)}" placeholder="yoga, viajes, música"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Rutinas</label><input data-ef="rutinas" value="${esc(s.rutinas)}" placeholder="gimnasio a la mañana, lectura"></div>
+        <div class="field"><label>Otros gustos</label><input data-ef="otros_gustos" value="${esc(s.otros_gustos)}" placeholder="gastronomía, cine, arte"></div>
+      </div>
       <div class="field"><label>Fotos actuales (arrastrá para ordenar · ✕ para borrar)</label>${fotoGrid(s.fotos)}<input type="file" data-ef="addFotos" accept="image/*" multiple style="margin-top:10px"></div>
       <div class="field"><label>Videos para el feed (verticales, tipo TikTok)</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
       <div class="field"><label>Mensaje de voz / Audio</label>${s.audio?`<div class="ed-chips"><span class="ed-chip">audio <button type="button" class="ed-rm" data-tipo="audio" data-url="${esc(s.audio)}">✕</button></span></div><audio controls src="${esc(s.audio)}" style="width:100%;margin-top:8px"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*,video/*"></div>
@@ -213,7 +231,7 @@
     const fIn = formEl.querySelector('[data-ef="addFotos"]'); const vIn = formEl.querySelector('[data-ef="addVideos"]'); const aIn = formEl.querySelector('[data-ef="addAudio"]');
     const nuevos = await subirMedios(fIn?[...fIn.files]:[], vIn?[...vIn.files]:[], aIn&&aIn.files[0]?aIn.files[0]:null);
     fotos = fotos.concat(nuevos.fotos); videos = videos.concat(nuevos.videos); if (nuevos.audio) audio = nuevos.audio;
-    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), fotos, videos, audio };
+    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), nivel_educativo:get('nivel_educativo'), edu_estado:get('edu_estado'), estudio:get('estudio'), cursos:get('cursos'), hobbies:get('hobbies'), rutinas:get('rutinas'), habilidades:get('habilidades'), otros_gustos:get('otros_gustos'), fotos, videos, audio };
     patch.precio_cita = +get('precio_cita')||15000;
     patch.roles = [...formEl.querySelectorAll('input[data-rol]:checked')].map(e => e.dataset.rol);
     if (isAdmin) { patch.plan = get('plan'); patch.puntos = +get('puntos')||0; }
