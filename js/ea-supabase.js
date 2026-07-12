@@ -210,7 +210,24 @@
         <div class="field"><label>Comidas que te gustan</label><input data-ef="comidas_gusta" value="${esc(s.comidas_gusta)}" placeholder="asado, pastas, sushi"></div>
         <div class="field"><label>Comidas que no te gustan</label><input data-ef="comidas_rechaza" value="${esc(s.comidas_rechaza)}" placeholder="mariscos, picante"></div>
       </div>
-      <div class="field"><label>💼 Negocio, emprendimiento u oficio para difundir (opcional)</label><textarea data-ef="negocio" placeholder="Contá qué ofrecés: rubro, servicio, dónde. Lo mostramos en tu perfil.">${esc(s.negocio)}</textarea></div>
+      <div style="border-top:1px solid var(--line-soft);margin-top:8px;padding-top:16px">
+        <label style="color:var(--gold-bright);font-size:1.02rem">💼 Perfil comercial · tu negocio, emprendimiento u oficio</label>
+        <p style="color:var(--text-soft);font-size:.83rem;margin:4px 0 12px">Difundí lo que ofrecés para multiplicar tus beneficios. Se muestra en tu perfil con botón de contacto.</p>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Nombre del negocio / emprendimiento</label><input data-ef="negocio_nombre" value="${esc(s.negocio_nombre)}" placeholder="Ej: Estudio Aura, Kiosco 24h..."></div>
+        <div class="field"><label>Rubro / categoría</label><input data-ef="negocio_rubro" value="${esc(s.negocio_rubro)}" placeholder="Gastronomía, Belleza, Servicios..."></div>
+      </div>
+      <div class="field"><label>¿Qué ofrecés? (descripción)</label><textarea data-ef="negocio" placeholder="Contá tu propuesta, qué te diferencia, para quién...">${esc(s.negocio)}</textarea></div>
+      <div class="field"><label>Servicios / productos (uno por línea)</label><textarea data-ef="negocio_servicios" placeholder="Corte de pelo — $...&#10;Delivery de comida casera&#10;Clases particulares">${esc(s.negocio_servicios)}</textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Promoción / oferta actual</label><input data-ef="negocio_promo" value="${esc(s.negocio_promo)}" placeholder="2x1 los martes · 10% primera compra"></div>
+        <div class="field"><label>Zona / dónde atendés</label><input data-ef="negocio_zona" value="${esc(s.negocio_zona)}" placeholder="La Plata y alrededores · online"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>WhatsApp / teléfono del negocio</label><input data-ef="negocio_contacto" value="${esc(s.negocio_contacto)}" placeholder="+54 9 221 000 0000"></div>
+        <div class="field"><label>Instagram / web</label><input data-ef="negocio_web" value="${esc(s.negocio_web)}" placeholder="@minegocio o minegocio.com"></div>
+      </div>
       <div class="field"><label>Fotos actuales (arrastrá para ordenar · ✕ para borrar)</label>${fotoGrid(s.fotos)}<input type="file" data-ef="addFotos" accept="image/*" multiple style="margin-top:10px"></div>
       <div class="field"><label>Videos para el feed (verticales, tipo TikTok)</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
       <div class="field"><label>Mensaje de voz / Audio</label>${s.audio?`<div class="ed-chips"><span class="ed-chip">audio <button type="button" class="ed-rm" data-tipo="audio" data-url="${esc(s.audio)}">✕</button></span></div><audio controls src="${esc(s.audio)}" style="width:100%;margin-top:8px"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*,video/*"></div>
@@ -237,7 +254,7 @@
     const fIn = formEl.querySelector('[data-ef="addFotos"]'); const vIn = formEl.querySelector('[data-ef="addVideos"]'); const aIn = formEl.querySelector('[data-ef="addAudio"]');
     const nuevos = await subirMedios(fIn?[...fIn.files]:[], vIn?[...vIn.files]:[], aIn&&aIn.files[0]?aIn.files[0]:null);
     fotos = fotos.concat(nuevos.fotos); videos = videos.concat(nuevos.videos); if (nuevos.audio) audio = nuevos.audio;
-    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), nivel_educativo:get('nivel_educativo'), edu_estado:get('edu_estado'), estudio:get('estudio'), cursos:get('cursos'), hobbies:get('hobbies'), rutinas:get('rutinas'), habilidades:get('habilidades'), otros_gustos:get('otros_gustos'), comidas_gusta:get('comidas_gusta'), comidas_rechaza:get('comidas_rechaza'), negocio:get('negocio'), fotos, videos, audio };
+    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), nivel_educativo:get('nivel_educativo'), edu_estado:get('edu_estado'), estudio:get('estudio'), cursos:get('cursos'), hobbies:get('hobbies'), rutinas:get('rutinas'), habilidades:get('habilidades'), otros_gustos:get('otros_gustos'), comidas_gusta:get('comidas_gusta'), comidas_rechaza:get('comidas_rechaza'), negocio:get('negocio'), negocio_nombre:get('negocio_nombre'), negocio_rubro:get('negocio_rubro'), negocio_servicios:get('negocio_servicios'), negocio_promo:get('negocio_promo'), negocio_zona:get('negocio_zona'), negocio_contacto:get('negocio_contacto'), negocio_web:get('negocio_web'), fotos, videos, audio };
     patch.precio_cita = +get('precio_cita')||15000;
     patch.roles = [...formEl.querySelectorAll('input[data-rol]:checked')].map(e => e.dataset.rol);
     if (isAdmin) { patch.plan = get('plan'); patch.puntos = +get('puntos')||0; }
