@@ -209,7 +209,7 @@ async function renderProfile(){
       var html='<div style="border-top:1px solid var(--line-soft);margin-top:24px;padding-top:18px"><h3 style="font-size:1.4rem;margin-bottom:14px">Perfil profesional</h3>'+cv.map(function(fld){return '<div style="margin-bottom:12px"><div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--gold);margin-bottom:2px">'+fld[0]+'</div><div style="color:var(--text-soft);white-space:pre-line;line-height:1.55">'+esc(fld[1])+'</div></div>';}).join('')+'</div>';
       chipsEl.insertAdjacentHTML('afterend', html);
     }
-    if(m.sid){ var acc=document.getElementById('profileActions'); if(acc) acc.insertAdjacentHTML('beforeend','<a href="cv.html?sid='+m.sid+'" class="btn btn-ghost" style="justify-content:center;margin-top:10px">📄 Ver / descargar currículum (PDF)</a>'); }
+    if(m.sid && cv.length){ setTimeout(function(){ var acc=document.getElementById('profileActions'); if(acc && !acc.querySelector('.cv-btn')) acc.insertAdjacentHTML('beforeend','<a class="cv-btn" href="cv.html?sid='+m.sid+'" class="btn btn-ghost" style="display:flex;justify-content:center;margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:999px;color:var(--gold);text-decoration:none">📄 Ver / descargar currículum (PDF)</a>'); },80); }
   }catch(e){} })();
   const rateBox=document.getElementById('rateBox'); if(rateBox){ const pn=planName(m.plan);
     rateBox.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:1.3rem">Pacto</h3><span class="tier-pill tier-${m.plan||'estandar'}">${pn}</span></div>
