@@ -17,7 +17,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
-<link rel="stylesheet" href="css/styles.css?v=6">
+<link rel="stylesheet" href="css/styles.css?v=7">
 </head>
 <body>
 
@@ -120,6 +120,29 @@
               <div class="field"><label>Videos cortos (opcional)</label><input type="file" id="videoInput" accept="video/*" multiple><div id="videoPreview" style="font-size:.8rem;color:var(--gold);margin-top:6px"></div></div>
               <div class="field"><label>Mensaje de voz (opcional)</label><input type="file" id="audioInput" accept="audio/*"><div id="audioPreview" style="font-size:.8rem;color:var(--gold);margin-top:6px"></div></div>
             </div>
+            <div class="field" style="border-top:1px solid var(--line);margin-top:6px;padding-top:16px">
+              <label style="color:var(--gold-bright)">🎓 Perfil profesional (opcional · para tu currículum)</label>
+              <p style="color:var(--text-soft);font-size:.83rem;margin:6px 0 12px">Se muestra en tu perfil y podés descargarlo como CV en PDF (3 diseños).</p>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Nivel educativo</label><select id="pNivel"><option value="">Seleccionar</option><option>Primario</option><option>Secundario</option><option>Terciario</option><option>Universitario</option></select></div>
+              <div class="field"><label>Estado</label><select id="pEstado"><option value="">Seleccionar</option><option>Completo</option><option>En curso</option><option>En transición</option></select></div>
+            </div>
+            <div class="field"><label>Carrera / qué estudiás o estudiaste</label><input id="pEstudio" placeholder="Ej: Diseño gráfico, Enfermería, Marketing..."></div>
+            <div class="field"><label>Cursos y capacitaciones (uno por línea; aclará si están en transición)</label><textarea id="pCursos" placeholder="Community Manager (en transición) — redes y contenido&#10;Inglés B2 — Cultural Inglesa"></textarea></div>
+            <div class="field-row">
+              <div class="field"><label>Habilidades</label><input id="pHabil" placeholder="fotografía, ventas, oratoria"></div>
+              <div class="field"><label>Hobbies e intereses</label><input id="pHobbies" placeholder="yoga, viajes, música"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Rutinas</label><input id="pRutinas" placeholder="gimnasio a la mañana, lectura"></div>
+              <div class="field"><label>Otros gustos</label><input id="pGustos" placeholder="cine, arte, gastronomía"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Comidas que te gustan</label><input id="pComeSi" placeholder="asado, pastas, sushi"></div>
+              <div class="field"><label>Comidas que no te gustan</label><input id="pComeNo" placeholder="mariscos, picante"></div>
+            </div>
+            <div class="field"><label>¿Tenés un negocio, emprendimiento u oficio para difundir? (opcional)</label><textarea id="pNegocio" placeholder="Contá qué ofrecés: rubro, servicio, dónde. Lo mostramos en tu perfil para multiplicar tus beneficios."></textarea></div>
             <div class="wizard-actions"><span></span><button type="button" class="btn btn-gold" data-next="2">Continuar →</button></div>
           </div>
 
@@ -213,9 +236,9 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="js/ea-supabase.js?v=22" defer></script>
+<script src="js/ea-supabase.js?v=24" defer></script>
 <script src="js/locations.js" defer></script>
-<script src="js/app.js?v=23" defer></script>
+<script src="js/app.js?v=24" defer></script>
 <script src="js/pwa.js?v=4" defer></script>
 </body>
 </html>

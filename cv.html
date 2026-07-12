@@ -120,6 +120,7 @@ body{font-family:'Jost',Helvetica,Arial,sans-serif;background:#20202a;color:var(
     var hobbies=chips(p.hobbies);
     var rutinas= p.rutinas? '<p>'+esc(p.rutinas)+'</p>':'';
     var gustos=chips(p.otros_gustos);
+    var comeSi=chips(p.comidas_gusta); var comeNo=chips(p.comidas_rechaza); var negocio=p.negocio?'<p>'+esc(p.negocio)+'</p>':'';
 
     var head='<div class="head"><div class="name-wrap">'+photoTag+'<div class="name">'+esc(p.nombre||'Perfil')+'</div><div class="role">'+esc(roleTxt)+'</div><div class="meta">'+esc(meta)+'</div>'+verif+'</div></div>';
 
@@ -132,7 +133,7 @@ body{font-family:'Jost',Helvetica,Arial,sans-serif;background:#20202a;color:var(
         '</div>'+
         '<div class="main">'+
           block('Sobre mí',about)+ block('Formación',edu)+ block('Cursos y capacitaciones',cursos)+
-          block('Rutinas',rutinas)+ block('Otros gustos',gustos)+
+          block('Rutinas',rutinas)+ block('Otros gustos',gustos)+ block('Comidas que disfruta',comeSi)+ block('No consume',comeNo)+ block('Negocio / oficio',negocio)+
         '</div>';
     } else if(estilo==='3'){
       cv.innerHTML=''+
@@ -142,13 +143,13 @@ body{font-family:'Jost',Helvetica,Arial,sans-serif;background:#20202a;color:var(
           block('Formación',edu)+ block('Cursos y capacitaciones',cursos)+
           block('Idiomas',langs)+ block('Habilidades',skills)+
           block('Hobbies',hobbies)+ block('Otros gustos',gustos)+
-          (rutinas?'<div class="sec full"><h3>Rutinas</h3>'+rutinas+'</div>':'')+
+          (rutinas?'<div class="sec full"><h3>Rutinas</h3>'+rutinas+'</div>':'')+ block('Comidas que disfruta',comeSi)+ block('No consume',comeNo)+ (negocio?'<div class="sec full"><h3>Negocio / oficio</h3>'+negocio+'</div>':'')+
         '</div>';
     } else {
       cv.innerHTML=head+
         '<div class="cols">'+
           '<div>'+block('Sobre mí',about)+block('Formación',edu)+block('Cursos y capacitaciones',cursos)+'</div>'+
-          '<div>'+block('Idiomas',langs)+block('Habilidades',skills)+block('Hobbies',hobbies)+block('Rutinas',rutinas)+block('Otros gustos',gustos)+'</div>'+
+          '<div>'+block('Idiomas',langs)+block('Habilidades',skills)+block('Hobbies',hobbies)+block('Rutinas',rutinas)+block('Otros gustos',gustos)+block('Comidas que disfruta',comeSi)+block('No consume',comeNo)+block('Negocio / oficio',negocio)+'</div>'+
         '</div>';
     }
   }

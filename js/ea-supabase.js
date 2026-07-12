@@ -56,6 +56,7 @@
       nombre: payload.nombre, edad: payload.edad, pais: payload.pais, provincia: payload.provincia,
       ciudad: payload.ciudad, altura: payload.altura, telefono: payload.telefono, email: payload.email,
       bio: payload.bio, genero: payload.genero, roles: payload.roles || [], precio: payload.precio, fotos: m.fotos, videos: m.videos, audio: m.audio, busto: payload.busto, cintura: payload.cintura, cola: payload.cola, nacionalidad: payload.nacionalidad, cabello: payload.cabello, tipo_cuerpo: payload.tipo_cuerpo,
+      nivel_educativo: payload.nivel_educativo, edu_estado: payload.edu_estado, estudio: payload.estudio, cursos: payload.cursos, hobbies: payload.hobbies, rutinas: payload.rutinas, habilidades: payload.habilidades, otros_gustos: payload.otros_gustos, comidas_gusta: payload.comidas_gusta, comidas_rechaza: payload.comidas_rechaza, negocio: payload.negocio,
       pago: 'pendiente', estado: 'pendiente'
     };
     const { error } = await client.from('solicitudes').insert(row);
@@ -70,7 +71,7 @@
 
   async function submitPublishGratis(payload, photoFiles, videoFiles, audioBlob) {
     const m = await subirMedios(photoFiles, videoFiles, audioBlob);
-    const body = { nombre: payload.nombre, edad: payload.edad, pais: payload.pais, provincia: payload.provincia, ciudad: payload.ciudad, altura: payload.altura, busto: payload.busto, cintura: payload.cintura, cola: payload.cola, nacionalidad: payload.nacionalidad, cabello: payload.cabello, tipo_cuerpo: payload.tipo_cuerpo, telefono: payload.telefono, email: payload.email, bio: payload.bio, genero: payload.genero, roles: payload.roles || [], fotos: m.fotos, videos: m.videos, audio: m.audio };
+    const body = { nombre: payload.nombre, edad: payload.edad, pais: payload.pais, provincia: payload.provincia, ciudad: payload.ciudad, altura: payload.altura, busto: payload.busto, cintura: payload.cintura, cola: payload.cola, nacionalidad: payload.nacionalidad, cabello: payload.cabello, tipo_cuerpo: payload.tipo_cuerpo, telefono: payload.telefono, email: payload.email, bio: payload.bio, genero: payload.genero, roles: payload.roles || [], nivel_educativo: payload.nivel_educativo, edu_estado: payload.edu_estado, estudio: payload.estudio, cursos: payload.cursos, hobbies: payload.hobbies, rutinas: payload.rutinas, habilidades: payload.habilidades, otros_gustos: payload.otros_gustos, comidas_gusta: payload.comidas_gusta, comidas_rechaza: payload.comidas_rechaza, negocio: payload.negocio, fotos: m.fotos, videos: m.videos, audio: m.audio };
     const resp = await client.functions.invoke('publicar-gratis', { body });
     if (resp.error) throw resp.error;
     if (resp.data && resp.data.error) throw new Error(resp.data.error);
@@ -205,6 +206,11 @@
         <div class="field"><label>Rutinas</label><input data-ef="rutinas" value="${esc(s.rutinas)}" placeholder="gimnasio a la mañana, lectura"></div>
         <div class="field"><label>Otros gustos</label><input data-ef="otros_gustos" value="${esc(s.otros_gustos)}" placeholder="gastronomía, cine, arte"></div>
       </div>
+      <div class="field-row">
+        <div class="field"><label>Comidas que te gustan</label><input data-ef="comidas_gusta" value="${esc(s.comidas_gusta)}" placeholder="asado, pastas, sushi"></div>
+        <div class="field"><label>Comidas que no te gustan</label><input data-ef="comidas_rechaza" value="${esc(s.comidas_rechaza)}" placeholder="mariscos, picante"></div>
+      </div>
+      <div class="field"><label>💼 Negocio, emprendimiento u oficio para difundir (opcional)</label><textarea data-ef="negocio" placeholder="Contá qué ofrecés: rubro, servicio, dónde. Lo mostramos en tu perfil.">${esc(s.negocio)}</textarea></div>
       <div class="field"><label>Fotos actuales (arrastrá para ordenar · ✕ para borrar)</label>${fotoGrid(s.fotos)}<input type="file" data-ef="addFotos" accept="image/*" multiple style="margin-top:10px"></div>
       <div class="field"><label>Videos para el feed (verticales, tipo TikTok)</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
       <div class="field"><label>Mensaje de voz / Audio</label>${s.audio?`<div class="ed-chips"><span class="ed-chip">audio <button type="button" class="ed-rm" data-tipo="audio" data-url="${esc(s.audio)}">✕</button></span></div><audio controls src="${esc(s.audio)}" style="width:100%;margin-top:8px"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*,video/*"></div>
@@ -231,7 +237,7 @@
     const fIn = formEl.querySelector('[data-ef="addFotos"]'); const vIn = formEl.querySelector('[data-ef="addVideos"]'); const aIn = formEl.querySelector('[data-ef="addAudio"]');
     const nuevos = await subirMedios(fIn?[...fIn.files]:[], vIn?[...vIn.files]:[], aIn&&aIn.files[0]?aIn.files[0]:null);
     fotos = fotos.concat(nuevos.fotos); videos = videos.concat(nuevos.videos); if (nuevos.audio) audio = nuevos.audio;
-    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), nivel_educativo:get('nivel_educativo'), edu_estado:get('edu_estado'), estudio:get('estudio'), cursos:get('cursos'), hobbies:get('hobbies'), rutinas:get('rutinas'), habilidades:get('habilidades'), otros_gustos:get('otros_gustos'), fotos, videos, audio };
+    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), nivel_educativo:get('nivel_educativo'), edu_estado:get('edu_estado'), estudio:get('estudio'), cursos:get('cursos'), hobbies:get('hobbies'), rutinas:get('rutinas'), habilidades:get('habilidades'), otros_gustos:get('otros_gustos'), comidas_gusta:get('comidas_gusta'), comidas_rechaza:get('comidas_rechaza'), negocio:get('negocio'), fotos, videos, audio };
     patch.precio_cita = +get('precio_cita')||15000;
     patch.roles = [...formEl.querySelectorAll('input[data-rol]:checked')].map(e => e.dataset.rol);
     if (isAdmin) { patch.plan = get('plan'); patch.puntos = +get('puntos')||0; }
