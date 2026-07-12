@@ -31,6 +31,7 @@
   @keyframes eq{0%,100%{height:20%}50%{height:100%}}
   @keyframes pulseSound{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
   @keyframes upsheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  @keyframes menuIn{from{transform:translateX(-100%)}to{transform:translateX(0)}}
   @keyframes modepop{0%{transform:translate(-50%,-4px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}
 </style>
 </head>
@@ -112,7 +113,7 @@ function Gate(props){ return <div className="fixed inset-0 z-50 bg-black/95 back
 function ModeBar(props){
   return <div className="absolute top-0 inset-x-0 z-30 pt-3">
     <div className="flex items-center justify-between px-3">
-      <a href="index.html" className="text-white/90 text-xl w-8">‹</a>
+      <button onClick={props.onMenu} className="text-white/90 text-2xl w-8 text-left" title="Menú">☰</button>
       <div className="flex bg-black/40 backdrop-blur rounded-full p-1 border border-white/10">
         {MODES.map(function(m){ const on=props.mode===m.k; return <button key={m.k} onClick={function(){props.setMode(m.k);}} className={"px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition "+(on?'text-neutral-950':'text-white/70')} style={on?{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}:{}}>{m.label}</button>; })}
       </div>
@@ -124,12 +125,30 @@ function ModeBar(props){
   </div>;
 }
 
+function Menu(props){
+  var Link=function(href,ic,txt,cls){ return React.createElement('a',{href:href,className:'flex items-center gap-3 px-5 py-3.5 text-[15px] border-b border-white/5 '+(cls||'text-white')},React.createElement('span',{className:'text-xl w-6 text-center'},ic),txt); };
+  return <div className="absolute inset-0 z-50" onClick={props.onClose}>
+    <div className="absolute inset-0 bg-black/60"/>
+    <div className="absolute left-0 top-0 bottom-0 w-72 max-w-[82%] bg-neutral-900 border-r border-white/10 overflow-y-auto no-sb" style={{animation:'menuIn .22s ease-out'}} onClick={function(e){e.stopPropagation();}}>
+      <div className="p-5 flex items-center gap-2 border-b border-white/10"><img src="assets/logo.svg" className="w-9 h-9" alt=""/><span className="text-white font-bold text-[17px]">Aura Experience</span></div>
+      {Link('modelos.html','🔍','Buscar perfiles')}
+      {Link('publicar.html','✍️','Publicá tu perfil')}
+      {Link('mi-perfil.html','👤','Mi perfil')}
+      {Link('nosotros.html','ℹ️','Nosotros')}
+      {Link('contacto.html','✉️','Contacto')}
+      {Link('instalar.html','📲','Instalá la app')}
+      {Link('index.html?web=1','🖥️','Ver sitio completo','text-amber-200')}
+      <div className="px-5 py-4 text-white/40 text-[12px]">Deslizá el feed ⬆⬇ · cambiá de vista deslizando ⬅➡</div>
+    </div>
+  </div>;
+}
 function App(){
   const [rows,setRows]=useState(null);
   const [soundOn,setSoundOn]=useState(false);
   const [counts,setCounts]=useState({});
   const [cmt,setCmt]=useState(null);
   const [mode,setMode]=useState(function(){ try{return localStorage.getItem('aura_feed_mode')||'mixto';}catch(e){return 'mixto';} });
+  const [menu,setMenu]=useState(false);
   const [ok,setOk]=useState(function(){ try{return sessionStorage.getItem('ea_age_ok')==='1';}catch(e){return false;} });
   const touch=useRef({x:0,y:0});
   function changeMode(k){ setMode(k); try{localStorage.setItem('aura_feed_mode',k);}catch(e){} }
@@ -155,11 +174,12 @@ function App(){
   }
 
   return <div className="h-full w-full flex justify-center bg-black"><div className="relative h-full w-full max-w-[460px] bg-neutral-950" onTouchStart={onTS} onTouchEnd={onTE}>
-    <ModeBar mode={mode} setMode={changeMode}/>
+    <ModeBar mode={mode} setMode={changeMode} onMenu={function(){setMenu(true);}}/>
     {rows===null && <div className="h-full flex items-center justify-center text-white/60">Cargando feed…</div>}
     {rows && items.length===0 && <div className="h-full flex flex-col items-center justify-center text-white/60 gap-3 px-8 text-center"><p>{mode==='video'?'Todavía no hay videos.':'No hay publicaciones.'}</p><a href="publicar.html" className="px-5 py-2 rounded-full text-neutral-950 font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>Publicá tu perfil</a></div>}
     {rows && items.length>0 && <div key={mode} className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">{items.map(function(p,i){return <div key={p.sid+'|'+(p.videoUrl||'')+i} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]} soundOn={soundOn} setSoundOn={setSoundOn} count={counts[keyOf(p.sid,p.videoUrl)]} onComments={setCmt}/></div>;})}</div>}
     {cmt && <Drawer card={cmt} onClose={function(){setCmt(null);}} onPosted={onPosted}/>}
+    {menu && <Menu onClose={function(){setMenu(false);}}/>}
   </div></div>;
 }
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
