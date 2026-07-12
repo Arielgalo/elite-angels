@@ -5,7 +5,7 @@
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Feed · Aura Experience</title>
-<meta name="description" content="Descubrí perfiles reales en video: presencia humana a demanda.">
+<meta name="description" content="Descubrí videos de la comunidad Aura. Subí el tuyo, seguí, comentá y conectá.">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0a0a0c">
@@ -24,8 +24,7 @@
 <style>
   html,body{margin:0;background:#0a0a0c;font-family:'Helvetica Neue',Helvetica,Arial,'Inter',sans-serif;overscroll-behavior:none;}
   #root{height:100dvh;}
-  .no-sb::-webkit-scrollbar{display:none;}
-  .no-sb{-ms-overflow-style:none;scrollbar-width:none;}
+  .no-sb::-webkit-scrollbar{display:none;} .no-sb{-ms-overflow-style:none;scrollbar-width:none;}
   @keyframes auraspin{to{transform:rotate(360deg)}}
   @keyframes kb{0%{transform:scale(1)}100%{transform:scale(1.12)}}
   @keyframes eq{0%,100%{height:20%}50%{height:100%}}
@@ -43,59 +42,59 @@ const sb = window.supabase.createClient('https://fsjrimmurtnrorqhnbwu.supabase.c
 const AURAS=[['#f59e0b','#f43f5e','#a855f7'],['#22d3ee','#3b82f6','#8b5cf6'],['#34d399','#10b981','#f59e0b'],['#e879f9','#d946ef','#f43f5e'],['#fbbf24','#f97316','#ef4444'],['#60a5fa','#818cf8','#c084fc']];
 const ROLES={citas:'Citas & Compañía',amigos:'Amigos & Salidas',eventos:'Eventos, Roles & Presencia'};
 const MODES=[{k:'video',label:'Video',big:'🎬 Solo videos'},{k:'mixto',label:'Mixto',big:'✨ Video + Foto'},{k:'foto',label:'Foto',big:'📸 Solo fotos'}];
-const keyOf=(sid,url)=>sid+'|'+(url||'');
-function Ico(props){return React.createElement('svg',{width:props.size||27,height:props.size||27,viewBox:'0 0 24 24',fill:props.fill||'none',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round'},React.createElement('path',{d:props.d}));}
+const ckey=function(c){ return c.type==='post' ? ('P:'+c.postId) : (c.sid+'|'+(c.videoUrl||'')); };
+function Ico(p){return React.createElement('svg',{width:p.size||27,height:p.size||27,viewBox:'0 0 24 24',fill:p.fill||'none',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round'},React.createElement('path',{d:p.d}));}
 const HEART="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z";
 const CHAT="M21 11.5a8.4 8.4 0 0 1-11.9 7.6L3 21l1.9-6A8.4 8.4 0 1 1 21 11.5z";
 const SHARE="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7 M16 6l-4-4-4 4 M12 2v13";
+const FLAG="M4 21V4 M4 4h13l-2 4 2 4H4";
 const SPK_ON="M11 5 6 9H2v6h4l5 4V5z M15.5 8.5a5 5 0 0 1 0 7 M19 5a9 9 0 0 1 0 14";
 const SPK_OFF="M11 5 6 9H2v6h4l5 4V5z M22 9l-6 6 M16 9l6 6";
-
-function Eq(props){ return <div className="flex items-end gap-0.5 h-3.5">{[0,1,2,3].map(i=><span key={i} className="w-0.5 rounded-full" style={{background:props.color,height:'100%',animation:'eq '+(0.6+i*0.12)+'s ease-in-out '+(i*0.1)+'s infinite'}}/>)}</div>; }
-function AuraRing(props){ const c=props.colors; return <div className="relative shrink-0" style={{width:props.size,height:props.size}}><div className="absolute rounded-full" style={{inset:0,background:'conic-gradient(from 0deg, '+c[0]+', '+c[1]+', '+c[2]+', '+c[0]+')',animation:'auraspin '+(props.active?3.5:9)+'s linear infinite',boxShadow:props.active?('0 0 20px 3px '+c[1]+'99'):'none'}}/><div className="absolute rounded-full overflow-hidden bg-neutral-900" style={{inset:3}}>{c.img?<img src={c.img} className="w-full h-full object-cover" alt=""/>:<div className="w-full h-full" style={{background:'radial-gradient(circle at 30% 25%, '+c[0]+'66, transparent 60%)'}}/>}</div></div>; }
+function Eq(p){ return <div className="flex items-end gap-0.5 h-3.5">{[0,1,2,3].map(i=><span key={i} className="w-0.5 rounded-full" style={{background:p.color,height:'100%',animation:'eq '+(0.6+i*0.12)+'s ease-in-out '+(i*0.1)+'s infinite'}}/>)}</div>; }
+function AuraRing(p){ const c=p.colors; return <div className="relative shrink-0" style={{width:p.size,height:p.size}}><div className="absolute rounded-full" style={{inset:0,background:'conic-gradient(from 0deg, '+c[0]+', '+c[1]+', '+c[2]+', '+c[0]+')',animation:'auraspin '+(p.active?3.5:9)+'s linear infinite',boxShadow:p.active?('0 0 20px 3px '+c[1]+'99'):'none'}}/><div className="absolute rounded-full overflow-hidden bg-neutral-900 flex items-center justify-center text-white font-bold" style={{inset:3}}>{c.img?<img src={c.img} className="w-full h-full object-cover" alt=""/>:(c.ini||'')}</div></div>; }
 
 function Card(props){
-  const p=props.p, aura=props.aura, soundOn=props.soundOn, setSoundOn=props.setSoundOn;
+  const p=props.p, aura=props.aura, soundOn=props.soundOn, setSoundOn=props.setSoundOn, isPost=p.type==='post';
   const ref=useRef(null), vidRef=useRef(null);
   const [active,setActive]=useState(false); const [paused,setPaused]=useState(false); const [liked,setLiked]=useState(false);
   useEffect(()=>{ const el=ref.current; if(!el) return;
     const io=new IntersectionObserver(function(ent){ const e=ent[0]; const vis=e.intersectionRatio>0.6; setActive(vis); const v=vidRef.current; if(v){ if(vis){ v.muted=!soundOn; v.volume=1; v.play().then(function(){setPaused(false);}).catch(function(){}); } else { v.pause(); v.muted=true; } } },{threshold:[0,0.6,1]});
-    io.observe(el); return function(){io.disconnect();};
-  },[soundOn]);
+    io.observe(el); return function(){io.disconnect();}; },[soundOn]);
   useEffect(()=>{ const v=vidRef.current; if(v&&active){ v.muted=!soundOn; v.volume=1; } },[soundOn,active]);
   function toggleSound(e){ if(e) e.stopPropagation(); const ns=!soundOn; setSoundOn(ns); const v=vidRef.current; if(v){ v.muted=!ns; v.volume=1; if(ns){ v.play().then(function(){setPaused(false);}).catch(function(){}); } } }
   function onMediaTap(){ if(!soundOn && p.video){ toggleSound(); return; } const v=vidRef.current; if(!v) return; if(v.paused){ v.play(); setPaused(false); } else { v.pause(); setPaused(true); } }
-  const avatarColors=Object.assign([aura[0],aura[1],aura[2]],{img:p.foto}); const hasVideo=!!p.video;
+  const avatarColors=Object.assign([aura[0],aura[1],aura[2]],{img:p.foto, ini:(p.name||'A').slice(0,1).toUpperCase()});
+  const hasVideo=!!p.video;
   return <section ref={ref} className="relative h-full w-full shrink-0 snap-start snap-always overflow-hidden bg-neutral-950" onClick={onMediaTap}>
     {hasVideo?<video ref={vidRef} src={p.video} poster={p.foto||undefined} loop muted playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover"/>:(p.foto?<img src={p.foto} alt={p.name} className="absolute inset-0 w-full h-full object-cover" style={{animation:active?'kb 12s ease-out forwards':'none'}}/>:<div className="absolute inset-0" style={{background:'linear-gradient(160deg, '+aura[0]+'33, #0a0a0c 70%)'}}/>) }
     <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(0,0,0,.82) 4%, rgba(0,0,0,0) 42%, rgba(0,0,0,.25))'}}/>
     {hasVideo && paused && <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><span className="w-16 h-16 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white"><Ico d="M8 5v14l11-7z" fill="#fff" size={30}/></span></div>}
     {hasVideo && active && !soundOn && <button onClick={toggleSound} className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 rounded-full text-neutral-950 text-[13px] font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)',animation:'pulseSound 1.6s ease-in-out infinite'}}><Ico d={SPK_OFF} size={18}/> Tocá para activar el sonido</button>}
     <div className="absolute right-2.5 bottom-32 flex flex-col items-center gap-5 z-10 text-white">
-      <div className="relative flex flex-col items-center"><AuraRing colors={avatarColors} size={54} active={active}/><span className="w-5 h-5 -mt-2 rounded-full flex items-center justify-center text-neutral-950 text-sm font-bold" style={{background:aura[1]}}>+</span></div>
-      <button onClick={function(e){e.stopPropagation();setLiked(function(v){return !v;});}} className="flex flex-col items-center gap-1" style={{color:liked?'#f43f5e':'#fff'}}><Ico d={HEART} fill={liked?'#f43f5e':'none'}/><span className="text-[11px] font-semibold">{(p.puntos||0)+(liked?1:0)}</span></button>
+      <div className="relative flex flex-col items-center"><AuraRing colors={avatarColors} size={54} active={active}/>{!isPost && <span className="w-5 h-5 -mt-2 rounded-full flex items-center justify-center text-neutral-950 text-sm font-bold" style={{background:aura[1]}}>+</span>}</div>
+      <button onClick={function(e){e.stopPropagation();setLiked(function(v){return !v;});}} className="flex flex-col items-center gap-1" style={{color:liked?'#f43f5e':'#fff'}}><Ico d={HEART} fill={liked?'#f43f5e':'none'}/><span className="text-[11px] font-semibold">{(p.likes||0)+(liked?1:0)}</span></button>
       <button onClick={function(e){e.stopPropagation();props.onComments(p);}} className="flex flex-col items-center gap-1"><Ico d={CHAT}/><span className="text-[11px] font-semibold">{props.count?props.count+' ':''}Comentar</span></button>
       {hasVideo && <button onClick={toggleSound} className="flex flex-col items-center gap-1" style={{color:soundOn?'#fbbf24':'#fff'}}><span className="w-11 h-11 rounded-full bg-white/10 backdrop-blur flex items-center justify-center"><Ico d={soundOn?SPK_ON:SPK_OFF} size={22}/></span><span className="text-[11px] font-semibold flex items-center gap-1">{soundOn?<Eq color="#fbbf24"/>:'Sonido'}</span></button>}
-      <a href={p.href} onClick={function(e){e.stopPropagation();}} className="flex flex-col items-center gap-1"><Ico d={SHARE}/><span className="text-[11px] font-semibold">Ver</span></a>
+      <button onClick={function(e){e.stopPropagation();props.onReport(p);}} className="flex flex-col items-center gap-1 text-white/80"><Ico d={FLAG} size={22}/><span className="text-[11px] font-semibold">Reportar</span></button>
     </div>
     <div className="absolute left-4 right-20 bottom-24 z-10 text-white">
-      <div className="flex items-center gap-1.5 mb-1.5"><span className="font-bold text-[16px]">{p.name}{p.edad?(', '+p.edad):''}</span>{p.verificado && <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-300 border border-emerald-400/40 bg-emerald-400/10 rounded-full px-1.5 py-0.5">✓ Verificado</span>}</div>
-      {p.ciudad && <div className="text-[12px] text-white/70 mb-1.5">📍 {p.ciudad}</div>}
-      {p.bio && <p className="text-[14px] leading-snug text-white/95 mb-2 line-clamp-3">{p.bio}</p>}
-      {p.roles && p.roles.length>0 && <div className="flex flex-wrap gap-1.5">{p.roles.map(function(r){return <span key={r} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border border-amber-300/40 text-amber-200 bg-amber-300/10">{ROLES[r]||r}</span>;})}</div>}
+      <div className="flex items-center gap-1.5 mb-1.5"><span className="font-bold text-[16px]">{isPost?('@'+(p.name||'usuario')):(p.name+(p.edad?(', '+p.edad):''))}</span>{p.verificado && <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-300 border border-emerald-400/40 bg-emerald-400/10 rounded-full px-1.5 py-0.5">✓ Verificado</span>}{isPost && <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border border-white/20 text-white/70">video</span>}</div>
+      {!isPost && p.ciudad && <div className="text-[12px] text-white/70 mb-1.5">📍 {p.ciudad}</div>}
+      {(p.caption||p.bio) && <p className="text-[14px] leading-snug text-white/95 mb-2 line-clamp-3">{p.caption||p.bio}</p>}
+      {!isPost && p.roles && p.roles.length>0 && <div className="flex flex-wrap gap-1.5">{p.roles.map(function(r){return <span key={r} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border border-amber-300/40 text-amber-200 bg-amber-300/10">{ROLES[r]||r}</span>;})}</div>}
     </div>
-    <a href={p.href} onClick={function(e){e.stopPropagation();}} className="absolute left-4 bottom-12 z-10 px-5 py-2 rounded-full text-[13px] font-semibold text-neutral-950" style={{background:'linear-gradient(90deg, '+aura[0]+', '+aura[1]+')'}}>Conocer a {p.name} →</a>
+    {!isPost && <a href={p.href} onClick={function(e){e.stopPropagation();}} className="absolute left-4 bottom-12 z-10 px-5 py-2 rounded-full text-[13px] font-semibold text-neutral-950" style={{background:'linear-gradient(90deg, '+aura[0]+', '+aura[1]+')'}}>Conocer a {p.name} →</a>}
   </section>;
 }
 
 function Drawer(props){
   const card=props.card; const [list,setList]=useState(null); const [autor,setAutor]=useState(''); const [texto,setTexto]=useState(''); const [sending,setSending]=useState(false);
-  useEffect(()=>{ (async function(){ try{ let q=sb.from('comentarios').select('*').eq('solicitud_id',card.sid).eq('estado','visible').order('created_at',{ascending:false}).limit(200); q = card.videoUrl ? q.eq('video_url',card.videoUrl) : q.is('video_url',null); const res=await q; setList(res.data||[]); }catch(e){ setList([]); } })(); },[]);
-  async function send(){ const t=texto.trim(); if(!t){return;} setSending(true); const row={solicitud_id:card.sid, video_url:card.videoUrl||null, autor:(autor.trim()||'Anónimo').slice(0,40), texto:t.slice(0,500)}; try{ const res=await sb.from('comentarios').insert(row).select().single(); if(res.error) throw res.error; setList(function(l){return [res.data].concat(l||[]);}); setTexto(''); props.onPosted(card); }catch(e){ alert('No se pudo enviar el comentario.'); } setSending(false); }
+  useEffect(()=>{ (async function(){ try{ let q=sb.from('comentarios').select('*').eq('estado','visible').order('created_at',{ascending:false}).limit(200); if(card.type==='post'){ q=q.eq('post_id',card.postId);} else { q=q.eq('solicitud_id',card.sid); q= card.videoUrl?q.eq('video_url',card.videoUrl):q.is('video_url',null);} const res=await q; setList(res.data||[]); }catch(e){ setList([]); } })(); },[]);
+  async function send(){ const t=texto.trim(); if(!t){return;} setSending(true); const row= card.type==='post' ? {post_id:card.postId, autor:(autor.trim()||'Anónimo').slice(0,40), texto:t.slice(0,500)} : {solicitud_id:card.sid, video_url:card.videoUrl||null, autor:(autor.trim()||'Anónimo').slice(0,40), texto:t.slice(0,500)}; try{ const res=await sb.from('comentarios').insert(row).select().single(); if(res.error) throw res.error; setList(function(l){return [res.data].concat(l||[]);}); setTexto(''); props.onPosted(card); }catch(e){ alert('No se pudo enviar el comentario.'); } setSending(false); }
   const n=list?list.length:0;
   return <div className="absolute inset-0 z-40" onClick={props.onClose}><div className="absolute inset-0 bg-black/50"/><div className="absolute bottom-0 inset-x-0 bg-neutral-900 rounded-t-2xl flex flex-col" style={{height:'68%',animation:'upsheet .22s ease-out'}} onClick={function(e){e.stopPropagation();}}>
     <div className="pt-2 pb-1 flex flex-col items-center"><span className="w-10 h-1 rounded-full bg-white/20"/></div>
-    <div className="px-4 py-2 text-white font-semibold text-center border-b border-white/10">{n} comentario{n===1?'':'s'} · {card.name}</div>
+    <div className="px-4 py-2 text-white font-semibold text-center border-b border-white/10">{n} comentario{n===1?'':'s'}</div>
     <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 no-sb">
       {list===null && <div className="text-white/50 text-center py-6">Cargando…</div>}
       {list && list.length===0 && <div className="text-white/50 text-center py-8">Sé la primera persona en comentar 💬</div>}
@@ -108,6 +107,53 @@ function Drawer(props){
   </div></div>;
 }
 
+function ReportSheet(props){
+  const [sent,setSent]=useState(false);
+  const reasons=['Contenido sexual explícito','Acoso, odio o violencia','Spam o estafa','Involucra a un menor','Otro'];
+  async function send(m){ try{ await sb.from('reportes').insert({ tipo:props.card.type||'perfil', ref_id: props.card.type==='post'?props.card.postId:props.card.sid, motivo:m }); }catch(e){} setSent(true); setTimeout(props.onClose,1500); }
+  return <div className="absolute inset-0 z-50" onClick={props.onClose}><div className="absolute inset-0 bg-black/60"/><div className="absolute bottom-0 inset-x-0 bg-neutral-900 rounded-t-2xl p-5" style={{animation:'upsheet .22s ease-out',paddingBottom:'max(20px, env(safe-area-inset-bottom))'}} onClick={function(e){e.stopPropagation();}}>
+    <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4"/>
+    {sent ? <div className="text-center text-white py-6"><div className="text-3xl mb-2">✓</div>Gracias. Nuestro equipo lo revisa.</div> :
+    <div><h3 className="text-white font-bold text-lg mb-1">Reportar contenido</h3><p className="text-white/60 text-sm mb-4">¿Por qué lo reportás? Lo revisamos y actuamos.</p>
+      {reasons.map(function(r){ return <button key={r} onClick={function(){send(r);}} className="w-full text-left text-white bg-white/5 hover:bg-white/10 rounded-xl px-4 py-3 mb-2 text-[15px]">{r}</button>; })}
+      <button onClick={props.onClose} className="w-full text-white/60 py-2 mt-1">Cancelar</button></div>}
+  </div></div>;
+}
+
+function UploadSheet(props){
+  const me=props.me; const [file,setFile]=useState(null); const [cap,setCap]=useState(''); const [busy,setBusy]=useState(false); const [err,setErr]=useState('');
+  async function pub(){ setErr(''); if(!file){ setErr('Elegí un video.'); return; } if(file.size>60*1024*1024){ setErr('El video pesa demasiado (máximo 60 MB). Grabá uno más corto.'); return; } setBusy(true); try{ await props.onUpload(file, cap); props.onDone(); }catch(e){ setErr('No se pudo subir: '+((e&&e.message)||e)); setBusy(false); } }
+  return <div className="absolute inset-0 z-50" onClick={busy?null:props.onClose}><div className="absolute inset-0 bg-black/60"/><div className="absolute bottom-0 inset-x-0 bg-neutral-900 rounded-t-2xl p-5" style={{animation:'upsheet .22s ease-out',paddingBottom:'max(20px, env(safe-area-inset-bottom))'}} onClick={function(e){e.stopPropagation();}}>
+    <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4"/>
+    {!me ? <div className="text-center text-white py-4"><h3 className="font-bold text-lg mb-2">Subí tu video 🎬</h3><p className="text-white/60 text-sm mb-5">Creá tu cuenta gratis para publicar videos en el feed.</p><a href="cuenta.html" className="block w-full py-3 rounded-full font-semibold text-neutral-950 mb-2" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>Crear cuenta / Ingresar</a><button onClick={props.onClose} className="text-white/60 py-2">Ahora no</button></div>
+    : <div><h3 className="text-white font-bold text-lg mb-3">Subí tu video 🎬</h3>
+      <label className="block w-full mb-3">
+        <span className="text-white/70 text-sm">Elegí o grabá tu video (vertical, hasta 60 MB)</span>
+        <input type="file" accept="video/*" onChange={function(e){setFile(e.target.files[0]||null);}} className="mt-2 w-full text-white/80 text-sm"/>
+      </label>
+      {file && <div className="text-emerald-300 text-sm mb-2">✓ {file.name} ({Math.round(file.size/1048576*10)/10} MB)</div>}
+      <input value={cap} onChange={function(e){setCap(e.target.value);}} maxLength={280} placeholder="Escribí una descripción…" className="w-full bg-white/10 text-white placeholder-white/40 text-[14px] rounded-xl px-4 py-3 mb-3 outline-none"/>
+      {err && <div className="text-rose-300 text-sm mb-2">{err}</div>}
+      <button onClick={pub} disabled={busy} className="w-full py-3 rounded-full font-semibold text-neutral-950 disabled:opacity-50" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>{busy?'Subiendo…':'Publicar en el feed'}</button>
+      <button onClick={busy?null:props.onClose} className="w-full text-white/60 py-2 mt-1">Cancelar</button></div>}
+  </div></div>;
+}
+
+function Menu(props){
+  var Link=function(href,ic,txt,cls){ return React.createElement('a',{href:href,className:'flex items-center gap-3 px-5 py-3.5 text-[15px] border-b border-white/5 '+(cls||'text-white')},React.createElement('span',{className:'text-xl w-6 text-center'},ic),txt); };
+  return <div className="absolute inset-0 z-50" onClick={props.onClose}><div className="absolute inset-0 bg-black/60"/><div className="absolute left-0 top-0 bottom-0 w-72 max-w-[82%] bg-neutral-900 border-r border-white/10 overflow-y-auto no-sb" style={{animation:'menuIn .22s ease-out'}} onClick={function(e){e.stopPropagation();}}>
+    <div className="p-5 flex items-center gap-2 border-b border-white/10"><img src="assets/logo.svg" className="w-9 h-9" alt=""/><span className="text-white font-bold text-[17px]">Aura Experience</span></div>
+    <button onClick={function(){props.onClose();props.onUpload();}} className="flex items-center gap-3 px-5 py-3.5 text-[15px] border-b border-white/5 text-neutral-950 w-full text-left" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}><span className="text-xl w-6 text-center">🎬</span>Subí tu video</button>
+    {Link('cuenta.html','👤','Mi cuenta')}
+    {Link('modelos.html','🔍','Buscar perfiles')}
+    {Link('publicar.html','✍️','Publicá tu perfil')}
+    {Link('nosotros.html','ℹ️','Nosotros')}
+    {Link('contacto.html','✉️','Contacto')}
+    {Link('instalar.html','📲','Instalá la app')}
+    {Link('index.html?web=1','🖥️','Ver sitio completo','text-amber-200')}
+  </div></div>;
+}
+
 function Gate(props){ return <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur flex items-center justify-center p-5"><div className="max-w-sm w-full text-center rounded-3xl border border-white/10 bg-neutral-900 p-8"><img src="assets/logo.svg" className="w-16 h-16 mx-auto mb-4" alt="Aura"/><h2 className="text-white text-2xl font-bold mb-3">Acceso exclusivo +18</h2><p className="text-white/70 text-sm mb-6">Contenido para mayores de edad. Al ingresar confirmás que tenés 18 años o más.</p><button onClick={props.onOk} className="w-full py-3 rounded-full font-semibold text-neutral-950" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>Soy mayor de 18 · Ingresar</button><a href="index.html" className="block mt-3 text-white/50 text-sm">Salir</a></div></div>; }
 
 function ModeBar(props){
@@ -117,69 +163,70 @@ function ModeBar(props){
       <div className="flex bg-black/40 backdrop-blur rounded-full p-1 border border-white/10">
         {MODES.map(function(m){ const on=props.mode===m.k; return <button key={m.k} onClick={function(){props.setMode(m.k);}} className={"px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition "+(on?'text-neutral-950':'text-white/70')} style={on?{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}:{}}>{m.label}</button>; })}
       </div>
-      <div className="flex items-center gap-2 w-8 justify-end"><button onClick={function(){ if(window.auraNotif) window.auraNotif(); }} className="text-white/90 text-[15px]" title="Notificaciones">🔔</button><a href="publicar.html" className="text-white/90 text-[13px] font-semibold">＋</a></div>
+      <div className="flex items-center gap-2 w-16 justify-end">
+        <button onClick={function(){if(window.auraNotif)window.auraNotif();}} className="text-white/90 text-[15px]" title="Avisos">🔔</button>
+        <button onClick={props.onUpload} className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-950 text-lg font-bold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}} title="Subir video">＋</button>
+      </div>
     </div>
-    <div key={props.mode} className="mx-auto mt-2 w-fit px-4 py-1 rounded-full text-[12px] font-bold text-white/95" style={{background:'rgba(0,0,0,.35)',animation:'modepop .25s ease-out'}}>
-      {(MODES.find(function(x){return x.k===props.mode;})||{}).big} <span className="text-white/50 font-normal">· deslizá para cambiar</span>
-    </div>
+    <div key={props.mode} className="mx-auto mt-2 w-fit px-4 py-1 rounded-full text-[12px] font-bold text-white/95" style={{background:'rgba(0,0,0,.35)',animation:'modepop .25s ease-out'}}>{(MODES.find(function(x){return x.k===props.mode;})||{}).big} <span className="text-white/50 font-normal">· deslizá para cambiar</span></div>
   </div>;
 }
 
-function Menu(props){
-  var Link=function(href,ic,txt,cls){ return React.createElement('a',{href:href,className:'flex items-center gap-3 px-5 py-3.5 text-[15px] border-b border-white/5 '+(cls||'text-white')},React.createElement('span',{className:'text-xl w-6 text-center'},ic),txt); };
-  return <div className="absolute inset-0 z-50" onClick={props.onClose}>
-    <div className="absolute inset-0 bg-black/60"/>
-    <div className="absolute left-0 top-0 bottom-0 w-72 max-w-[82%] bg-neutral-900 border-r border-white/10 overflow-y-auto no-sb" style={{animation:'menuIn .22s ease-out'}} onClick={function(e){e.stopPropagation();}}>
-      <div className="p-5 flex items-center gap-2 border-b border-white/10"><img src="assets/logo.svg" className="w-9 h-9" alt=""/><span className="text-white font-bold text-[17px]">Aura Experience</span></div>
-      {Link('modelos.html','🔍','Buscar perfiles')}
-      {Link('publicar.html','✍️','Publicá tu perfil')}
-      {Link('cuenta.html','👤','Mi cuenta')}
-      {Link('nosotros.html','ℹ️','Nosotros')}
-      {Link('contacto.html','✉️','Contacto')}
-      {Link('instalar.html','📲','Instalá la app')}
-      {Link('index.html?web=1','🖥️','Ver sitio completo','text-amber-200')}
-      <div className="px-5 py-4 text-white/40 text-[12px]">Deslizá el feed ⬆⬇ · cambiá de vista deslizando ⬅➡</div>
-    </div>
-  </div>;
-}
 function App(){
   const [rows,setRows]=useState(null);
+  const [posts,setPosts]=useState([]);
   const [soundOn,setSoundOn]=useState(false);
   const [counts,setCounts]=useState({});
   const [cmt,setCmt]=useState(null);
+  const [rep,setRep]=useState(null);
+  const [upl,setUpl]=useState(false);
+  const [me,setMe]=useState(null);
   const [mode,setMode]=useState(function(){ try{return localStorage.getItem('aura_feed_mode')||'mixto';}catch(e){return 'mixto';} });
   const [menu,setMenu]=useState(false);
   const [ok,setOk]=useState(function(){ try{return sessionStorage.getItem('ea_age_ok')==='1';}catch(e){return false;} });
   const touch=useRef({x:0,y:0});
   function changeMode(k){ setMode(k); try{localStorage.setItem('aura_feed_mode',k);}catch(e){} }
   function onTS(e){ const t=e.touches[0]; touch.current={x:t.clientX,y:t.clientY}; }
-  function onTE(e){ if(cmt) return; const t=e.changedTouches[0]; const dx=t.clientX-touch.current.x, dy=t.clientY-touch.current.y; if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){ const i=MODES.findIndex(function(m){return m.k===mode;}); let ni = dx<0 ? i+1 : i-1; if(ni<0)ni=0; if(ni>MODES.length-1)ni=MODES.length-1; if(ni!==i) changeMode(MODES[ni].k); } }
+  function onTE(e){ if(cmt||rep||upl||menu) return; const t=e.changedTouches[0]; const dx=t.clientX-touch.current.x, dy=t.clientY-touch.current.y; if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){ const i=MODES.findIndex(function(m){return m.k===mode;}); let ni=dx<0?i+1:i-1; if(ni<0)ni=0; if(ni>MODES.length-1)ni=MODES.length-1; if(ni!==i) changeMode(MODES[ni].k); } }
+  async function loadPosts(){ try{ const r=await sb.from('feed_posts').select('*').order('created_at',{ascending:false}).limit(200); setPosts(r.data||[]); }catch(e){} }
+  async function loadCounts(){ try{ const cr=await sb.from('comentarios').select('solicitud_id,video_url,post_id').eq('estado','visible').limit(8000); const m={}; (cr.data||[]).forEach(function(c){ const k=c.post_id?('P:'+c.post_id):(c.solicitud_id+'|'+(c.video_url||'')); m[k]=(m[k]||0)+1; }); setCounts(m); }catch(e){} }
   useEffect(()=>{ (async function(){
-    try{
-      const res=await sb.from('perfiles_publicados').select('id,nombre,bio,ciudad,edad,roles,verificado,videos,fotos,puntos').limit(60);
-      setRows(res.data||[]);
-      try{ const cr=await sb.from('comentarios').select('solicitud_id,video_url').eq('estado','visible').limit(5000); const m={}; (cr.data||[]).forEach(function(c){ const k=keyOf(c.solicitud_id,c.video_url); m[k]=(m[k]||0)+1; }); setCounts(m); }catch(e){}
-    }catch(e){ setRows([]); }
+    try{ const res=await sb.from('perfiles_publicados').select('id,nombre,bio,ciudad,edad,roles,verificado,videos,fotos,puntos').limit(60); setRows(res.data||[]);}catch(e){ setRows([]); }
+    loadPosts(); loadCounts();
+    try{ const u=await sb.auth.getUser(); if(u.data.user){ let nom=(u.data.user.email||'').split('@')[0]; try{ const pr=await sb.from('usuarios').select('nombre').eq('id',u.data.user.id).maybeSingle(); if(pr.data&&pr.data.nombre) nom=pr.data.nombre; }catch(e){} setMe({id:u.data.user.id, nombre:nom}); } }catch(e){}
   })(); },[]);
-  function onPosted(card){ const k=keyOf(card.sid,card.videoUrl); setCounts(function(c){ const n=Object.assign({},c); n[k]=(n[k]||0)+1; return n; }); }
+  function onPosted(card){ const k=ckey(card); setCounts(function(c){ const n=Object.assign({},c); n[k]=(n[k]||0)+1; return n; }); }
+  async function uploadVideo(file, caption){
+    const u=await sb.auth.getUser(); if(!u.data.user) throw new Error('Iniciá sesión');
+    const ext=(file.name.split('.').pop()||'mp4').toLowerCase();
+    const path=u.data.user.id+'/'+Date.now()+'.'+ext;
+    const up=await sb.storage.from('posts').upload(path, file, {contentType:file.type||'video/mp4', upsert:false});
+    if(up.error) throw up.error;
+    const url=sb.storage.from('posts').getPublicUrl(path).data.publicUrl;
+    const ins=await sb.from('posts').insert({ user_id:u.data.user.id, video_url:url, caption:caption||null }).select().single();
+    if(ins.error) throw ins.error;
+  }
   if(!ok) return <Gate onOk={function(){ try{sessionStorage.setItem('ea_age_ok','1');}catch(e){} setOk(true); }}/>;
 
   let items=[];
   if(rows){
-    const base=function(r){ return { sid:r.id, name:r.nombre, bio:r.bio, ciudad:r.ciudad, edad:r.edad, roles:r.roles||[], verificado:r.verificado, puntos:r.puntos||0, foto:(Array.isArray(r.fotos)&&r.fotos[0])||null, href:'perfil.html?sid='+r.id }; };
-    const vids=[], fotos=[];
-    rows.forEach(function(r){ const b=base(r); const vv=Array.isArray(r.videos)?r.videos:[]; vv.forEach(function(v){ vids.push(Object.assign({},b,{video:v,videoUrl:v})); }); if(b.foto) fotos.push(Object.assign({},b,{video:null,videoUrl:null})); });
-    vids.sort(function(a,b){return b.puntos-a.puntos;}); fotos.sort(function(a,b){return b.puntos-a.puntos;});
+    const base=function(r){ return { type:'perfil', sid:r.id, name:r.nombre, bio:r.bio, ciudad:r.ciudad, edad:r.edad, roles:r.roles||[], verificado:r.verificado, likes:r.puntos||0, foto:(Array.isArray(r.fotos)&&r.fotos[0])||null, href:'perfil.html?sid='+r.id }; };
+    const pvids=[], fotos=[];
+    rows.forEach(function(r){ const b=base(r); const vv=Array.isArray(r.videos)?r.videos:[]; vv.forEach(function(v){ pvids.push(Object.assign({},b,{video:v,videoUrl:v})); }); if(b.foto) fotos.push(Object.assign({},b,{video:null,videoUrl:null})); });
+    const uposts=posts.map(function(p){ return { type:'post', postId:p.id, name:p.autor, caption:p.caption, video:p.video_url, videoUrl:p.video_url, foto:null, likes:0 }; });
+    const vids=uposts.concat(pvids);
     items = mode==='video'?vids : mode==='foto'?fotos : vids.concat(fotos);
   }
 
   return <div className="h-full w-full flex justify-center bg-black"><div className="relative h-full w-full max-w-[460px] bg-neutral-950" onTouchStart={onTS} onTouchEnd={onTE}>
-    <ModeBar mode={mode} setMode={changeMode} onMenu={function(){setMenu(true);}}/>
+    <ModeBar mode={mode} setMode={changeMode} onMenu={function(){setMenu(true);}} onUpload={function(){setUpl(true);}}/>
     {rows===null && <div className="h-full flex items-center justify-center text-white/60">Cargando feed…</div>}
-    {rows && items.length===0 && <div className="h-full flex flex-col items-center justify-center text-white/60 gap-3 px-8 text-center"><p>{mode==='video'?'Todavía no hay videos.':'No hay publicaciones.'}</p><a href="publicar.html" className="px-5 py-2 rounded-full text-neutral-950 font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>Publicá tu perfil</a></div>}
-    {rows && items.length>0 && <div key={mode} className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">{items.map(function(p,i){return <div key={p.sid+'|'+(p.videoUrl||'')+i} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]} soundOn={soundOn} setSoundOn={setSoundOn} count={counts[keyOf(p.sid,p.videoUrl)]} onComments={setCmt}/></div>;})}</div>}
+    {rows && items.length===0 && <div className="h-full flex flex-col items-center justify-center text-white/60 gap-3 px-8 text-center"><p>{mode==='video'?'Todavía no hay videos. ¡Subí el primero!':'No hay publicaciones.'}</p><button onClick={function(){setUpl(true);}} className="px-5 py-2 rounded-full text-neutral-950 font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>🎬 Subir video</button></div>}
+    {rows && items.length>0 && <div key={mode} className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">{items.map(function(p,i){return <div key={(p.postId||p.sid)+'|'+(p.videoUrl||'')+i} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]} soundOn={soundOn} setSoundOn={setSoundOn} count={counts[ckey(p)]} onComments={setCmt} onReport={setRep}/></div>;})}</div>}
     {cmt && <Drawer card={cmt} onClose={function(){setCmt(null);}} onPosted={onPosted}/>}
-    {menu && <Menu onClose={function(){setMenu(false);}}/>}
+    {rep && <ReportSheet card={rep} onClose={function(){setRep(null);}}/>}
+    {upl && <UploadSheet me={me} onUpload={uploadVideo} onDone={function(){ setUpl(false); loadPosts(); if(mode==='foto') changeMode('video'); }} onClose={function(){setUpl(false);}}/>}
+    {menu && <Menu onClose={function(){setMenu(false);}} onUpload={function(){setUpl(true);}}/>}
   </div></div>;
 }
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
