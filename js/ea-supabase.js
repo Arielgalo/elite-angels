@@ -40,6 +40,8 @@
   }
 
   /* ---------- Publicar ---------- */
+  function fileToB64(file){ return new Promise(function(res,rej){ const r=new FileReader(); r.onload=function(){ const t=String(r.result||''); res(t.slice(t.indexOf(',')+1)); }; r.onerror=rej; r.readAsDataURL(file); }); }
+  async function subirVerificacion(sid, email, frenteFile, dorsoFile){ if(!sid||!frenteFile||!dorsoFile) return false; const f=await comprimirFoto(frenteFile), d=await comprimirFoto(dorsoFile); const fb=await fileToB64(f), db=await fileToB64(d); const resp=await client.functions.invoke('guardar-verificacion',{ body:{ sid:sid, email:email||'', dni_frente:fb, dni_dorso:db } }); if(resp.error) throw resp.error; if(resp.data&&resp.data.error) throw new Error(resp.data.error); return true; }
   async function submitPublish(payload, photoFiles, videoFiles, audioBlob) {
     const m = await subirMedios(photoFiles, videoFiles, audioBlob);
     const sid = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '-' + Math.random().toString(36).slice(2));
@@ -58,6 +60,7 @@
     };
     const { error } = await client.from('solicitudes').insert(row);
     if (error) throw error;
+    if (payload.dniFrente && payload.dniDorso) { try { await subirVerificacion(sid, payload.email, payload.dniFrente, payload.dniDorso); } catch (e) { console.warn('verif', e); } }
     const resp = await client.functions.invoke('crear-pago', { body: { nombre: payload.nombre, precio: payload.precio, solicitud_id: sid } });
     if (resp.error) throw resp.error;
     const ip = resp.data && (resp.data.init_point || resp.data.sandbox_init_point);
@@ -71,7 +74,7 @@
     const resp = await client.functions.invoke('publicar-gratis', { body });
     if (resp.error) throw resp.error;
     if (resp.data && resp.data.error) throw new Error(resp.data.error);
-    if (resp.data && resp.data.ok) return 'ok';
+    if (resp.data && resp.data.ok) { const newId = resp.data.id; if (newId && payload.dniFrente && payload.dniDorso) { try { await subirVerificacion(newId, payload.email, payload.dniFrente, payload.dniDorso); } catch (e) { console.warn('verif', e); } } return 'ok'; }
     throw new Error('No se pudo publicar.');
   }
 

@@ -114,10 +114,18 @@
             </div>
             <div class="field"><label>Descripción / ¿Quién sos?</label><textarea name="bio" placeholder="Contá quién sos y qué ofrecés: compañía, eventos, asistencia, una charla, buenos momentos... y qué te hace especial."></textarea></div>
             <div class="field">
-              <label>Fotos (verificación)</label>
+              <label>Fotos de tu perfil</label>
               <div class="photo-drop" id="photoDrop"><div class="pi">⬆</div><div>Tocá para subir tus fotos</div><div style="font-size:.78rem;margin-top:6px">JPG o PNG · hasta 6 imágenes</div></div>
               <input type="file" id="photoInput" accept="image/*" multiple hidden>
               <div class="photo-preview" id="photoPreview"></div>
+            </div>
+            <div class="field" id="verifTab" style="margin-top:6px;padding:16px;border:1px dashed var(--line);border-radius:14px;background:rgba(212,175,110,.05)">
+              <label style="font-size:1rem;color:var(--gold-bright);margin-bottom:2px">🪪 Verificación de identidad <span style="color:var(--text-mute);font-weight:400;font-size:.85rem">· privado, no se publica</span></label>
+              <p style="color:var(--text-soft);font-size:.84rem;margin:6px 0 12px">Subí tu <strong>DNI (frente y dorso)</strong>. Es <strong>privado</strong>: solo lo ve el equipo de Aura para darte el sello <strong>✓ Verificado</strong>. No aparece en tu perfil ni lo ve nadie más.</p>
+              <div class="field-row">
+                <div class="field"><label>DNI · frente</label><input type="file" id="dniFrente" accept="image/*"><div id="dniFrentePrev" style="font-size:.8rem;color:var(--gold);margin-top:6px"></div></div>
+                <div class="field"><label>DNI · dorso</label><input type="file" id="dniDorso" accept="image/*"><div id="dniDorsoPrev" style="font-size:.8rem;color:var(--gold);margin-top:6px"></div></div>
+              </div>
             </div>
             <div class="field-row">
               <div class="field"><label>Videos cortos (opcional)</label><input type="file" id="videoInput" accept="video/*" multiple><div id="videoPreview" style="font-size:.8rem;color:var(--gold);margin-top:6px"></div></div>
