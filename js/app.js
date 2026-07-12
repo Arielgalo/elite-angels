@@ -10,7 +10,7 @@ const MODELS = [
   { id:'camila', name:'Camila', provincia:'Santa Fe', ciudad:'Rosario', age:23, height:'1.68', cabello:'Rubia', tipo:'Curvas', nacionalidad:'Argentina', precio_cita:40000, price:40000, plan:'top', puntos:18, tone:'#e8cf9a', langs:['Español'], style:['Dulce'], bio:'Encanto y buena charla.' },
   { id:'renata', name:'Renata', provincia:'Buenos Aires', ciudad:'La Plata', age:25, height:'1.71', cabello:'Morena', tipo:'Curvas', nacionalidad:'Argentina', precio_cita:35000, price:35000, plan:'top', puntos:14, tone:'#cfc0a4', langs:['Español'], style:['Apasionada'], bio:'Carácter cálido y cercano.' },
   { id:'lucia', name:'Lucía', provincia:'Mendoza', ciudad:'Mendoza', age:22, height:'1.70', cabello:'Castaña', tipo:'Delgada', nacionalidad:'Argentina', precio_cita:30000, price:30000, plan:'estandar', puntos:6, tone:'#c9a4cf', langs:['Español'], style:['Juvenil'], bio:'Juventud y simpatía.' },
-  { id:'abril', name:'Abril', provincia:'Neuquén', ciudad:'Neuquén', age:27, height:'1.73', cabello:'Pelirroja', tipo:'Curvas', nacionalidad:'Argentina', precio_cita:30000, price:30000, plan:'estandar', puntos:3, tone:'#a4b8cf', langs:['Español'], style:['Sensual'], bio:'Para conocernos sin apuro.' },
+  { id:'abril', name:'Abril', provincia:'Neuquén', ciudad:'Neuquén', age:27, height:'1.73', cabello:'Pelirroja', tipo:'Curvas', nacionalidad:'Argentina', precio_cita:30000, price:30000, plan:'estandar', puntos:3, tone:'#a4b8cf', langs:['Español'], style:['Carismática'], bio:'Para conocernos sin apuro.' },
   { id:'valentina', name:'Valentina', provincia:'Ciudad de Buenos Aires', ciudad:'Recoleta', age:28, height:'1.74', cabello:'Rubia', tipo:'Voluptuosa', nacionalidad:'Argentina', precio_cita:50000, price:50000, plan:'top', puntos:22, tone:'#e8cf9a', langs:['Español','Inglés'], style:['Glamorosa'], bio:'Elegancia y actitud.' },
   { id:'bianca', name:'Bianca', provincia:'Salta', ciudad:'Salta', age:23, height:'1.69', cabello:'Morena', tipo:'Delgada', nacionalidad:'Argentina', precio_cita:30000, price:30000, plan:'estandar', puntos:1, tone:'#cfc0a4', langs:['Español'], style:['Misteriosa'], bio:'Un café y una buena charla.' },
 ];
@@ -100,7 +100,27 @@ function aplicar(){
   const cont=document.getElementById('qCount'); if(cont) cont.textContent = res.length+' resultado'+(res.length===1?'':'s');
 }
 
-function lightbox(src){ let lb=document.getElementById('eaLightbox'); if(!lb){ lb=document.createElement('div'); lb.id='eaLightbox'; lb.className='lightbox'; lb.innerHTML='<span class="lb-close">✕</span><img>'; document.body.appendChild(lb); lb.addEventListener('click',()=>lb.classList.remove('show')); } lb.querySelector('img').src=src; lb.classList.add('show'); }
+function lightbox(src, list, idx){
+  const arr = (Array.isArray(list)&&list.length) ? list.slice() : [src];
+  let start = (typeof idx==='number' && idx>=0) ? idx : Math.max(0, arr.indexOf(src));
+  let lb=document.getElementById('eaLightbox');
+  if(!lb){
+    if(!document.getElementById('lbCss')){ var st=document.createElement('style'); st.id='lbCss'; st.textContent='.lightbox .lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.45);color:#fff;border:none;width:46px;height:46px;border-radius:50%;font-size:28px;line-height:1;cursor:pointer;z-index:3;display:flex;align-items:center;justify-content:center;padding-bottom:3px}.lightbox .lb-prev{left:14px}.lightbox .lb-next{right:14px}.lightbox .lb-dots{position:absolute;bottom:22px;left:0;right:0;display:flex;gap:6px;justify-content:center;z-index:3}.lightbox .lb-dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.4);transition:background .2s}.lightbox .lb-dots i.on{background:#fff}.lightbox img{touch-action:pan-y;user-select:none}'; document.head.appendChild(st); }
+    lb=document.createElement('div'); lb.id='eaLightbox'; lb.className='lightbox';
+    lb.innerHTML='<span class="lb-close">✕</span><button class="lb-nav lb-prev" aria-label="Anterior">‹</button><img alt=""><button class="lb-nav lb-next" aria-label="Siguiente">›</button><div class="lb-dots"></div>';
+    document.body.appendChild(lb);
+    lb.addEventListener('click',(e)=>{ if(e.target===lb||e.target.classList.contains('lb-close')) lb.classList.remove('show'); });
+    lb.querySelector('.lb-prev').addEventListener('click',(e)=>{ e.stopPropagation(); lb._go(-1); });
+    lb.querySelector('.lb-next').addEventListener('click',(e)=>{ e.stopPropagation(); lb._go(1); });
+    let sx=0,sy=0;
+    lb.addEventListener('touchstart',(e)=>{ const t=e.changedTouches[0]; sx=t.clientX; sy=t.clientY; },{passive:true});
+    lb.addEventListener('touchend',(e)=>{ const t=e.changedTouches[0]; const dx=t.clientX-sx, dy=t.clientY-sy; if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)) lb._go(dx<0?1:-1); },{passive:true});
+    document.addEventListener('keydown',(e)=>{ if(!lb.classList.contains('show'))return; if(e.key==='ArrowRight')lb._go(1); else if(e.key==='ArrowLeft')lb._go(-1); else if(e.key==='Escape')lb.classList.remove('show'); });
+    lb._render=function(){ const multi=lb._arr.length>1; lb.querySelector('img').src=lb._arr[lb._i]; lb.querySelector('.lb-prev').style.display=multi?'':'none'; lb.querySelector('.lb-next').style.display=multi?'':'none'; lb.querySelector('.lb-dots').innerHTML= multi? lb._arr.map((_,k)=>'<i class="'+(k===lb._i?'on':'')+'"></i>').join('') : ''; };
+    lb._go=function(d){ lb._i=(lb._i+d+lb._arr.length)%lb._arr.length; lb._render(); };
+  }
+  lb._arr=arr; lb._i=Math.min(Math.max(0,start),arr.length-1); lb._render(); lb.classList.add('show');
+}
 
 function mediaKind(u){ const e=(String(u).split('?')[0].split('.').pop()||'').toLowerCase(); if(['mp3','wav','ogg','oga','m4a','aac','opus','weba','flac'].includes(e)) return 'audio'; return 'video'; }
 async function renderProfile(){
@@ -137,7 +157,7 @@ async function renderProfile(){
   const fotos=(m.fotos&&m.fotos.length)?m.fotos:null;
   const mainImg=document.getElementById('mainImg');
   mainImg.innerHTML=fotos?`<img src="${fotos[0]}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in">`:`<div class="figure" style="position:absolute;inset:0">${figureSVG(m.tone||'#d4af6e')}</div>`;
-  if(fotos) mainImg.querySelector('img').addEventListener('click',()=>lightbox(fotos[0]));
+  if(fotos) mainImg.querySelector('img').addEventListener('click',()=>lightbox(fotos[0], fotos, 0));
   const thumbsEl=document.getElementById('thumbs');
   if(fotos){ thumbsEl.innerHTML=fotos.map((x,i)=>`<div class="thumb${i===0?' active':''}"><img src="${x}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"></div>`).join(''); thumbsEl.querySelectorAll('.thumb').forEach((t,i)=>t.addEventListener('click',()=>{ const im=mainImg.querySelector('img'); if(im) im.src=fotos[i]; thumbsEl.querySelectorAll('.thumb').forEach(x=>x.classList.remove('active')); t.classList.add('active'); })); }
   else { thumbsEl.innerHTML=[m.tone||'#d4af6e','#d9a7a0','#e8cf9a','#a4b8cf'].map(t=>`<div class="thumb"><div class="figure" style="position:absolute;inset:0">${figureSVG(t)}</div></div>`).join(''); }
@@ -145,7 +165,7 @@ async function renderProfile(){
     var _mi=document.getElementById('mainImg'); if(_mi) _mi.style.display='none';
     var _av=document.querySelector('.aura-avatar'); if(_av){ _av.style.display='flex'; _av.style.width='max-content'; _av.style.margin='6px auto 16px'; var _rw=_av.querySelector('span'); if(_rw){ _rw.style.width='140px'; _rw.style.height='140px'; } }
     var _th=document.getElementById('thumbs'); var _hd=document.querySelector('.profile-header'); if(_th&&_hd){ _hd.insertAdjacentElement('afterend', _th); _th.style.margin='2px 0 20px'; }
-    if(fotos&&_th){ _th.querySelectorAll('.thumb').forEach(function(t,i){ t.style.cursor='zoom-in'; t.addEventListener('click',function(){ if(typeof lightbox==='function') lightbox(fotos[i]); }); }); }
+    if(fotos&&_th){ _th.querySelectorAll('.thumb').forEach(function(t,i){ t.style.cursor='zoom-in'; t.addEventListener('click',function(){ if(typeof lightbox==='function') lightbox(fotos[i], fotos, i); }); }); }
   } }catch(e){}
   const allMedia=[...(m.videos||[])]; if(m.audio) allMedia.push(m.audio);
   const vids=allMedia.filter(u=>mediaKind(u)==='video'); const auds=allMedia.filter(u=>mediaKind(u)==='audio');

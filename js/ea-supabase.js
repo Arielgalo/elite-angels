@@ -167,7 +167,7 @@
       ${selUbic(s)}
       <div class="field-row">
         <div class="field"><label>Teléfono / WhatsApp</label><input data-ef="telefono" value="${esc(s.telefono)}"></div>
-        <div class="field"><label>Tu precio de cita (ARS) · encuentro 30 min (lo cobrás vos, directo)</label><input data-ef="precio_cita" type="number" min="15000" value="${esc(s.precio_cita)}" placeholder="15000"></div>
+        <div class="field"><label>Tu tarifa (ARS) · plan de 30 min (lo cobrás vos, directo)</label><input data-ef="precio_cita" type="number" min="15000" value="${esc(s.precio_cita)}" placeholder="15000"></div>
       </div>
       ${isAdmin?`<div class="field-row"><div class="field"><label>Nivel</label><select data-ef="plan"><option value="estandar"${s.plan==='estandar'?' selected':''}>Estándar</option><option value="top"${s.plan==='top'?' selected':''}>Top</option><option value="premium"${s.plan==='premium'?' selected':''}>Premium VIP</option></select></div><div class="field"><label>Puntos (ranking)</label><input data-ef="puntos" type="number" value="${esc(s.puntos)}"></div></div>`:''}
       <div class="field-row">
@@ -185,7 +185,7 @@
       <div class="field"><label>Descripción</label><textarea data-ef="bio">${esc(s.bio)}</textarea></div>
       <div class="field-row">
         <div class="field"><label>Idiomas (separados por coma)</label><input data-ef="idiomas" value="${esc(s.idiomas)}" placeholder="Español, Inglés, Portugués"></div>
-        <div class="field"><label>Estilo (separados por coma)</label><input data-ef="estilo" value="${esc(s.estilo)}" placeholder="Elegante, Culta, Sensual"></div>
+        <div class="field"><label>Estilo (separados por coma)</label><input data-ef="estilo" value="${esc(s.estilo)}" placeholder="Elegante, Culta, Carismática"></div>
       </div>
       <div class="field"><label>Fotos actuales (arrastrá para ordenar · ✕ para borrar)</label>${fotoGrid(s.fotos)}<input type="file" data-ef="addFotos" accept="image/*" multiple style="margin-top:10px"></div>
       <div class="field"><label>Videos para el feed (verticales, tipo TikTok)</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
@@ -401,8 +401,8 @@
         <div class="sp-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">${imgField('logo','Subí tu logo (PNG/SVG)', cfg.logo, 'assets/logo.svg', true)}</div>
         ${H('Portada (Hero)')}
         ${tf('hero_titulo','Título (podés resaltar con <span class="text-gold">palabra</span>)','Experiencias donde el aura se expande')}
-        ${tf('hero_lead','Bajada','Acompañantes de alto nivel...')}
-        ${tf('hero_eyebrow','Texto chico sobre el título (arriba del título grande)','Plataforma inclusiva · modelos, coequipers...')}
+        ${tf('hero_lead','Bajada','Presencia real para lo que necesites...')}
+        ${tf('hero_eyebrow','Texto chico sobre el título (arriba del título grande)','Plataforma inclusiva · coequipers, asistentes y compañía...')}
         ${H('Fotos del carrusel (hasta 4)')}
         <div class="sp-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
           ${[0,1,2,3,4,5,6,7,8].map(i=>`<div class="field" style="margin:0"><div style="aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--line-soft);margin-bottom:6px;background:#1d0e28"><img id="cfg_carimg_${i}" src="${car[i]||defs[i%4]}" style="width:100%;height:100%;object-fit:cover"></div><input type="file" data-car="${i}" accept="image/*" style="font-size:.76rem;color:var(--text-soft)"></div>`).join('')}
@@ -425,7 +425,7 @@
         ${H('Sección «Nosotros»')}
         <div class="sp-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">${imgField('img_nosotros','Imagen de Nosotros', cfg.img_nosotros, 'assets/logo.svg', !cfg.img_nosotros)}</div>
         ${H('Llamado final (CTA)')}
-        <div class="field"><label>Título</label><input id="cfg_cta_title" value="${v('cta_title')}" placeholder="Una velada inolvidable te está esperando"></div>
+        <div class="field"><label>Título</label><input id="cfg_cta_title" value="${v('cta_title')}" placeholder="Tu próximo plan te está esperando"></div>
         ${tf('cta_text','Texto','Contactanos de forma discreta...')}
         ${H('Contacto y redes')}
         <div class="field-row"><div class="field"><label>WhatsApp (solo números con país)</label><input id="cfg_whatsapp" value="${v('whatsapp')}" placeholder="5492214982243"></div><div class="field"><label>Teléfono (como se muestra)</label><input id="cfg_telefono" value="${v('telefono')}" placeholder="+54 9 221 498-2243"></div></div>
