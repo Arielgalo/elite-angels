@@ -112,6 +112,27 @@ async function renderProfile(){
   document.getElementById('crumbName').textContent=m.name;
   document.getElementById('pName').textContent=m.name; if(m.verificado){ const _pn=document.getElementById('pName'); if(_pn && !_pn.parentElement.querySelector('.verif-badge')) _pn.insertAdjacentHTML('afterend','<span class="verif-badge" style="margin-top:6px">✓ Perfil verificado</span>'); }
   document.getElementById('pLoc').textContent=ubicTxt(m);
+  (function(){ try{
+    if(!document.getElementById('auraKf')){ var st=document.createElement('style'); st.id='auraKf'; st.textContent='@keyframes auraspin{to{transform:rotate(360deg)}}'; document.head.appendChild(st); }
+    var fresh = m.created ? ((Date.now()-new Date(m.created).getTime())<86400000) : false;
+    var av = (m.fotos&&m.fotos.length)?m.fotos[0]:null;
+    var ph = document.querySelector('.profile-header'); if(!ph) return;
+    var feedHref = 'feed.html'+(m.sid?('?sid='+m.sid):'');
+    var ringBg = fresh?'conic-gradient(from 0deg,#f59e0b,#f43f5e,#a855f7,#f59e0b)':'#3a3a40';
+    var glow = fresh?'box-shadow:0 0 18px 3px rgba(244,63,94,.55);':'';
+    var spin = fresh?'animation:auraspin 4s linear infinite;':'';
+    var inner = av?('<img src="'+av+'" alt="'+(m.name||'')+'" style="width:100%;height:100%;object-fit:cover">'):('<div style="width:100%;height:100%;background:'+(m.tone||'#d4af6e')+'"></div>');
+    var lbl = fresh?'\u25cf Nuevo \u00b7 tocá para ver':'Ver en el feed';
+    var lblColor = fresh?'#f6a5b4':'var(--text-mute)';
+    var html='<a href="'+feedHref+'" class="aura-avatar" title="Ver a '+(m.name||'')+' en el feed" style="display:inline-flex;flex-direction:column;align-items:center;gap:7px;text-decoration:none;margin-bottom:16px">'
+      +'<span style="position:relative;width:104px;height:104px;display:inline-block">'
+      +'<span style="position:absolute;inset:0;border-radius:50%;background:'+ringBg+';'+glow+spin+'"></span>'
+      +'<span style="position:absolute;inset:'+(fresh?4:3)+'px;border-radius:50%;overflow:hidden;background:#111;display:block">'+inner+'</span>'
+      +'</span>'
+      +'<span style="font-size:.74rem;color:'+lblColor+';letter-spacing:.03em;font-weight:600">'+lbl+'</span></a>';
+    ph.insertAdjacentHTML('afterbegin', html);
+  }catch(e){} })();
+
   document.getElementById('pBio').textContent=m.bio||'';
   const fotos=(m.fotos&&m.fotos.length)?m.fotos:null;
   const mainImg=document.getElementById('mainImg');

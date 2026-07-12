@@ -188,6 +188,7 @@ function App(){
   const touch=useRef({x:0,y:0});
   const scroller=useRef(null);
   function nav(dir){ const el=scroller.current; if(el) el.scrollBy({top: dir*el.clientHeight, behavior:'smooth'}); }
+  useEffect(function(){ if(rows===null) return; try{ const sid=new URLSearchParams(location.search).get('sid'); if(!sid) return; const el=scroller.current; if(!el) return; const t=setTimeout(function(){ const c=el.querySelector('[data-sid="'+sid+'"]'); if(c&&c.scrollIntoView) c.scrollIntoView(); },150); return function(){clearTimeout(t);}; }catch(e){} },[rows,posts,mode]);
   function changeMode(k){ setMode(k); try{localStorage.setItem('aura_feed_mode',k);}catch(e){} }
   function onTS(e){ const t=e.touches[0]; touch.current={x:t.clientX,y:t.clientY}; }
   function onTE(e){ if(cmt||rep||upl||menu) return; const t=e.changedTouches[0]; const dx=t.clientX-touch.current.x, dy=t.clientY-touch.current.y; if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){ const i=MODES.findIndex(function(m){return m.k===mode;}); let ni=dx<0?i+1:i-1; if(ni<0)ni=0; if(ni>MODES.length-1)ni=MODES.length-1; if(ni!==i) changeMode(MODES[ni].k); } }
@@ -225,7 +226,7 @@ function App(){
     <ModeBar mode={mode} setMode={changeMode} onMenu={function(){setMenu(true);}} onUpload={function(){setUpl(true);}}/>
     {rows===null && <div className="h-full flex items-center justify-center text-white/60">Cargando feed…</div>}
     {rows && items.length===0 && <div className="h-full flex flex-col items-center justify-center text-white/60 gap-3 px-8 text-center"><p>{mode==='video'?'Todavía no hay videos. ¡Subí el primero!':'No hay publicaciones.'}</p><button onClick={function(){setUpl(true);}} className="px-5 py-2 rounded-full text-neutral-950 font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>🎬 Subir video</button></div>}
-    {rows && items.length>0 && <div ref={scroller} key={mode} className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">{items.map(function(p,i){return <div key={(p.postId||p.sid)+'|'+(p.videoUrl||'')+i} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]} soundOn={soundOn} setSoundOn={setSoundOn} count={counts[ckey(p)]} onComments={setCmt} onReport={setRep}/></div>;})}</div>}
+    {rows && items.length>0 && <div ref={scroller} key={mode} className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">{items.map(function(p,i){return <div key={(p.postId||p.sid)+'|'+(p.videoUrl||'')+i} data-sid={p.sid||''} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]} soundOn={soundOn} setSoundOn={setSoundOn} count={counts[ckey(p)]} onComments={setCmt} onReport={setRep}/></div>;})}</div>}
     {rows && items.length>0 && <div className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2.5"><button onClick={function(){nav(-1);}} className="w-9 h-9 rounded-full bg-black/45 backdrop-blur text-white text-base flex items-center justify-center active:scale-90">▲</button><button onClick={function(){nav(1);}} className="w-9 h-9 rounded-full bg-black/45 backdrop-blur text-white text-base flex items-center justify-center active:scale-90">▼</button></div>}
     {cmt && <Drawer card={cmt} onClose={function(){setCmt(null);}} onPosted={onPosted}/>}
     {rep && <ReportSheet card={rep} onClose={function(){setRep(null);}}/>}
