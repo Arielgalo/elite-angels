@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Instalá Aura · Aura Experience</title>
 <meta name="description" content="Instalá Aura Experience en tu celular en 3 pasos. iPhone y Android.">
@@ -77,7 +78,7 @@
   <p class="ins-note" id="insNote"></p>
 
   <div class="qr-box">
-    <img src="assets/qr-instalar.png" alt="QR para instalar Aura">
+    <img src="assets/qr-instalar.png?v=2" alt="QR para instalar Aura">
     <div><span class="badge-share">📷 Escaneá o compartí este QR para que la instalen</span></div>
   </div>
 </main>
@@ -94,6 +95,6 @@
   pick(isIOS?'ios':'and');
   if(isStandalone){ document.getElementById('insNote').textContent='✓ Ya tenés Aura instalada. Activá las notificaciones para recibir novedades.'; }
 </script>
-<script src="js/pwa.js?v=1" defer></script>
+<script src="js/pwa.js?v=2" defer></script>
 </body>
 </html>
