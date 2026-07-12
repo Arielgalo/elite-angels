@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
+<script>(function(){try{var g=false;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(/^sb-.*-auth-token$/.test(k)&&localStorage.getItem(k)){g=true;break;}}if(!g)location.replace("cuenta.html?next="+encodeURIComponent(location.pathname.replace(/^\//,"")+location.search));}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Feed · Aura Experience</title>
 <meta name="description" content="Descubrí videos de la comunidad Aura. Subí el tuyo, seguí, comentá y conectá.">
@@ -184,7 +185,7 @@ function App(){
   const [me,setMe]=useState(null);
   const [mode,setMode]=useState(function(){ try{return localStorage.getItem('aura_feed_mode')||'mixto';}catch(e){return 'mixto';} });
   const [menu,setMenu]=useState(false);
-  const [ok,setOk]=useState(function(){ try{return sessionStorage.getItem('ea_age_ok')==='1';}catch(e){return false;} });
+  const [ok,setOk]=useState(true);
   const touch=useRef({x:0,y:0});
   const scroller=useRef(null);
   function nav(dir){ const el=scroller.current; if(el) el.scrollBy({top: dir*el.clientHeight, behavior:'smooth'}); }

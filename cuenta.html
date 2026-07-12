@@ -45,7 +45,7 @@
       <div class="field"><label>Tu nombre o alias</label><input id="rName" placeholder="Cómo querés aparecer"></div>
       <div class="field"><label>Email</label><input id="rEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
       <div class="field"><label>Contraseña</label><input id="rPass" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div>
-      <button class="btn btn-gold" style="width:100%;justify-content:center" onclick="doSignup()">Crear mi cuenta</button>
+      <label style="display:flex;gap:8px;align-items:flex-start;font-size:.82rem;color:var(--text-soft);margin:2px 0 14px;cursor:pointer"><input type="checkbox" id="rAgree" style="width:auto;margin-top:3px;accent-color:var(--gold)"><span>Soy mayor de 18 años y acepto los <a href="terminos.html" target="_blank" style="color:var(--gold)">Términos</a> y la <a href="privacidad.html" target="_blank" style="color:var(--gold)">Privacidad</a>.</span></label><button class="btn btn-gold" style="width:100%;justify-content:center" onclick="doSignup()">Crear mi cuenta</button>
     </div>
     <div id="formLog" style="display:none">
       <div class="field"><label>Email</label><input id="lEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var s=await sb.auth.getSession();
     var session=s.data.session;
     if(session){
+      var _nx=new URLSearchParams(location.search).get('next'); if(_nx){ location.replace(_nx); return; }
       document.getElementById('authBox').style.display='none';
       document.getElementById('userBox').style.display='block';
       document.getElementById('uEmail').textContent=session.user.email;
@@ -104,6 +105,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var email=document.getElementById('rEmail').value.trim();
     var pass=document.getElementById('rPass').value;
     if(!email||pass.length<6){ msg('Poné un email válido y una contraseña de 6+ caracteres.'); return; }
+    var ag=document.getElementById('rAgree'); if(ag && !ag.checked){ msg('Para crear tu cuenta confirmá que sos mayor de 18 y aceptás los Términos y la Privacidad.'); return; }
     msg('Creando tu cuenta…', true);
     try{
       var resp=await fetch('https://fsjrimmurtnrorqhnbwu.supabase.co/functions/v1/registrar',{ method:'POST', headers:{'Content-Type':'application/json','apikey':'sb_publishable_2lWllWfVLWsPnnko4TEa4Q_2sx0kdI4','Authorization':'Bearer sb_publishable_2lWllWfVLWsPnnko4TEa4Q_2sx0kdI4'}, body:JSON.stringify({ email:email, password:pass, nombre:nombre }) });
