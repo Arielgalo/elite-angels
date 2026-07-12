@@ -106,5 +106,5 @@
     b.innerHTML='<span style="flex:1">Para instalar Aura, abrila en tu navegador</span><button onclick="auraInstall()" style="background:#0a0a0c;color:#fff;border:0;border-radius:999px;padding:7px 14px;font-weight:700;font-size:13px">Abrir</button>';
     document.body.appendChild(b);
   }
-  window.addEventListener('load', function(){ renderInApp(); setTimeout(renderBar, 1400); });
+  window.addEventListener('load', function(){ setTimeout(renderBar, 1400); });
 })();
