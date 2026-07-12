@@ -72,7 +72,7 @@ function Card(props){
     {hasVideo && paused && <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><span className="w-16 h-16 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white"><Ico d="M8 5v14l11-7z" fill="#fff" size={30}/></span></div>}
     {hasVideo && active && !soundOn && <button onClick={toggleSound} className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 rounded-full text-neutral-950 text-[13px] font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)',animation:'pulseSound 1.6s ease-in-out infinite'}}><Ico d={SPK_OFF} size={18}/> Tocá para activar el sonido</button>}
     <div className="absolute right-2.5 bottom-32 flex flex-col items-center gap-5 z-10 text-white">
-      <div className="relative flex flex-col items-center"><AuraRing colors={avatarColors} size={54} active={active} fresh={fresh}/>{!isPost && <span className="w-5 h-5 -mt-2 rounded-full flex items-center justify-center text-neutral-950 text-sm font-bold" style={{background:aura[1]}}>+</span>}</div>
+      <a href={isPost?('feed.html?u='+(p.userId||'')):p.href} onClick={function(e){e.stopPropagation();}} className="relative flex flex-col items-center active:scale-95" title="Ver el perfil"><AuraRing colors={avatarColors} size={54} active={active} fresh={fresh}/>{!isPost && <span className="w-5 h-5 -mt-2 rounded-full flex items-center justify-center text-neutral-950 text-sm font-bold" style={{background:aura[1]}}>+</span>}</a>
       <button onClick={function(e){e.stopPropagation();setLiked(function(v){return !v;});}} className="flex flex-col items-center gap-1" style={{color:liked?'#f43f5e':'#fff'}}><Ico d={HEART} fill={liked?'#f43f5e':'none'}/><span className="text-[11px] font-semibold">{(p.likes||0)+(liked?1:0)}</span></button>
       <button onClick={function(e){e.stopPropagation();props.onComments(p);}} className="flex flex-col items-center gap-1"><Ico d={CHAT}/><span className="text-[11px] font-semibold">{props.count?props.count+' ':''}Comentar</span></button>
       {hasVideo && <button onClick={toggleSound} className="flex flex-col items-center gap-1" style={{color:soundOn?'#fbbf24':'#fff'}}><span className="w-11 h-11 rounded-full bg-white/10 backdrop-blur flex items-center justify-center"><Ico d={soundOn?SPK_ON:SPK_OFF} size={22}/></span><span className="text-[11px] font-semibold flex items-center gap-1">{soundOn?<Eq color="#fbbf24"/>:'Sonido'}</span></button>}
@@ -212,19 +212,24 @@ function App(){
   }
   if(!ok) return <Gate onOk={function(){ try{sessionStorage.setItem('ea_age_ok','1');}catch(e){} setOk(true); }}/>;
 
-  let items=[];
+  const uParam=(function(){ try{ return new URLSearchParams(location.search).get('u'); }catch(e){ return null; } })();
+  let items=[]; let uAuthor='';
   if(rows){
     const base=function(r){ return { type:'perfil', sid:r.id, name:r.nombre, bio:r.bio, ciudad:r.ciudad, edad:r.edad, roles:r.roles||[], verificado:r.verificado, likes:r.puntos||0, foto:(Array.isArray(r.fotos)&&r.fotos[0])||null, freshTs: r.created_at? new Date(r.created_at).getTime():0, href:'perfil.html?sid='+r.id }; };
     const pvids=[], fotos=[];
     rows.forEach(function(r){ const b=base(r); const vv=Array.isArray(r.videos)?r.videos:[]; vv.forEach(function(v){ pvids.push(Object.assign({},b,{video:v,videoUrl:v})); }); if(b.foto) fotos.push(Object.assign({},b,{video:null,videoUrl:null})); });
-    const uposts=posts.map(function(p){ return { type:'post', postId:p.id, name:p.autor, caption:p.caption, video:p.video_url, videoUrl:p.video_url, foto:null, likes:0, freshTs: p.created_at? new Date(p.created_at).getTime():0 }; });
+    const uposts=posts.map(function(p){ return { type:'post', postId:p.id, name:p.autor, caption:p.caption, video:p.video_url, videoUrl:p.video_url, foto:null, likes:0, freshTs: p.created_at? new Date(p.created_at).getTime():0, userId:p.user_id }; });
     const vids=uposts.concat(pvids);
-    items = mode==='video'?vids : mode==='foto'?fotos : vids.concat(fotos);
+    if(uParam){ items = uposts.filter(function(x){return x.userId===uParam;}); uAuthor=(items[0]&&items[0].name)||''; }
+    else { items = mode==='video'?vids : mode==='foto'?fotos : vids.concat(fotos); }
   }
 
   return <div className="h-full w-full flex justify-center bg-black"><div className="relative h-full w-full max-w-[460px] bg-neutral-950" onTouchStart={onTS} onTouchEnd={onTE}>
     <ModeBar mode={mode} setMode={changeMode} onMenu={function(){setMenu(true);}} onUpload={function(){setUpl(true);}}/>
     {rows===null && <div className="h-full flex items-center justify-center text-white/60">Cargando feed…</div>}
+    {uParam && <a href="feed.html" onClick={function(e){e.stopPropagation();}} className="absolute top-16 left-3 z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur text-white text-[13px] font-semibold">\u2190 @{uAuthor||'usuario'} \u00b7 sus videos</a>}
+    {rows && uParam && items.length===0 && <div className="h-full flex items-center justify-center text-white/60 px-8 text-center">Esta persona todav\u00eda no subi\u00f3 videos.</div>}
+
     {rows && items.length===0 && <div className="h-full flex flex-col items-center justify-center text-white/60 gap-3 px-8 text-center"><p>{mode==='video'?'Todavía no hay videos. ¡Subí el primero!':'No hay publicaciones.'}</p><button onClick={function(){setUpl(true);}} className="px-5 py-2 rounded-full text-neutral-950 font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>🎬 Subir video</button></div>}
     {rows && items.length>0 && <div ref={scroller} key={mode} className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">{items.map(function(p,i){return <div key={(p.postId||p.sid)+'|'+(p.videoUrl||'')+i} data-sid={p.sid||''} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]} soundOn={soundOn} setSoundOn={setSoundOn} count={counts[ckey(p)]} onComments={setCmt} onReport={setRep}/></div>;})}</div>}
     {rows && items.length>0 && <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2.5"><button onClick={function(){nav(-1);}} className="w-9 h-9 rounded-full bg-black/45 backdrop-blur text-white text-base flex items-center justify-center active:scale-90">▲</button><button onClick={function(){nav(1);}} className="w-9 h-9 rounded-full bg-black/45 backdrop-blur text-white text-base flex items-center justify-center active:scale-90">▼</button></div>}
