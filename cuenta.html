@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Mi cuenta · Aura Experience</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0a0c">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Aura">
+<link rel="stylesheet" href="css/styles.css?v=6">
+<style>
+  .cta-wrap{max-width:440px;margin:0 auto;padding:26px 18px 80px}
+  .cta-card{background:var(--black-card);border:1px solid var(--line);border-radius:18px;padding:24px 20px}
+  .cta-tabs{display:flex;gap:8px;margin-bottom:20px}
+  .cta-tabs button{flex:1;padding:11px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--text-soft);font-family:inherit;font-weight:600;cursor:pointer}
+  .cta-tabs button.on{background:linear-gradient(90deg,#f59e0b,#f43f5e);color:#0a0a0c;border-color:transparent}
+  .cta-wrap .field{margin-bottom:14px}
+  .cta-wrap label{display:block;font-size:.82rem;color:var(--text-soft);margin-bottom:6px}
+  .cta-wrap input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--text);font-family:inherit;font-size:.95rem}
+  .cta-msg{font-size:.86rem;margin-top:12px;min-height:18px}
+  .ava{width:76px;height:76px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;font-size:2rem;font-weight:700;color:#0a0a0c;background:linear-gradient(135deg,#f59e0b,#f43f5e)}
+</style>
+</head>
+<body>
+<header class="header" id="header"><div class="container nav">
+  <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-mark" alt="Aura"><span class="logo-text">Aura <em style="font-style:normal;color:var(--gold)">Experience</em></span></a>
+  <a href="feed.html" class="btn btn-ghost" style="padding:9px 18px">Feed</a>
+</div></header>
+
+<main class="cta-wrap">
+  <div class="section-head reveal in" style="text-align:center;margin:10px 0 20px"><span class="eyebrow">Tu espacio en Aura</span><h1 style="font-size:1.9rem">Mi cuenta</h1></div>
+
+  <div class="cta-card" id="authBox">
+    <div class="cta-tabs">
+      <button id="tabReg" class="on" onclick="tab('reg')">Crear cuenta</button>
+      <button id="tabLog" onclick="tab('log')">Ingresar</button>
+    </div>
+    <div id="formReg">
+      <div class="field"><label>Tu nombre o alias</label><input id="rName" placeholder="Cómo querés aparecer"></div>
+      <div class="field"><label>Email</label><input id="rEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
+      <div class="field"><label>Contraseña</label><input id="rPass" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div>
+      <button class="btn btn-gold" style="width:100%;justify-content:center" onclick="doSignup()">Crear mi cuenta</button>
+    </div>
+    <div id="formLog" style="display:none">
+      <div class="field"><label>Email</label><input id="lEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
+      <div class="field"><label>Contraseña</label><input id="lPass" type="password" placeholder="Tu contraseña" autocomplete="current-password"></div>
+      <button class="btn btn-gold" style="width:100%;justify-content:center" onclick="doLogin()">Ingresar</button>
+      <p style="text-align:center;margin-top:12px"><a href="#" onclick="doReset();return false" style="color:var(--gold);font-size:.85rem">¿Olvidaste tu contraseña?</a></p>
+    </div>
+    <p class="cta-msg" id="authMsg"></p>
+    <p style="color:var(--text-mute);font-size:.78rem;text-align:center;margin-top:14px">Al crear tu cuenta aceptás ser mayor de 18 y las condiciones de uso.</p>
+  </div>
+
+  <div class="cta-card" id="userBox" style="display:none;text-align:center">
+    <div class="ava" id="uAva">A</div>
+    <div class="field" style="text-align:left"><label>Nombre o alias</label><input id="uName" placeholder="Tu nombre"></div>
+    <div class="field" style="text-align:left"><label>Sobre vos (opcional)</label><input id="uBio" placeholder="Una línea sobre vos"></div>
+    <p style="color:var(--text-mute);font-size:.8rem;margin:2px 0 14px" id="uEmail"></p>
+    <button class="btn btn-gold" style="width:100%;justify-content:center;margin-bottom:10px" onclick="saveProfile()">Guardar cambios</button>
+    <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="doLogout()">Cerrar sesión</button>
+    <p class="cta-msg" id="userMsg"></p>
+    <div style="border-top:1px solid var(--line-soft);margin-top:18px;padding-top:16px"><a href="publicar.html" class="btn btn-ghost" style="width:100%;justify-content:center">✍️ Publicá tu perfil y ganá</a></div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/ea-supabase.js?v=13" defer></script>
+<script src="js/pwa.js?v=3" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function(){
+  var sb = window.eaSupa && window.eaSupa.client;
+  if(!sb){ document.getElementById('authMsg').textContent='Error de carga. Recargá la página.'; return; }
+  var msg=function(t,ok){ var e=document.getElementById('authMsg'); e.textContent=t||''; e.style.color= ok?'#7be3a0':'#e08aa0'; };
+  var umsg=function(t){ var e=document.getElementById('userMsg'); e.textContent=t||''; e.style.color='#7be3a0'; };
+  window.tab=function(w){ document.getElementById('tabReg').classList.toggle('on',w==='reg'); document.getElementById('tabLog').classList.toggle('on',w==='log'); document.getElementById('formReg').style.display=w==='reg'?'block':'none'; document.getElementById('formLog').style.display=w==='log'?'block':'none'; msg(''); };
+
+  async function refresh(){
+    var s=await sb.auth.getSession();
+    var session=s.data.session;
+    if(session){
+      document.getElementById('authBox').style.display='none';
+      document.getElementById('userBox').style.display='block';
+      document.getElementById('uEmail').textContent=session.user.email;
+      var u=await sb.from('usuarios').select('*').eq('id',session.user.id).maybeSingle();
+      var row=u.data||{};
+      var nom=row.nombre||(session.user.email||'').split('@')[0];
+      document.getElementById('uName').value=nom;
+      document.getElementById('uBio').value=row.bio||'';
+      document.getElementById('uAva').textContent=(nom||'A').slice(0,1).toUpperCase();
+    } else {
+      document.getElementById('authBox').style.display='block';
+      document.getElementById('userBox').style.display='none';
+    }
+  }
+
+  window.doSignup=async function(){
+    var nombre=document.getElementById('rName').value.trim();
+    var email=document.getElementById('rEmail').value.trim();
+    var pass=document.getElementById('rPass').value;
+    if(!email||pass.length<6){ msg('Poné un email válido y una contraseña de 6+ caracteres.'); return; }
+    msg('Creando tu cuenta…', true);
+    var r=await sb.auth.signUp({ email:email, password:pass, options:{ data:{ nombre:nombre||email.split('@')[0] } } });
+    if(r.error){ msg(r.error.message); return; }
+    if(r.data.session){ msg('¡Cuenta creada! 🎉', true); refresh(); }
+    else { msg('¡Casi! Te enviamos un email para confirmar tu cuenta. Revisá tu casilla (y spam) y volvé a entrar.', true); }
+  };
+  window.doLogin=async function(){
+    var email=document.getElementById('lEmail').value.trim(); var pass=document.getElementById('lPass').value;
+    if(!email||!pass){ msg('Completá email y contraseña.'); return; }
+    msg('Ingresando…', true);
+    var r=await sb.auth.signInWithPassword({ email:email, password:pass });
+    if(r.error){ msg('Email o contraseña incorrectos, o falta confirmar el email.'); return; }
+    refresh();
+  };
+  window.doReset=async function(){
+    var email=(document.getElementById('lEmail').value||'').trim();
+    if(!email){ msg('Escribí tu email arriba y tocá de nuevo.'); return; }
+    var r=await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin+'/cuenta.html' });
+    if(r.error){ msg(r.error.message); return; }
+    msg('Te enviamos un email para restablecer la contraseña.', true);
+  };
+  window.saveProfile=async function(){
+    var s=await sb.auth.getSession(); if(!s.data.session) return;
+    var nombre=document.getElementById('uName').value.trim(); var bio=document.getElementById('uBio').value.trim();
+    var r=await sb.from('usuarios').update({ nombre:nombre, bio:bio }).eq('id', s.data.session.user.id);
+    if(r.error){ umsg(''); document.getElementById('userMsg').style.color='#e08aa0'; document.getElementById('userMsg').textContent='Error: '+r.error.message; return; }
+    document.getElementById('uAva').textContent=(nombre||'A').slice(0,1).toUpperCase();
+    umsg('✓ Guardado');
+  };
+  window.doLogout=async function(){ await sb.auth.signOut(); refresh(); };
+
+  refresh();
+});
+</script>
+</body>
+</html>
