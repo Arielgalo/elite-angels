@@ -85,7 +85,7 @@
               <div class="field"><label>Edad</label><input type="number" name="edad" min="18" max="70" placeholder="22" required><div class="msg">Debés ser mayor de 18</div></div>
             </div>
             <div class="field-row">
-              <div class="field"><label>Género</label><select name="genero"><option value="">Sin especificar</option><option>Mujer</option><option>Varón</option><option>No binarie</option><option>Trans femenina</option><option>Trans masculino</option><option>Crossdresser</option><option>Otro / prefiero no decir</option></select></div><div class="field" style="grid-column:1/-1"><label>¿Qué ofrecés? Activá tus roles — cuantos más, más propuestas y más plata por semana</label><div class="roles-pick"><label class="role-chk"><input type="checkbox" name="rol" value="citas"> <span>💛 Citas &amp; Compañía</span></label><label class="role-chk"><input type="checkbox" name="rol" value="amigos"> <span>🧡 Amigos &amp; Salidas</span></label><label class="role-chk"><input type="checkbox" name="rol" value="eventos"> <span>💙 Eventos, Roles &amp; Presencia</span></label></div><p class="role-hint">Tip: los perfiles con los 3 roles activos reciben hasta 3× más contactos.</p></div>
+              <div class="field"><label>Género</label><select name="genero" id="selGenero"><option value="">Sin especificar</option><option>Mujer</option><option>Varón</option><option>No binarie</option><option>Trans femenina</option><option>Trans masculino</option><option>Crossdresser</option><option>Otro / prefiero no decir</option></select></div><div class="field" style="grid-column:1/-1"><label>¿Qué ofrecés? Activá tus roles — cuantos más, más propuestas y más plata por semana</label><div class="roles-pick"><label class="role-chk"><input type="checkbox" name="rol" value="citas"> <span>💛 Citas &amp; Compañía</span></label><label class="role-chk"><input type="checkbox" name="rol" value="amigos"> <span>🧡 Amigos &amp; Salidas</span></label><label class="role-chk"><input type="checkbox" name="rol" value="eventos"> <span>💙 Eventos, Roles &amp; Presencia</span></label></div><p class="role-hint">Tip: los perfiles con los 3 roles activos reciben hasta 3× más contactos.</p></div>
               <div class="field"></div>
             </div>
             <div class="field-row">
@@ -98,11 +98,11 @@
             </div>
             <div class="field-row">
               <div class="field"><label>Nacionalidad</label><input type="text" name="nacionalidad" placeholder="Argentina"></div>
-              <div class="field"><label>Cabello</label><select name="cabello"><option value="">Seleccionar</option><option>Rubia</option><option>Morena</option><option>Castaña</option><option>Pelirroja</option><option>Otro</option></select></div>
+              <div class="field"><label>Cabello</label><select name="cabello" id="selCabello"><option value="">Seleccionar</option></select></div>
             </div>
             <div class="field-row">
-              <div class="field"><label>Tipo de cuerpo</label><select name="tipo_cuerpo"><option value="">Seleccionar</option><option>Delgada</option><option>Atlética</option><option>Curvas</option><option>Voluptuosa</option></select></div>
-              <div class="field"><label>Busto</label><input type="text" name="busto" placeholder="90 cm"></div>
+              <div class="field"><label>Tipo de cuerpo</label><select name="tipo_cuerpo" id="selCuerpo"><option value="">Seleccionar</option></select></div>
+              <div class="field" id="bustoField"><label>Busto</label><input type="text" name="busto" placeholder="90 cm"></div>
             </div>
             <div class="field-row">
               <div class="field"><label>Cintura</label><input type="text" name="cintura" placeholder="60 cm"></div>
@@ -140,6 +140,7 @@
             <div class="plan-grid">
               <label class="plan-card"><input type="radio" name="plan" value="d15" checked><span class="plan-name">15 días</span><span class="plan-price">$15.000</span><span class="plan-desc">Publicá tu perfil por 15 días. Ideal para empezar.</span></label>
               <label class="plan-card premium"><input type="radio" name="plan" value="d30"><span class="plan-name">30 días · mejor valor</span><span class="plan-price">$30.000</span><span class="plan-desc">El doble de tiempo y más visibilidad. Aparecés todo el mes.</span></label>
+              <label class="plan-card"><input type="radio" name="plan" value="gratis"><span class="plan-name">Gratis</span><span class="plan-price">$0</span><span class="plan-desc">Participás solo con tu perfil (sin cita paga). Se publica al instante, sin espera ni moderación.</span></label>
             </div>
             <div class="field-row" id="diasExtraField">
               <div class="field"><label>Puntos para destacarte y subir a Top (+$1.000 c/u)</label><input type="number" id="puntosInput" min="0" step="1" value="0"></div>
@@ -217,9 +218,9 @@
 <a href="https://wa.me/5492214982243" class="wa-float" aria-label="WhatsApp"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.8-2-.9-.3-.1-.5-.2-.7.2-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.6-.8-2.6-1.4-3.7-3.2-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.3 5.2 4.6 2 .8 2.7.9 3.7.8.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.2-.3-.3-.6-.4z"/><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-2.9.8.8-2.8-.2-.3A8.2 8.2 0 1 1 12 20.2z" fill-rule="evenodd"/></svg></a>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="js/ea-supabase.js?v=13" defer></script>
+<script src="js/ea-supabase.js?v=14" defer></script>
 <script src="js/locations.js" defer></script>
-<script src="js/app.js?v=11" defer></script>
+<script src="js/app.js?v=12" defer></script>
 <script src="js/pwa.js?v=3" defer></script>
 </body>
 </html>

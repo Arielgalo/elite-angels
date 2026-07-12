@@ -65,6 +65,16 @@
     throw new Error((resp.data && resp.data.error) || 'No se pudo iniciar el pago.');
   }
 
+  async function submitPublishGratis(payload, photoFiles, videoFiles, audioBlob) {
+    const m = await subirMedios(photoFiles, videoFiles, audioBlob);
+    const body = { nombre: payload.nombre, edad: payload.edad, pais: payload.pais, provincia: payload.provincia, ciudad: payload.ciudad, altura: payload.altura, busto: payload.busto, cintura: payload.cintura, cola: payload.cola, nacionalidad: payload.nacionalidad, cabello: payload.cabello, tipo_cuerpo: payload.tipo_cuerpo, telefono: payload.telefono, email: payload.email, bio: payload.bio, genero: payload.genero, roles: payload.roles || [], fotos: m.fotos, videos: m.videos, audio: m.audio };
+    const resp = await client.functions.invoke('publicar-gratis', { body });
+    if (resp.error) throw resp.error;
+    if (resp.data && resp.data.error) throw new Error(resp.data.error);
+    if (resp.data && resp.data.ok) return 'ok';
+    throw new Error('No se pudo publicar.');
+  }
+
   /* ---------- Lecturas públicas ---------- */
   async function getPublicados() { const { data, error } = await client.from('perfiles_publicados').select('*').order('created_at', { ascending: false }); return error ? [] : data; }
   async function getPerfil(id) { const { data, error } = await client.from('perfiles_publicados').select('*').eq('id', id).single(); return error ? null : data; }
@@ -532,5 +542,5 @@
     if(r.error) throw r.error; if(r.data&&r.data.error) throw new Error(r.data.error); return r.data;
   }
   function estadoVerifLbl(e){ return ({sin_verificar:'Sin verificar', en_revision:'En revisión ⏳', verificado:'Verificado ✓', rechazado:'Rechazado — volvé a subir'})[e||'sin_verificar']||'Sin verificar'; }
-  window.eaSupa = { client, submitPublish, crearPagoPuntos, getPublicados, getPerfil, getResenas, submitResena, initPanel, initPortal, ubic, fmt, getConfig, saveConfig };
+  window.eaSupa = { client, submitPublish, submitPublishGratis, crearPagoPuntos, getPublicados, getPerfil, getResenas, submitResena, initPanel, initPortal, ubic, fmt, getConfig, saveConfig };
 })();
