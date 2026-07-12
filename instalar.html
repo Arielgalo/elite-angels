@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Instalá Aura · Aura Experience</title>
+<meta name="description" content="Instalá Aura Experience en tu celular en 3 pasos. iPhone y Android.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0a0c">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/styles.css?v=6">
+<style>
+  .ins-wrap{max-width:720px;margin:0 auto;padding:28px 18px 80px}
+  .ins-hero{text-align:center;margin:18px 0 26px}
+  .ins-hero img{width:72px;height:72px;margin-bottom:14px}
+  .ins-hero h1{font-size:2.1rem;margin-bottom:8px}
+  .ins-hero p{color:var(--text-soft);max-width:460px;margin:0 auto}
+  .seg{display:flex;gap:8px;justify-content:center;margin:22px 0}
+  .seg button{padding:11px 22px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--text-soft);font-family:inherit;font-size:.95rem;font-weight:600;cursor:pointer;transition:.2s}
+  .seg button.on{background:linear-gradient(90deg,#f59e0b,#f43f5e);color:#0a0a0c;border-color:transparent}
+  .steps{display:none}
+  .steps.on{display:block}
+  .step{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--line-soft)}
+  .step .n{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-weight:700;color:#0a0a0c;background:linear-gradient(135deg,#f59e0b,#f43f5e)}
+  .step .t{font-size:1rem;color:var(--text);line-height:1.5}
+  .step .t b{color:var(--gold-bright)}
+  .ins-cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:26px 0 6px}
+  .ins-note{text-align:center;color:var(--text-mute);font-size:.85rem;margin-top:8px}
+  .qr-box{text-align:center;margin:34px 0 0;padding-top:26px;border-top:1px solid var(--line-soft)}
+  .qr-box img{width:180px;height:180px;border-radius:14px;background:#fff;padding:8px}
+  .badge-share{display:inline-flex;gap:6px;align-items:center;background:var(--black-card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;color:var(--text-soft);font-size:.85rem;margin-top:10px}
+</style>
+</head>
+<body>
+<header class="header" id="header">
+  <div class="container nav">
+    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-mark" alt="Aura"><span class="logo-text">Aura <em style="font-style:normal;color:var(--gold)">Experience</em></span></a>
+    <a href="index.html" class="btn btn-ghost" style="padding:9px 18px">← Inicio</a>
+  </div>
+</header>
+
+<main class="ins-wrap">
+  <div class="ins-hero">
+    <img src="assets/logo.svg" alt="Aura">
+    <h1>Instalá <span class="text-gold">Aura</span> en tu celu</h1>
+    <p>Tené Aura como una app: ícono en tu pantalla, a pantalla completa y con avisos. Se instala en 3 pasos, gratis y en segundos.</p>
+  </div>
+
+  <div class="seg">
+    <button id="segIos" onclick="pick('ios')">🍏 iPhone</button>
+    <button id="segAnd" onclick="pick('and')">🤖 Android</button>
+  </div>
+
+  <div class="steps" id="stepsIos">
+    <div class="step"><div class="n">1</div><div class="t">Abrí <b>www.auraexperience.com.ar</b> en <b>Safari</b> (en iPhone tiene que ser Safari).</div></div>
+    <div class="step"><div class="n">2</div><div class="t">Tocá el botón <b>Compartir</b> — el cuadradito con la flecha hacia arriba <b>↑</b>, abajo en el centro.</div></div>
+    <div class="step"><div class="n">3</div><div class="t">Deslizá el menú y elegí <b>"Agregar a inicio"</b> (Add to Home Screen).</div></div>
+    <div class="step"><div class="n">4</div><div class="t">Tocá <b>Agregar</b>. Ya vas a ver el ícono de Aura en tu pantalla. 🎉</div></div>
+    <div class="step"><div class="n">5</div><div class="t">Abrí Aura <b>desde ese ícono</b> y activá las <b>notificaciones 🔔</b> para no perderte nada.</div></div>
+  </div>
+
+  <div class="steps" id="stepsAnd">
+    <div class="step"><div class="n">1</div><div class="t">Abrí la web en <b>Chrome</b>.</div></div>
+    <div class="step"><div class="n">2</div><div class="t">Tocá el botón <b>"Instalar ahora"</b> de acá abajo. (O el menú <b>⋮</b> → <b>"Instalar app"</b> / "Agregar a pantalla de inicio".)</div></div>
+    <div class="step"><div class="n">3</div><div class="t">Confirmá <b>Instalar</b>. Aparece el ícono de Aura en tu pantalla. 🎉</div></div>
+    <div class="step"><div class="n">4</div><div class="t">Abrí Aura <b>desde el ícono</b> y activá las <b>notificaciones 🔔</b>.</div></div>
+  </div>
+
+  <div class="ins-cta">
+    <button class="btn btn-gold" onclick="if(window.auraInstall)auraInstall()">📲 Instalar ahora</button>
+    <button class="btn btn-ghost" onclick="if(window.auraNotif)auraNotif()">🔔 Activar notificaciones</button>
+  </div>
+  <p class="ins-note" id="insNote"></p>
+
+  <div class="qr-box">
+    <img src="assets/qr-instalar.png" alt="QR para instalar Aura">
+    <div><span class="badge-share">📷 Escaneá o compartí este QR para que la instalen</span></div>
+  </div>
+</main>
+
+<script>
+  function pick(p){
+    document.getElementById('segIos').classList.toggle('on', p==='ios');
+    document.getElementById('segAnd').classList.toggle('on', p==='and');
+    document.getElementById('stepsIos').classList.toggle('on', p==='ios');
+    document.getElementById('stepsAnd').classList.toggle('on', p==='and');
+  }
+  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  var isStandalone=window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+  pick(isIOS?'ios':'and');
+  if(isStandalone){ document.getElementById('insNote').textContent='✓ Ya tenés Aura instalada. Activá las notificaciones para recibir novedades.'; }
+</script>
+<script src="js/pwa.js?v=1" defer></script>
+</body>
+</html>
