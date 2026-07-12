@@ -249,7 +249,7 @@
   async function adminBoard(root, email) {
     root.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
       <span style="color:var(--text-soft);font-size:.88rem">Admin: <strong style="color:var(--gold)">${esc(email)}</strong></span>
-      <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nuevo perfil</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="admVerif"></div><div id="eaBoard"></div>`;
+      <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nuevo perfil</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="admVerif"></div><div id="admReportes"></div><div id="eaBoard"></div>`;
     document.getElementById('aOut').addEventListener('click', async () => { await client.auth.signOut(); location.reload(); });
     document.getElementById('aNew').addEventListener('click', async () => {
       const nsid = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '');
@@ -276,6 +276,39 @@
       el.querySelectorAll('.vf-ok,.vf-no').forEach(b=>b.addEventListener('click', async ()=>{ b.disabled=true; b.textContent='…'; const nuevo=b.classList.contains('vf-no')?'rechazado':'verificado'; try{ await client.from('solicitudes').update({ verif_estado:nuevo }).eq('id', b.dataset.id); renderAdmVerif(); }catch(e){ alert('Error: '+(e.message||e)); b.disabled=false; } }));
     }
     renderAdmVerif();
+    async function renderAdmReportes(){
+      const el=document.getElementById('admReportes'); if(!el) return;
+      const { data } = await client.from('reportes').select('*').eq('estado','pendiente').order('created_at',{ascending:false}).limit(100);
+      const reps=data||[]; if(!reps.length){ el.innerHTML=''; return; }
+      const cards=[];
+      for(const r of reps){
+        let preview='', tipoLbl='', extraBtns='';
+        if(r.tipo==='post'){
+          tipoLbl='Video de usuario';
+          const { data:pr } = await client.from('posts').select('id,video_url,caption,user_id,estado').eq('id', r.ref_id).maybeSingle();
+          if(pr){ const oculto=pr.estado!=='visible';
+            preview=`<video src="${esc(pr.video_url)}#t=0.1" muted playsinline preload="metadata" style="width:120px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--line)"></video><div style="font-size:.82rem;color:var(--text-soft);margin-top:4px">${esc(pr.caption||'')}</div>${oculto?'<div style="color:#f6a5b4;font-size:.78rem">● ya oculto</div>':''}`;
+            extraBtns=`<button class="btn btn-ghost rp-hide" data-ref="${esc(r.ref_id)}" data-cur="${esc(pr.estado)}" style="padding:7px 12px">${oculto?'Mostrar':'Ocultar'}</button><button class="btn btn-ghost rp-ban" data-user="${esc(pr.user_id)}" style="padding:7px 12px">Bloquear autor</button><button class="btn btn-ghost rp-del" data-ref="${esc(r.ref_id)}" style="padding:7px 12px;color:#f66">Eliminar</button>`;
+          } else { preview='<span style="color:var(--text-mute)">Contenido ya eliminado</span>'; }
+        } else {
+          tipoLbl='Perfil';
+          const { data:so } = await client.from('solicitudes').select('id,nombre,numero,fotos,estado').eq('id', r.ref_id).maybeSingle();
+          if(so){ const oculto=so.estado!=='publicado'; const ft=(Array.isArray(so.fotos)&&so.fotos[0])||'';
+            preview=`${ft?`<img src="${esc(ft)}" style="width:90px;height:110px;object-fit:cover;border-radius:8px;border:1px solid var(--line)">`:''}<div style="font-size:.85rem;margin-top:4px">${esc(so.nombre||'Perfil')} <span style="color:var(--text-mute)">${esc(so.numero||'')}</span></div>${oculto?'<div style="color:#f6a5b4;font-size:.78rem">● ya oculto</div>':''}`;
+            extraBtns=`<button class="btn btn-ghost rp-hideperfil" data-ref="${esc(r.ref_id)}" data-cur="${esc(so.estado)}" style="padding:7px 12px">${oculto?'Republicar':'Ocultar perfil'}</button>`;
+          } else { preview='<span style="color:var(--text-mute)">Perfil no encontrado</span>'; }
+        }
+        cards.push(`<div style="padding:12px 0;border-bottom:1px solid var(--line-soft)"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start"><div><span style="font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-mute)">${tipoLbl}</span><div style="font-weight:700;color:#f6a5b4">${esc(r.motivo||'')}</div><div style="font-size:.74rem;color:var(--text-mute)">${new Date(r.created_at).toLocaleString('es-AR')}</div></div><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${extraBtns}<button class="btn btn-gold rp-ok" data-id="${esc(r.id)}" style="padding:7px 12px">Descartar</button></div></div><div style="margin-top:10px;display:flex;flex-direction:column;gap:2px">${preview}</div></div>`);
+      }
+      el.innerHTML=`<div class="form-card" style="margin-bottom:18px;border:1px solid #f43f5e"><h3 style="color:#f6a5b4;font-size:1.2rem;margin-bottom:6px">🚩 Reportes pendientes (${reps.length})</h3><p style="color:var(--text-soft);font-size:.84rem;margin-bottom:8px">Revisá y actuá: ocultar/eliminar el contenido o bloquear al autor. Descartá si no corresponde. Las tiendas piden actuar dentro de las 24 h.</p>${cards.join('')}</div>`;
+      const done=()=>renderAdmReportes();
+      el.querySelectorAll('.rp-ok').forEach(b=>b.addEventListener('click', async()=>{ b.disabled=true; try{ await client.from('reportes').update({estado:'descartado'}).eq('id',b.dataset.id); done(); }catch(e){ alert('Error: '+(e.message||e)); b.disabled=false; } }));
+      el.querySelectorAll('.rp-hide').forEach(b=>b.addEventListener('click', async()=>{ b.disabled=true; try{ const nuevo=(b.dataset.cur==='visible')?'oculto':'visible'; await client.from('posts').update({estado:nuevo}).eq('id',b.dataset.ref); await client.from('reportes').update({estado:'resuelto'}).eq('tipo','post').eq('ref_id',b.dataset.ref); done(); }catch(e){ alert('Error: '+(e.message||e)); b.disabled=false; } }));
+      el.querySelectorAll('.rp-del').forEach(b=>b.addEventListener('click', async()=>{ if(!confirm('¿Eliminar el video definitivamente?')) return; b.disabled=true; try{ await client.from('posts').delete().eq('id',b.dataset.ref); await client.from('reportes').update({estado:'resuelto'}).eq('tipo','post').eq('ref_id',b.dataset.ref); done(); }catch(e){ alert('Error: '+(e.message||e)); b.disabled=false; } }));
+      el.querySelectorAll('.rp-ban').forEach(b=>b.addEventListener('click', async()=>{ if(!confirm('¿Ocultar TODOS los videos de este autor?')) return; b.disabled=true; try{ const uid=b.dataset.user; const {data:ps}=await client.from('posts').select('id').eq('user_id',uid); await client.from('posts').update({estado:'oculto'}).eq('user_id',uid); const ids=(ps||[]).map(x=>x.id); if(ids.length) await client.from('reportes').update({estado:'resuelto'}).eq('tipo','post').in('ref_id',ids); done(); }catch(e){ alert('Error: '+(e.message||e)); b.disabled=false; } }));
+      el.querySelectorAll('.rp-hideperfil').forEach(b=>b.addEventListener('click', async()=>{ b.disabled=true; try{ const nuevo=(b.dataset.cur==='publicado')?'oculto':'publicado'; await client.from('solicitudes').update({estado:nuevo}).eq('id',b.dataset.ref); await client.from('reportes').update({estado:'resuelto'}).eq('tipo','perfil').eq('ref_id',b.dataset.ref); done(); }catch(e){ alert('Error: '+(e.message||e)); b.disabled=false; } }));
+    }
+    renderAdmReportes();
     function renderAdmNotif(){
       const el=document.getElementById('admNotif'); if(!el) return;
       el.innerHTML=`<div class="form-card" style="margin-bottom:18px;border:1px solid var(--gold)"><h3 style="color:var(--gold);font-size:1.2rem;margin-bottom:4px">🔔 Enviar notificación push</h3><p style="color:var(--text-soft);font-size:.84rem;margin-bottom:12px">Llega al celular de quienes instalaron la app y activaron avisos.</p><div class="field"><label>Título</label><input id="ntfTitle" placeholder="Novedad en Aura ✨" maxlength="60"></div><div class="field"><label>Mensaje</label><input id="ntfBody" placeholder="Entrá a ver los nuevos perfiles de hoy" maxlength="140"></div><div class="field"><label>Link al tocar (opcional)</label><input id="ntfUrl" placeholder="/feed.html"></div><div style="display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap"><button class="btn btn-gold" id="ntfSend">Enviar a todos</button><span id="ntfMsg" style="color:var(--gold);font-size:.86rem"></span></div></div>`;
