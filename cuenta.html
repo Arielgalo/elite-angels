@@ -105,10 +105,14 @@ document.addEventListener('DOMContentLoaded', function(){
     var pass=document.getElementById('rPass').value;
     if(!email||pass.length<6){ msg('Poné un email válido y una contraseña de 6+ caracteres.'); return; }
     msg('Creando tu cuenta…', true);
-    var r=await sb.auth.signUp({ email:email, password:pass, options:{ data:{ nombre:nombre||email.split('@')[0] } } });
-    if(r.error){ msg(r.error.message); return; }
-    if(r.data.session){ msg('¡Cuenta creada! 🎉', true); refresh(); }
-    else { msg('¡Casi! Te enviamos un email para confirmar tu cuenta. Revisá tu casilla (y spam) y volvé a entrar.', true); }
+    try{
+      var resp=await fetch('https://fsjrimmurtnrorqhnbwu.supabase.co/functions/v1/registrar',{ method:'POST', headers:{'Content-Type':'application/json','apikey':'sb_publishable_2lWllWfVLWsPnnko4TEa4Q_2sx0kdI4','Authorization':'Bearer sb_publishable_2lWllWfVLWsPnnko4TEa4Q_2sx0kdI4'}, body:JSON.stringify({ email:email, password:pass, nombre:nombre }) });
+      var j=await resp.json();
+      if(j.error){ msg(j.error); if(j.code==='exists'){ tab('log'); document.getElementById('lEmail').value=email; } return; }
+      var li=await sb.auth.signInWithPassword({ email:email, password:pass });
+      if(li.error){ msg('Cuenta creada ✓. Ahora ingresá.', true); tab('log'); document.getElementById('lEmail').value=email; return; }
+      msg('¡Bienvenido/a a Aura! 🎉', true); refresh();
+    }catch(e){ msg('No se pudo crear la cuenta. Probá de nuevo.'); }
   };
   window.doLogin=async function(){
     var email=document.getElementById('lEmail').value.trim(); var pass=document.getElementById('lPass').value;
