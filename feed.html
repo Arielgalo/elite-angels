@@ -51,7 +51,7 @@ const FLAG="M4 21V4 M4 4h13l-2 4 2 4H4";
 const SPK_ON="M11 5 6 9H2v6h4l5 4V5z M15.5 8.5a5 5 0 0 1 0 7 M19 5a9 9 0 0 1 0 14";
 const SPK_OFF="M11 5 6 9H2v6h4l5 4V5z M22 9l-6 6 M16 9l6 6";
 function Eq(p){ return <div className="flex items-end gap-0.5 h-3.5">{[0,1,2,3].map(i=><span key={i} className="w-0.5 rounded-full" style={{background:p.color,height:'100%',animation:'eq '+(0.6+i*0.12)+'s ease-in-out '+(i*0.1)+'s infinite'}}/>)}</div>; }
-function AuraRing(p){ const c=p.colors; return <div className="relative shrink-0" style={{width:p.size,height:p.size}}><div className="absolute rounded-full" style={{inset:0,background:'conic-gradient(from 0deg, '+c[0]+', '+c[1]+', '+c[2]+', '+c[0]+')',animation:'auraspin '+(p.active?3.5:9)+'s linear infinite',boxShadow:p.active?('0 0 20px 3px '+c[1]+'99'):'none'}}/><div className="absolute rounded-full overflow-hidden bg-neutral-900 flex items-center justify-center text-white font-bold" style={{inset:3}}>{c.img?<img src={c.img} className="w-full h-full object-cover" alt=""/>:(c.ini||'')}</div></div>; }
+function AuraRing(p){ const c=p.colors; const fresh=p.fresh; return <div className="relative shrink-0" style={{width:p.size,height:p.size}}><div className="absolute rounded-full" style={{inset:0, background: fresh?('conic-gradient(from 0deg, '+c[0]+', '+c[1]+', '+c[2]+', '+c[0]+')'):'#3a3a40', animation: fresh?('auraspin '+(p.active?3:6)+'s linear infinite'):'none', boxShadow: fresh?('0 0 18px 3px '+c[1]+'aa'):'none'}}/><div className="absolute rounded-full overflow-hidden bg-neutral-900 flex items-center justify-center text-white font-bold" style={{inset: fresh?3:2}}>{c.img?<img src={c.img} className="w-full h-full object-cover" alt=""/>:(c.ini||'')}</div></div>; }
 
 function Card(props){
   const p=props.p, aura=props.aura, soundOn=props.soundOn, setSoundOn=props.setSoundOn, isPost=p.type==='post';
@@ -65,13 +65,14 @@ function Card(props){
   function onMediaTap(){ if(!soundOn && p.video){ toggleSound(); return; } const v=vidRef.current; if(!v) return; if(v.paused){ v.play(); setPaused(false); } else { v.pause(); setPaused(true); } }
   const avatarColors=Object.assign([aura[0],aura[1],aura[2]],{img:p.foto, ini:(p.name||'A').slice(0,1).toUpperCase()});
   const hasVideo=!!p.video;
+  const fresh = p.freshTs ? ((Date.now()-p.freshTs) < 86400000) : false;
   return <section ref={ref} className="relative h-full w-full shrink-0 snap-start snap-always overflow-hidden bg-neutral-950" onClick={onMediaTap}>
     {hasVideo?<video ref={vidRef} src={p.video} poster={p.foto||undefined} loop muted playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover"/>:(p.foto?<img src={p.foto} alt={p.name} className="absolute inset-0 w-full h-full object-cover" style={{animation:active?'kb 12s ease-out forwards':'none'}}/>:<div className="absolute inset-0" style={{background:'linear-gradient(160deg, '+aura[0]+'33, #0a0a0c 70%)'}}/>) }
     <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(0,0,0,.82) 4%, rgba(0,0,0,0) 42%, rgba(0,0,0,.25))'}}/>
     {hasVideo && paused && <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><span className="w-16 h-16 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white"><Ico d="M8 5v14l11-7z" fill="#fff" size={30}/></span></div>}
     {hasVideo && active && !soundOn && <button onClick={toggleSound} className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 rounded-full text-neutral-950 text-[13px] font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)',animation:'pulseSound 1.6s ease-in-out infinite'}}><Ico d={SPK_OFF} size={18}/> Tocá para activar el sonido</button>}
     <div className="absolute right-2.5 bottom-32 flex flex-col items-center gap-5 z-10 text-white">
-      <div className="relative flex flex-col items-center"><AuraRing colors={avatarColors} size={54} active={active}/>{!isPost && <span className="w-5 h-5 -mt-2 rounded-full flex items-center justify-center text-neutral-950 text-sm font-bold" style={{background:aura[1]}}>+</span>}</div>
+      <div className="relative flex flex-col items-center"><AuraRing colors={avatarColors} size={54} active={active} fresh={fresh}/>{!isPost && <span className="w-5 h-5 -mt-2 rounded-full flex items-center justify-center text-neutral-950 text-sm font-bold" style={{background:aura[1]}}>+</span>}</div>
       <button onClick={function(e){e.stopPropagation();setLiked(function(v){return !v;});}} className="flex flex-col items-center gap-1" style={{color:liked?'#f43f5e':'#fff'}}><Ico d={HEART} fill={liked?'#f43f5e':'none'}/><span className="text-[11px] font-semibold">{(p.likes||0)+(liked?1:0)}</span></button>
       <button onClick={function(e){e.stopPropagation();props.onComments(p);}} className="flex flex-col items-center gap-1"><Ico d={CHAT}/><span className="text-[11px] font-semibold">{props.count?props.count+' ':''}Comentar</span></button>
       {hasVideo && <button onClick={toggleSound} className="flex flex-col items-center gap-1" style={{color:soundOn?'#fbbf24':'#fff'}}><span className="w-11 h-11 rounded-full bg-white/10 backdrop-blur flex items-center justify-center"><Ico d={soundOn?SPK_ON:SPK_OFF} size={22}/></span><span className="text-[11px] font-semibold flex items-center gap-1">{soundOn?<Eq color="#fbbf24"/>:'Sonido'}</span></button>}
@@ -185,13 +186,15 @@ function App(){
   const [menu,setMenu]=useState(false);
   const [ok,setOk]=useState(function(){ try{return sessionStorage.getItem('ea_age_ok')==='1';}catch(e){return false;} });
   const touch=useRef({x:0,y:0});
+  const scroller=useRef(null);
+  function nav(dir){ const el=scroller.current; if(el) el.scrollBy({top: dir*el.clientHeight, behavior:'smooth'}); }
   function changeMode(k){ setMode(k); try{localStorage.setItem('aura_feed_mode',k);}catch(e){} }
   function onTS(e){ const t=e.touches[0]; touch.current={x:t.clientX,y:t.clientY}; }
   function onTE(e){ if(cmt||rep||upl||menu) return; const t=e.changedTouches[0]; const dx=t.clientX-touch.current.x, dy=t.clientY-touch.current.y; if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){ const i=MODES.findIndex(function(m){return m.k===mode;}); let ni=dx<0?i+1:i-1; if(ni<0)ni=0; if(ni>MODES.length-1)ni=MODES.length-1; if(ni!==i) changeMode(MODES[ni].k); } }
   async function loadPosts(){ try{ const r=await sb.from('feed_posts').select('*').order('created_at',{ascending:false}).limit(200); setPosts(r.data||[]); }catch(e){} }
   async function loadCounts(){ try{ const cr=await sb.from('comentarios').select('solicitud_id,video_url,post_id').eq('estado','visible').limit(8000); const m={}; (cr.data||[]).forEach(function(c){ const k=c.post_id?('P:'+c.post_id):(c.solicitud_id+'|'+(c.video_url||'')); m[k]=(m[k]||0)+1; }); setCounts(m); }catch(e){} }
   useEffect(()=>{ (async function(){
-    try{ const res=await sb.from('perfiles_publicados').select('id,nombre,bio,ciudad,edad,roles,verificado,videos,fotos,puntos').limit(60); setRows(res.data||[]);}catch(e){ setRows([]); }
+    try{ const res=await sb.from('perfiles_publicados').select('id,nombre,bio,ciudad,edad,roles,verificado,videos,fotos,puntos,created_at').limit(60); setRows(res.data||[]);}catch(e){ setRows([]); }
     loadPosts(); loadCounts();
     try{ const u=await sb.auth.getUser(); if(u.data.user){ let nom=(u.data.user.email||'').split('@')[0]; try{ const pr=await sb.from('usuarios').select('nombre').eq('id',u.data.user.id).maybeSingle(); if(pr.data&&pr.data.nombre) nom=pr.data.nombre; }catch(e){} setMe({id:u.data.user.id, nombre:nom}); } }catch(e){}
   })(); },[]);
@@ -210,10 +213,10 @@ function App(){
 
   let items=[];
   if(rows){
-    const base=function(r){ return { type:'perfil', sid:r.id, name:r.nombre, bio:r.bio, ciudad:r.ciudad, edad:r.edad, roles:r.roles||[], verificado:r.verificado, likes:r.puntos||0, foto:(Array.isArray(r.fotos)&&r.fotos[0])||null, href:'perfil.html?sid='+r.id }; };
+    const base=function(r){ return { type:'perfil', sid:r.id, name:r.nombre, bio:r.bio, ciudad:r.ciudad, edad:r.edad, roles:r.roles||[], verificado:r.verificado, likes:r.puntos||0, foto:(Array.isArray(r.fotos)&&r.fotos[0])||null, freshTs: r.created_at? new Date(r.created_at).getTime():0, href:'perfil.html?sid='+r.id }; };
     const pvids=[], fotos=[];
     rows.forEach(function(r){ const b=base(r); const vv=Array.isArray(r.videos)?r.videos:[]; vv.forEach(function(v){ pvids.push(Object.assign({},b,{video:v,videoUrl:v})); }); if(b.foto) fotos.push(Object.assign({},b,{video:null,videoUrl:null})); });
-    const uposts=posts.map(function(p){ return { type:'post', postId:p.id, name:p.autor, caption:p.caption, video:p.video_url, videoUrl:p.video_url, foto:null, likes:0 }; });
+    const uposts=posts.map(function(p){ return { type:'post', postId:p.id, name:p.autor, caption:p.caption, video:p.video_url, videoUrl:p.video_url, foto:null, likes:0, freshTs: p.created_at? new Date(p.created_at).getTime():0 }; });
     const vids=uposts.concat(pvids);
     items = mode==='video'?vids : mode==='foto'?fotos : vids.concat(fotos);
   }
@@ -222,7 +225,8 @@ function App(){
     <ModeBar mode={mode} setMode={changeMode} onMenu={function(){setMenu(true);}} onUpload={function(){setUpl(true);}}/>
     {rows===null && <div className="h-full flex items-center justify-center text-white/60">Cargando feed…</div>}
     {rows && items.length===0 && <div className="h-full flex flex-col items-center justify-center text-white/60 gap-3 px-8 text-center"><p>{mode==='video'?'Todavía no hay videos. ¡Subí el primero!':'No hay publicaciones.'}</p><button onClick={function(){setUpl(true);}} className="px-5 py-2 rounded-full text-neutral-950 font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>🎬 Subir video</button></div>}
-    {rows && items.length>0 && <div key={mode} className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">{items.map(function(p,i){return <div key={(p.postId||p.sid)+'|'+(p.videoUrl||'')+i} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]} soundOn={soundOn} setSoundOn={setSoundOn} count={counts[ckey(p)]} onComments={setCmt} onReport={setRep}/></div>;})}</div>}
+    {rows && items.length>0 && <div ref={scroller} key={mode} className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">{items.map(function(p,i){return <div key={(p.postId||p.sid)+'|'+(p.videoUrl||'')+i} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]} soundOn={soundOn} setSoundOn={setSoundOn} count={counts[ckey(p)]} onComments={setCmt} onReport={setRep}/></div>;})}</div>}
+    {rows && items.length>0 && <div className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2.5"><button onClick={function(){nav(-1);}} className="w-9 h-9 rounded-full bg-black/45 backdrop-blur text-white text-base flex items-center justify-center active:scale-90">▲</button><button onClick={function(){nav(1);}} className="w-9 h-9 rounded-full bg-black/45 backdrop-blur text-white text-base flex items-center justify-center active:scale-90">▼</button></div>}
     {cmt && <Drawer card={cmt} onClose={function(){setCmt(null);}} onPosted={onPosted}/>}
     {rep && <ReportSheet card={rep} onClose={function(){setRep(null);}}/>}
     {upl && <UploadSheet me={me} onUpload={uploadVideo} onDone={function(){ setUpl(false); loadPosts(); if(mode==='foto') changeMode('video'); }} onClose={function(){setUpl(false);}}/>}
