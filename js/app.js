@@ -141,6 +141,12 @@ async function renderProfile(){
   const thumbsEl=document.getElementById('thumbs');
   if(fotos){ thumbsEl.innerHTML=fotos.map((x,i)=>`<div class="thumb${i===0?' active':''}"><img src="${x}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"></div>`).join(''); thumbsEl.querySelectorAll('.thumb').forEach((t,i)=>t.addEventListener('click',()=>{ const im=mainImg.querySelector('img'); if(im) im.src=fotos[i]; thumbsEl.querySelectorAll('.thumb').forEach(x=>x.classList.remove('active')); t.classList.add('active'); })); }
   else { thumbsEl.innerHTML=[m.tone||'#d4af6e','#d9a7a0','#e8cf9a','#a4b8cf'].map(t=>`<div class="thumb"><div class="figure" style="position:absolute;inset:0">${figureSVG(t)}</div></div>`).join(''); }
+  try{ if(window.matchMedia('(max-width: 760px)').matches){
+    var _mi=document.getElementById('mainImg'); if(_mi) _mi.style.display='none';
+    var _av=document.querySelector('.aura-avatar'); if(_av){ _av.style.display='flex'; _av.style.width='max-content'; _av.style.margin='6px auto 16px'; var _rw=_av.querySelector('span'); if(_rw){ _rw.style.width='140px'; _rw.style.height='140px'; } }
+    var _th=document.getElementById('thumbs'); var _hd=document.querySelector('.profile-header'); if(_th&&_hd){ _hd.insertAdjacentElement('afterend', _th); _th.style.margin='2px 0 20px'; }
+    if(fotos&&_th){ _th.querySelectorAll('.thumb').forEach(function(t,i){ t.style.cursor='zoom-in'; t.addEventListener('click',function(){ if(typeof lightbox==='function') lightbox(fotos[i]); }); }); }
+  } }catch(e){}
   const allMedia=[...(m.videos||[])]; if(m.audio) allMedia.push(m.audio);
   const vids=allMedia.filter(u=>mediaKind(u)==='video'); const auds=allMedia.filter(u=>mediaKind(u)==='audio');
   const vidWrap=document.getElementById('profileVideos'); if(vidWrap){ vidWrap.innerHTML=vids.length?`<h3 style="font-size:1.4rem;margin:8px 0 14px">Videos</h3><div class="video-grid">${vids.map(v=>`<video controls preload="metadata" playsinline><source src="${v}">Tu navegador no puede reproducir este video.</video>`).join('')}</div>`:''; }
