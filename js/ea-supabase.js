@@ -228,6 +228,16 @@
         <div class="field"><label>WhatsApp / teléfono del negocio</label><input data-ef="negocio_contacto" value="${esc(s.negocio_contacto)}" placeholder="+54 9 221 000 0000"></div>
         <div class="field"><label>Instagram / web</label><input data-ef="negocio_web" value="${esc(s.negocio_web)}" placeholder="@minegocio o minegocio.com"></div>
       </div>
+      <div class="field-row">
+        <div class="field"><label>Logo / imagen de marca</label>${s.negocio_logo?`<img src="${esc(s.negocio_logo)}" style="width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:block;margin-bottom:8px">`:''}<input type="file" data-ef="negocio_logo_file" accept="image/*"></div>
+        <div class="field"><label>Fotos de productos / trabajos</label><div class="ed-chips">${(s.negocio_fotos||[]).map((u,i)=>`<span class="ed-chip">foto${i+1} <button type="button" class="ed-rm" data-tipo="negfoto" data-url="${esc(u)}">✕</button></span>`).join('')||'<span style="color:var(--text-mute)">sin fotos</span>'}</div><input type="file" data-ef="negocio_fotos_file" accept="image/*" multiple></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Dirección (para mostrar el mapa)</label><input data-ef="negocio_direccion" value="${esc(s.negocio_direccion)}" placeholder="Calle 50 n° 123, La Plata"></div>
+        <div class="field"><label>Link de Google Maps (opcional)</label><input data-ef="negocio_mapa" value="${esc(s.negocio_mapa)}" placeholder="https://maps.app.goo.gl/..."></div>
+      </div>
+      <div class="field"><label>Descuentos y promociones (uno por línea)</label><textarea data-ef="negocio_descuentos" placeholder="20% off pagando en efectivo&#10;3x2 en productos seleccionados">${esc(s.negocio_descuentos)}</textarea></div>
+      <div class="field"><label>Notas de prensa / links (uno por línea: título — url)</label><textarea data-ef="negocio_prensa" placeholder="Nota en Diario X — https://...&#10;Entrevista — https://...">${esc(s.negocio_prensa)}</textarea></div>
       <div class="field"><label>Fotos actuales (arrastrá para ordenar · ✕ para borrar)</label>${fotoGrid(s.fotos)}<input type="file" data-ef="addFotos" accept="image/*" multiple style="margin-top:10px"></div>
       <div class="field"><label>Videos para el feed (verticales, tipo TikTok)</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
       <div class="field"><label>Mensaje de voz / Audio</label>${s.audio?`<div class="ed-chips"><span class="ed-chip">audio <button type="button" class="ed-rm" data-tipo="audio" data-url="${esc(s.audio)}">✕</button></span></div><audio controls src="${esc(s.audio)}" style="width:100%;margin-top:8px"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*,video/*"></div>
@@ -246,7 +256,7 @@
     const id = formEl.dataset.id;
     const get = (k) => { const el = formEl.querySelector(`[data-ef="${k}"]`); return el ? el.value.trim() : undefined; };
     // cargar fila actual para fusionar media
-    const { data: actual } = await client.from('solicitudes').select('fotos,videos,audio').eq('id', id).single();
+    const { data: actual } = await client.from('solicitudes').select('fotos,videos,audio,negocio_logo,negocio_fotos').eq('id', id).single();
     const _grid = formEl.querySelector('.ed-fotos'); let fotos = _grid ? [...formEl.querySelectorAll('.ed-fotos .ed-foto')].map(e => e.dataset.url) : (actual?.fotos || []).filter(u => !removidos.includes(u));
     let videos = (actual?.videos || []).filter(u => !removidos.includes(u));
     let audio = actual?.audio || null;
@@ -254,7 +264,11 @@
     const fIn = formEl.querySelector('[data-ef="addFotos"]'); const vIn = formEl.querySelector('[data-ef="addVideos"]'); const aIn = formEl.querySelector('[data-ef="addAudio"]');
     const nuevos = await subirMedios(fIn?[...fIn.files]:[], vIn?[...vIn.files]:[], aIn&&aIn.files[0]?aIn.files[0]:null);
     fotos = fotos.concat(nuevos.fotos); videos = videos.concat(nuevos.videos); if (nuevos.audio) audio = nuevos.audio;
-    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), nivel_educativo:get('nivel_educativo'), edu_estado:get('edu_estado'), estudio:get('estudio'), cursos:get('cursos'), hobbies:get('hobbies'), rutinas:get('rutinas'), habilidades:get('habilidades'), otros_gustos:get('otros_gustos'), comidas_gusta:get('comidas_gusta'), comidas_rechaza:get('comidas_rechaza'), negocio:get('negocio'), negocio_nombre:get('negocio_nombre'), negocio_rubro:get('negocio_rubro'), negocio_servicios:get('negocio_servicios'), negocio_promo:get('negocio_promo'), negocio_zona:get('negocio_zona'), negocio_contacto:get('negocio_contacto'), negocio_web:get('negocio_web'), fotos, videos, audio };
+    let negLogo = actual?.negocio_logo || null;
+    const lIn = formEl.querySelector('[data-ef="negocio_logo_file"]'); if(lIn && lIn.files[0]){ const upl = await subirMedios([lIn.files[0]],[],null); if(upl.fotos[0]) negLogo = upl.fotos[0]; }
+    let negFotos = (Array.isArray(actual?.negocio_fotos)?actual.negocio_fotos:[]).filter(u => !removidos.includes(u));
+    const pfIn = formEl.querySelector('[data-ef="negocio_fotos_file"]'); if(pfIn && pfIn.files.length){ const upp = await subirMedios([...pfIn.files],[],null); negFotos = negFotos.concat(upp.fotos); }
+    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), nivel_educativo:get('nivel_educativo'), edu_estado:get('edu_estado'), estudio:get('estudio'), cursos:get('cursos'), hobbies:get('hobbies'), rutinas:get('rutinas'), habilidades:get('habilidades'), otros_gustos:get('otros_gustos'), comidas_gusta:get('comidas_gusta'), comidas_rechaza:get('comidas_rechaza'), negocio:get('negocio'), negocio_nombre:get('negocio_nombre'), negocio_rubro:get('negocio_rubro'), negocio_servicios:get('negocio_servicios'), negocio_promo:get('negocio_promo'), negocio_zona:get('negocio_zona'), negocio_contacto:get('negocio_contacto'), negocio_web:get('negocio_web'), negocio_logo:negLogo, negocio_fotos:negFotos, negocio_direccion:get('negocio_direccion'), negocio_mapa:get('negocio_mapa'), negocio_descuentos:get('negocio_descuentos'), negocio_prensa:get('negocio_prensa'), fotos, videos, audio };
     patch.precio_cita = +get('precio_cita')||15000;
     patch.roles = [...formEl.querySelectorAll('input[data-rol]:checked')].map(e => e.dataset.rol);
     if (isAdmin) { patch.plan = get('plan'); patch.puntos = +get('puntos')||0; }
