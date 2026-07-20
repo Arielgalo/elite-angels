@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
+<title>Aura Noticias · lo más buscado, citado y al instante</title>
+<meta name="description" content="Aura Noticias: lo último del mundo, Argentina y tu ciudad. Fuentes citadas y actualizadas cada 8 horas.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/styles.css?v=7">
+<style>
+.nw-wrap{max-width:1080px;margin:0 auto;padding:24px 18px 90px}
+.nw-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.nw-top a.logo{display:inline-flex;flex-direction:column;line-height:.86;text-decoration:none}
+.nw-top a.logo span{font-family:var(--serif);font-size:1.25rem;color:var(--text);letter-spacing:.08em}
+.nw-head{text-align:center;margin:8px 0 24px}
+.nw-head h1{font-size:2.3rem;margin-bottom:6px}
+.nw-head p{color:var(--text-soft);font-size:.95rem}
+.nw-tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:20px 0 26px}
+.nw-tabs button{font-family:inherit;border:1px solid var(--line);background:transparent;color:var(--text-soft);padding:8px 16px;border-radius:999px;font-size:.85rem;cursor:pointer;transition:.2s}
+.nw-tabs button.on{background:linear-gradient(90deg,#c9a24b,#e6c983);color:#1a1a1e;border-color:transparent;font-weight:600}
+.nw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.nw-card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--black-soft);display:flex;flex-direction:column;transition:.25s}
+.nw-card:hover{border-color:var(--gold);transform:translateY(-3px)}
+.nw-img{width:100%;aspect-ratio:16/9;object-fit:cover;background:#15151c}
+.nw-body{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
+.nw-src{display:inline-flex;align-items:center;gap:6px;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gold);margin-bottom:7px}
+.nw-src .dot{width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.nw-card h3{font-size:1.02rem;line-height:1.35;margin-bottom:7px}
+.nw-card p{color:var(--text-soft);font-size:.86rem;line-height:1.5;flex:1}
+.nw-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:wrap}
+.nw-link{color:var(--gold);font-size:.82rem;text-decoration:none;font-weight:600}
+.nw-share{display:flex;gap:6px}
+.nw-share button{border:1px solid var(--line-soft);background:transparent;color:var(--text-mute);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:.2s;padding:0}
+.nw-share button:hover{border-color:var(--gold);color:var(--gold)}
+.nw-date{color:var(--text-mute);font-size:.72rem}
+.nw-aura{border-color:var(--gold)}
+.nw-badge-aura{background:linear-gradient(90deg,#f59e0b,#f43f5e);color:#0a0a0c;font-weight:700;padding:2px 8px;border-radius:999px;font-size:.62rem}
+.nw-note{text-align:center;color:var(--text-mute);font-size:.8rem;margin-top:30px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="nw-wrap">
+  <div class="nw-top">
+    <a class="logo" href="index.html"><span>Aura</span><span style="color:var(--gold)">Experience</span></a>
+    <a href="index.html" style="color:var(--text-mute);font-size:.88rem;text-decoration:none">← Inicio</a>
+  </div>
+  <div class="nw-head">
+    <h1>Aura <span class="text-gold">Noticias</span></h1>
+    <p>Lo último del mundo, Argentina y tu ciudad · fuentes citadas · se actualiza cada 8 horas</p>
+  </div>
+  <div class="nw-tabs" id="tabs">
+    <button data-c="" class="on">Todas</button>
+    <button data-c="aura">✨ Aura</button>
+    <button data-c="argentina">Argentina</button>
+    <button data-c="ciudad">Mi ciudad</button>
+    <button data-c="mundo">Mundo</button>
+  </div>
+  <div class="nw-grid" id="grid"><p style="color:var(--text-mute)">Cargando noticias…</p></div>
+  <p class="nw-note">Las noticias se muestran con <strong>titular, copete e imagen del propio medio</strong>, citando siempre la fuente y enlazando a la nota original.<br>Aura Experience no reproduce el contenido completo de terceros.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var URL='https://fsjrimmurtnrorqhnbwu.supabase.co', KEY='sb_publishable_2lWllWfVLWsPnnko4TEa4Q_2sx0kdI4';
+  var sb=window.supabase.createClient(URL,KEY);
+  var grid=document.getElementById('grid'); var TODAS=[]; var cat='';
+  var esc=function(x){return (x==null?'':String(x)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  function fecha(d){ try{ var x=new Date(d); var h=Math.round((Date.now()-x)/3600000); if(h<1) return 'hace minutos'; if(h<24) return 'hace '+h+' h'; return x.toLocaleDateString('es-AR',{day:'numeric',month:'short'}); }catch(e){ return ''; } }
+  window.auraShare=function(red, url, titulo){
+    var u=encodeURIComponent(url), t=encodeURIComponent(titulo);
+    var m={ wa:'https://wa.me/?text='+t+'%20'+u, fb:'https://www.facebook.com/sharer/sharer.php?u='+u, tw:'https://twitter.com/intent/tweet?text='+t+'&url='+u, tg:'https://t.me/share/url?url='+u+'&text='+t };
+    if(red==='copy'){ navigator.clipboard.writeText(url).then(function(){ alert('Link copiado ✓'); }); return; }
+    window.open(m[red],'_blank','noopener');
+  };
+  function card(n){
+    var esAura = n.tipo==='propia';
+    var link = esAura ? ('nota.html?id='+n.id) : (n.url||'#');
+    var shareUrl = esAura ? (location.origin+'/nota.html?id='+n.id) : (n.url||location.origin);
+    var img = n.imagen? '<img class="nw-img" src="'+esc(n.imagen)+'" loading="lazy" alt="">' : '<div class="nw-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-mute);font-size:2rem">📰</div>';
+    var src = esAura? '<span class="nw-badge-aura">AURA</span>' : '<span class="nw-src"><span class="dot"></span>'+esc(n.fuente||'')+'</span>';
+    var t=esc(n.titulo||'');
+    return '<article class="nw-card'+(esAura?' nw-aura':'')+'">'
+      +'<a href="'+esc(link)+'"'+(esAura?'':' target="_blank" rel="noopener"')+'>'+img+'</a>'
+      +'<div class="nw-body">'+src+'<h3>'+t+'</h3><p>'+esc((n.resumen||'').slice(0,160))+(n.resumen&&n.resumen.length>160?'…':'')+'</p>'
+      +'<div class="nw-meta"><a class="nw-link" href="'+esc(link)+'"'+(esAura?'':' target="_blank" rel="noopener"')+'>'+(esAura?'Leer la nota →':'Leer en '+esc(n.fuente||'la fuente')+' →')+'</a>'
+      +'<span class="nw-date">'+fecha(n.publicado_at)+'</span></div>'
+      +'<div class="nw-share" style="margin-top:10px">'
+        +'<button title="WhatsApp" onclick="auraShare(\'wa\',\''+shareUrl.replace(/'/g,"%27")+'\',\''+t.replace(/'/g,"%27").replace(/"/g,'')+'\')">💬</button>'
+        +'<button title="Facebook" onclick="auraShare(\'fb\',\''+shareUrl.replace(/'/g,"%27")+'\',\'\')">f</button>'
+        +'<button title="X" onclick="auraShare(\'tw\',\''+shareUrl.replace(/'/g,"%27")+'\',\''+t.replace(/'/g,"%27").replace(/"/g,'')+'\')">𝕏</button>'
+        +'<button title="Telegram" onclick="auraShare(\'tg\',\''+shareUrl.replace(/'/g,"%27")+'\',\''+t.replace(/'/g,"%27").replace(/"/g,'')+'\')">✈</button>'
+        +'<button title="Copiar link" onclick="auraShare(\'copy\',\''+shareUrl.replace(/'/g,"%27")+'\',\'\')">🔗</button>'
+      +'</div></div></article>';
+  }
+  function pintar(){
+    var lista = TODAS.filter(function(n){ if(!cat) return true; if(cat==='aura') return n.tipo==='propia'; return n.categoria===cat; });
+    grid.innerHTML = lista.length? lista.map(card).join('') : '<p style="color:var(--text-mute)">Todavía no hay noticias en esta sección.</p>';
+  }
+  document.querySelectorAll('#tabs button').forEach(function(b){ b.addEventListener('click',function(){ document.querySelectorAll('#tabs button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); cat=b.dataset.c; pintar(); }); });
+  sb.from('noticias').select('*').eq('estado','publicado').order('publicado_at',{ascending:false}).limit(90).then(function(r){
+    if(r.error){ grid.innerHTML='<p style="color:var(--text-mute)">No se pudieron cargar las noticias.</p>'; return; }
+    TODAS=r.data||[]; pintar();
+  });
+})();
+</script></body></html>

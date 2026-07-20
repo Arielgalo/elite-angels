@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
+<title>Nota · Aura Experience</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/styles.css?v=7">
+<style>
+.nt-wrap{max-width:760px;margin:0 auto;padding:24px 18px 90px}
+.nt-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
+.nt-top a.logo{display:inline-flex;flex-direction:column;line-height:.86;text-decoration:none}
+.nt-top a.logo span{font-family:var(--serif);font-size:1.25rem;color:var(--text);letter-spacing:.08em}
+.nt-badge{background:linear-gradient(90deg,#f59e0b,#f43f5e);color:#0a0a0c;font-weight:700;padding:3px 11px;border-radius:999px;font-size:.68rem;letter-spacing:.05em}
+.nt-wrap h1{font-size:2.1rem;line-height:1.18;margin:12px 0 8px}
+.nt-meta{color:var(--text-mute);font-size:.85rem;margin-bottom:18px}
+.nt-media{width:100%;border-radius:16px;overflow:hidden;border:1px solid var(--line);margin-bottom:20px}
+.nt-media img,.nt-media video{width:100%;display:block}
+.nt-body{color:var(--text-soft);font-size:1.05rem;line-height:1.8;white-space:pre-line}
+.nt-share{display:flex;gap:10px;flex-wrap:wrap;margin-top:32px;padding-top:20px;border-top:1px solid var(--line-soft)}
+.nt-share button{font-family:inherit;border:1px solid var(--line);background:transparent;color:var(--text-soft);padding:10px 16px;border-radius:999px;cursor:pointer;font-size:.85rem;transition:.2s}
+.nt-share button:hover{border-color:var(--gold);color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="nt-wrap">
+  <div class="nt-top">
+    <a class="logo" href="index.html"><span>Aura</span><span style="color:var(--gold)">Experience</span></a>
+    <a href="noticias.html" style="color:var(--text-mute);font-size:.88rem;text-decoration:none">← Noticias</a>
+  </div>
+  <div id="nt"><p style="color:var(--text-mute)">Cargando nota…</p></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var sb=window.supabase.createClient('https://fsjrimmurtnrorqhnbwu.supabase.co','sb_publishable_2lWllWfVLWsPnnko4TEa4Q_2sx0kdI4');
+  var id=new URLSearchParams(location.search).get('id'); var el=document.getElementById('nt');
+  var esc=function(x){return (x==null?'':String(x)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  window.auraShare=function(red,url,titulo){ var u=encodeURIComponent(url),t=encodeURIComponent(titulo);
+    var m={wa:'https://wa.me/?text='+t+'%20'+u,fb:'https://www.facebook.com/sharer/sharer.php?u='+u,tw:'https://twitter.com/intent/tweet?text='+t+'&url='+u,tg:'https://t.me/share/url?url='+u+'&text='+t};
+    if(red==='copy'){ navigator.clipboard.writeText(url).then(function(){alert('Link copiado ✓');}); return; }
+    window.open(m[red],'_blank','noopener'); };
+  if(!id){ el.innerHTML='<p style="color:var(--text-mute)">Falta la nota (?id=).</p>'; return; }
+  sb.from('noticias').select('*').eq('id',id).eq('estado','publicado').maybeSingle().then(function(r){
+    if(r.error||!r.data){ el.innerHTML='<p style="color:var(--text-mute)">No se encontró la nota.</p>'; return; }
+    var n=r.data; document.title=(n.titulo||'Nota')+' · Aura Experience';
+    var media=''; if(n.video) media='<div class="nt-media"><video controls playsinline preload="metadata" src="'+esc(n.video)+'"></video></div>';
+    else if(n.imagen) media='<div class="nt-media"><img src="'+esc(n.imagen)+'" alt=""></div>';
+    var f=''; try{ f=new Date(n.publicado_at).toLocaleDateString('es-AR',{day:'numeric',month:'long',year:'numeric'}); }catch(e){}
+    var cita = (n.tipo!=='propia' && n.url)? '<p style="margin-top:24px;color:var(--text-mute);font-size:.9rem">Fuente: <a href="'+esc(n.url)+'" target="_blank" rel="noopener" style="color:var(--gold)">'+esc(n.fuente||'ver original')+' →</a></p>':'';
+    var url=location.origin+'/nota.html?id='+n.id; var t=(n.titulo||'').replace(/'/g,'%27').replace(/"/g,'');
+    el.innerHTML='<span class="nt-badge">'+(n.tipo==='propia'?'AURA NOTICIAS':esc(n.fuente||'NOTICIA'))+'</span>'
+      +'<h1>'+esc(n.titulo)+'</h1><div class="nt-meta">'+f+'</div>'+media
+      +'<div class="nt-body">'+esc(n.contenido||n.resumen||'')+'</div>'+cita
+      +'<div class="nt-share"><button onclick="auraShare(\'wa\',\''+url+'\',\''+t+'\')">💬 WhatsApp</button>'
+      +'<button onclick="auraShare(\'fb\',\''+url+'\',\'\')">Facebook</button>'
+      +'<button onclick="auraShare(\'tw\',\''+url+'\',\''+t+'\')">𝕏 Twitter</button>'
+      +'<button onclick="auraShare(\'tg\',\''+url+'\',\''+t+'\')">✈ Telegram</button>'
+      +'<button onclick="auraShare(\'copy\',\''+url+'\',\'\')">🔗 Copiar link</button></div>';
+  });
+})();
+</script>
+</body>
+</html>

@@ -304,7 +304,7 @@
   async function adminBoard(root, email) {
     root.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
       <span style="color:var(--text-soft);font-size:.88rem">Admin: <strong style="color:var(--gold)">${esc(email)}</strong></span>
-      <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nuevo perfil</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="admVerif"></div><div id="admReportes"></div><div id="eaBoard"></div>`;
+      <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nuevo perfil</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="admVerif"></div><div id="admNoticias"></div><div id="admReportes"></div><div id="eaBoard"></div>`;
     document.getElementById('aOut').addEventListener('click', async () => { await client.auth.signOut(); location.reload(); });
     document.getElementById('aNew').addEventListener('click', async () => {
       const nsid = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '');
@@ -364,6 +364,65 @@
       el.querySelectorAll('.rp-hideperfil').forEach(b=>b.addEventListener('click', async()=>{ b.disabled=true; try{ const nuevo=(b.dataset.cur==='publicado')?'oculto':'publicado'; await client.from('solicitudes').update({estado:nuevo}).eq('id',b.dataset.ref); await client.from('reportes').update({estado:'resuelto'}).eq('tipo','perfil').eq('ref_id',b.dataset.ref); done(); }catch(e){ alert('Error: '+(e.message||e)); b.disabled=false; } }));
     }
     renderAdmReportes();
+    async function renderFuentesNoticias(){
+      const box=document.getElementById('nnFuentes'); if(!box) return;
+      const { data } = await client.from('noticias_fuentes').select('*').order('categoria').order('nombre');
+      const fs=data||[];
+      box.innerHTML='<div style="border-top:1px solid var(--line-soft);padding-top:14px"><strong style="font-size:.92rem">Fuentes RSS ('+fs.filter(x=>x.activa).length+' activas)</strong>'
+        + fs.map(function(x){ return '<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line-soft);flex-wrap:wrap"><label style="display:flex;align-items:center;gap:7px;flex:1;min-width:180px;cursor:pointer"><input type="checkbox" class="fnAct" data-id="'+x.id+'" '+(x.activa?'checked':'')+' style="width:auto;accent-color:var(--gold)"><span>'+esc(x.nombre)+' <span style="color:var(--text-mute);font-size:.76rem">· '+esc(x.categoria)+'</span></span></label>'
+          + (x.ultimo_error? '<span style="color:#e08aa0;font-size:.72rem">⚠ '+esc(String(x.ultimo_error).slice(0,40))+'</span>' : '<span style="color:#7be3a0;font-size:.72rem">✓ ok</span>')
+          + '<button class="btn btn-ghost fnDel" data-id="'+x.id+'" style="padding:4px 9px;font-size:.7rem">✕</button></div>'; }).join('')
+        + '<div class="field-row" style="margin-top:12px"><div class="field"><label>Nombre del medio</label><input id="fnNom" placeholder="Ej: La Nación"></div><div class="field"><label>Categoría</label><select id="fnCat"><option value="argentina">Argentina</option><option value="ciudad">Mi ciudad</option><option value="mundo">Mundo</option><option value="tema">Temático</option></select></div></div>'
+        + '<div class="field"><label>URL del RSS</label><input id="fnUrl" placeholder="https://medio.com/rss"></div><button class="btn btn-gold" id="fnAdd" style="padding:8px 16px">+ Agregar fuente</button></div>';
+      box.querySelectorAll('.fnAct').forEach(c=>c.addEventListener('change', async ()=>{ await client.from('noticias_fuentes').update({activa:c.checked}).eq('id',c.dataset.id); }));
+      box.querySelectorAll('.fnDel').forEach(b=>b.addEventListener('click', async ()=>{ if(!confirm('¿Eliminar esta fuente?'))return; await client.from('noticias_fuentes').delete().eq('id',b.dataset.id); renderFuentesNoticias(); }));
+      const add=document.getElementById('fnAdd');
+      if(add) add.addEventListener('click', async ()=>{ const n=document.getElementById('fnNom').value.trim(), u=document.getElementById('fnUrl').value.trim(), c=document.getElementById('fnCat').value;
+        if(!n||!u){ alert('Completá nombre y URL del RSS.'); return; }
+        const r=await client.from('noticias_fuentes').insert({nombre:n,url:u,categoria:c}); if(r.error){ alert('Error: '+r.error.message); return; } renderFuentesNoticias(); });
+    }
+    function renderAdmNoticias(){
+      const el=document.getElementById('admNoticias'); if(!el) return;
+      el.innerHTML=`<div class="form-card" style="margin-bottom:18px;border:1px solid var(--gold)">
+        <h3 style="color:var(--gold);font-size:1.2rem;margin-bottom:4px">📰 Aura Noticias</h3>
+        <p style="color:var(--text-soft);font-size:.84rem;margin-bottom:12px">Publicá tu propia nota en segundos, o traé ahora lo último de las fuentes (se hace solo cada 8 h).</p>
+        <div class="field"><label>Título</label><input id="nnTit" placeholder="Título de la nota" maxlength="200"></div>
+        <div class="field"><label>Copete / resumen (opcional)</label><input id="nnRes" placeholder="Una línea que enganche" maxlength="300"></div>
+        <div class="field"><label>Desarrollo de la nota</label><textarea id="nnCont" rows="6" placeholder="Escribí la nota acá..."></textarea></div>
+        <div class="field-row"><div class="field"><label>Foto</label><input type="file" id="nnFoto" accept="image/*"></div><div class="field"><label>Video (opcional)</label><input type="file" id="nnVideo" accept="video/*"></div></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px">
+          <button type="button" class="btn btn-gold" id="nnPub">Publicar nota</button>
+          <button type="button" class="btn btn-ghost" id="nnFetch">↻ Traer noticias ahora</button>
+          <a class="btn btn-ghost" href="noticias.html" target="_blank" style="padding:9px 16px">Ver Aura Noticias</a>
+          <span id="nnMsg" style="color:var(--gold);font-size:.86rem"></span>
+        </div>
+        <div id="nnFuentes"></div></div>`;
+      const msg=(t,ok)=>{ const e=document.getElementById('nnMsg'); e.textContent=t||''; e.style.color= ok===false?'#e08aa0':'var(--gold)'; };
+      document.getElementById('nnPub').addEventListener('click', async ()=>{
+        const tit=document.getElementById('nnTit').value.trim(); const res=document.getElementById('nnRes').value.trim(); const cont=document.getElementById('nnCont').value.trim();
+        if(!tit){ msg('Poné un título.',false); return; }
+        const b=document.getElementById('nnPub'); b.disabled=true; msg('Publicando…');
+        try{
+          const fIn=document.getElementById('nnFoto'), vIn=document.getElementById('nnVideo');
+          const up=await subirMedios(fIn&&fIn.files[0]?[fIn.files[0]]:[], vIn&&vIn.files[0]?[vIn.files[0]]:[], null);
+          const row={ tipo:'propia', titulo:tit, resumen:res||cont.slice(0,200), contenido:cont, imagen:(up.fotos&&up.fotos[0])||null, video:(up.videos&&up.videos[0])||null, fuente:'Aura Experience', categoria:'aura', publicado_at:new Date().toISOString() };
+          const r=await client.from('noticias').insert(row).select('id').single(); if(r.error) throw r.error;
+          msg('✓ Publicada. Ver: /nota.html?id='+r.data.id);
+          document.getElementById('nnTit').value=''; document.getElementById('nnRes').value=''; document.getElementById('nnCont').value='';
+          if(fIn) fIn.value=''; if(vIn) vIn.value='';
+        }catch(e){ msg('Error: '+(e.message||e), false); }
+        b.disabled=false;
+      });
+      document.getElementById('nnFetch').addEventListener('click', async ()=>{
+        const b=document.getElementById('nnFetch'); b.disabled=true; msg('Trayendo noticias…');
+        try{ const r=await client.functions.invoke('traer-noticias'); const d=r.data||{};
+          msg('✓ '+(d.totalNuevas||0)+' noticias nuevas'); renderFuentesNoticias();
+        }catch(e){ msg('Error: '+(e.message||e), false); }
+        b.disabled=false;
+      });
+      renderFuentesNoticias();
+    }
+    renderAdmNoticias();
     function renderAdmNotif(){
       const el=document.getElementById('admNotif'); if(!el) return;
       el.innerHTML=`<div class="form-card" style="margin-bottom:18px;border:1px solid var(--gold)"><h3 style="color:var(--gold);font-size:1.2rem;margin-bottom:4px">🔔 Enviar notificación push</h3><p style="color:var(--text-soft);font-size:.84rem;margin-bottom:12px">Llega al celular de quienes instalaron la app y activaron avisos.</p><div class="field"><label>Título</label><input id="ntfTitle" placeholder="Novedad en Aura ✨" maxlength="60"></div><div class="field"><label>Mensaje</label><input id="ntfBody" placeholder="Entrá a ver los nuevos perfiles de hoy" maxlength="140"></div><div class="field"><label>Link al tocar (opcional)</label><input id="ntfUrl" placeholder="/feed.html"></div><div style="display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap"><button class="btn btn-gold" id="ntfSend">Enviar a todos</button><span id="ntfMsg" style="color:var(--gold);font-size:.86rem"></span></div></div>`;
