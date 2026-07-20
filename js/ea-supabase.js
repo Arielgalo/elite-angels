@@ -393,20 +393,35 @@
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px">
           <button type="button" class="btn btn-gold" id="nnPub">Publicar nota</button>
           <button type="button" class="btn btn-ghost" id="nnFetch">↻ Traer noticias ahora</button>
+          <button type="button" class="btn btn-ghost" id="nnRest" title="Recuperar lo último que escribiste">↺ Recuperar borrador</button>
           <a class="btn btn-ghost" href="noticias.html" target="_blank" style="padding:9px 16px">Ver Aura Noticias</a>
           <span id="nnMsg" style="color:var(--gold);font-size:.86rem"></span>
         </div>
         <div id="nnFuentes"></div></div>`;
       const msg=(t,ok)=>{ const e=document.getElementById('nnMsg'); e.textContent=t||''; e.style.color= ok===false?'#e08aa0':'var(--gold)'; };
       const DK='aura_nota_draft';
-      const guardarBorrador=()=>{ try{ localStorage.setItem(DK, JSON.stringify({ tit:(document.getElementById('nnTit')||{}).value||'', res:(document.getElementById('nnRes')||{}).value||'', cont:(document.getElementById('nnCont')||{}).value||'' })); }catch(e){} };
-      try{ const d=JSON.parse(localStorage.getItem(DK)||'{}');
-        if(d.tit) document.getElementById('nnTit').value=d.tit;
-        if(d.res) document.getElementById('nnRes').value=d.res;
-        if(d.cont) document.getElementById('nnCont').value=d.cont;
-        if(d.tit||d.res||d.cont) msg('Borrador recuperado ✓');
-      }catch(e){}
-      ['nnTit','nnRes','nnCont'].forEach(function(id){ const e=document.getElementById(id); if(e){ e.addEventListener('input',guardarBorrador); e.addEventListener('blur',guardarBorrador); } });
+      const F=function(){ return { tit:document.getElementById('nnTit'), res:document.getElementById('nnRes'), cont:document.getElementById('nnCont') }; };
+      const guardarBorrador=function(){ try{ const f=F(); if(!f.tit) return; const d={ tit:f.tit.value||'', res:f.res.value||'', cont:f.cont.value||'' }; if(d.tit||d.res||d.cont) localStorage.setItem(DK, JSON.stringify(d)); }catch(e){} };
+      const restaurarBorrador=function(force){ try{ const f=F(); if(!f.tit) return false; const d=JSON.parse(localStorage.getItem(DK)||'{}');
+        const vacio = !f.tit.value && !f.res.value && !f.cont.value;
+        if((vacio||force) && (d.tit||d.res||d.cont)){ f.tit.value=d.tit||''; f.res.value=d.res||''; f.cont.value=d.cont||''; return true; }
+        return false; }catch(e){ return false; } };
+      window.auraGuardarBorrador=guardarBorrador; window.auraRestaurarBorrador=restaurarBorrador;
+      ['nnTit','nnRes','nnCont'].forEach(function(id){ const e=document.getElementById(id); if(e){ ['input','change','paste','keyup','cut','blur'].forEach(function(ev){ e.addEventListener(ev, guardarBorrador); }); } });
+      const rb=document.getElementById('nnRest'); if(rb) rb.addEventListener('click', function(){ msg(restaurarBorrador(true)?'Borrador recuperado ✓':'No hay borrador guardado.', restaurarBorrador(true)); });
+      if(window._auraDraftTimer) clearInterval(window._auraDraftTimer);
+      window._auraDraftTimer=setInterval(guardarBorrador, 1500);
+      if(!window._auraDraftHooks){ window._auraDraftHooks=true;
+        document.addEventListener('visibilitychange', function(){
+          if(document.hidden){ if(window.auraGuardarBorrador) window.auraGuardarBorrador(); }
+          else { setTimeout(function(){ if(window.auraRestaurarBorrador && window.auraRestaurarBorrador(false)){ const m=document.getElementById('nnMsg'); if(m){ m.textContent='Borrador recuperado ✓'; m.style.color='var(--gold)'; } } }, 250); }
+        });
+        window.addEventListener('blur', function(){ if(window.auraGuardarBorrador) window.auraGuardarBorrador(); });
+        window.addEventListener('focus', function(){ setTimeout(function(){ if(window.auraRestaurarBorrador) window.auraRestaurarBorrador(false); }, 250); });
+        window.addEventListener('pagehide', function(){ if(window.auraGuardarBorrador) window.auraGuardarBorrador(); });
+        window.addEventListener('beforeunload', function(){ if(window.auraGuardarBorrador) window.auraGuardarBorrador(); });
+      }
+      if(restaurarBorrador(false)) msg('Borrador recuperado ✓');
       document.getElementById('nnPub').addEventListener('click', async ()=>{
         const tit=document.getElementById('nnTit').value.trim(); const res=document.getElementById('nnRes').value.trim(); const cont=document.getElementById('nnCont').value.trim();
         if(!tit){ msg('Poné un título.',false); return; }
