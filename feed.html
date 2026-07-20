@@ -56,7 +56,7 @@ function Eq(p){ return <div className="flex items-end gap-0.5 h-3.5">{[0,1,2,3].
 function AuraRing(p){ const c=p.colors; const fresh=p.fresh; return <div className="relative shrink-0" style={{width:p.size,height:p.size}}><div className="absolute rounded-full" style={{inset:0, background: fresh?('conic-gradient(from 0deg, '+c[0]+', '+c[1]+', '+c[2]+', '+c[0]+')'):'#3a3a40', animation: fresh?('auraspin '+(p.active?3:6)+'s linear infinite'):'none', boxShadow: fresh?('0 0 18px 3px '+c[1]+'aa'):'none'}}/><div className="absolute rounded-full overflow-hidden bg-neutral-900 flex items-center justify-center text-white font-bold" style={{inset: fresh?3:2}}>{c.img?<img src={c.img} className="w-full h-full object-cover" alt=""/>:(c.ini||'')}</div></div>; }
 
 function Card(props){
-  const p=props.p, aura=props.aura, soundOn=props.soundOn, setSoundOn=props.setSoundOn, isPost=p.type==='post';
+  const p=props.p, aura=props.aura, soundOn=props.soundOn, setSoundOn=props.setSoundOn, isPost=p.type==='post', isNews=p.type==='noticia';
   const ref=useRef(null), vidRef=useRef(null);
   const [active,setActive]=useState(false); const [paused,setPaused]=useState(false); const [liked,setLiked]=useState(false);
   useEffect(()=>{ const el=ref.current; if(!el) return;
@@ -65,7 +65,7 @@ function Card(props){
   useEffect(()=>{ const v=vidRef.current; if(v&&active){ v.muted=!soundOn; v.volume=1; } },[soundOn,active]);
   function toggleSound(e){ if(e) e.stopPropagation(); const ns=!soundOn; setSoundOn(ns); const v=vidRef.current; if(v){ v.muted=!ns; v.volume=1; if(ns){ v.play().then(function(){setPaused(false);}).catch(function(){}); } } }
   function onMediaTap(){ if(!soundOn && p.video){ toggleSound(); return; } const v=vidRef.current; if(!v) return; if(v.paused){ v.play(); setPaused(false); } else { v.pause(); setPaused(true); } }
-  const avatarColors=Object.assign([aura[0],aura[1],aura[2]],{img:p.foto, ini:(p.name||'A').slice(0,1).toUpperCase()});
+  const avatarColors=Object.assign([aura[0],aura[1],aura[2]],{img: isNews?'assets/logo.svg':p.foto, ini:(p.name||'A').slice(0,1).toUpperCase()});
   const hasVideo=!!p.video;
   const fresh = p.freshTs ? ((Date.now()-p.freshTs) < 86400000) : false;
   return <section ref={ref} className="relative h-full w-full shrink-0 snap-start snap-always overflow-hidden bg-neutral-950" onClick={onMediaTap}>
@@ -74,18 +74,18 @@ function Card(props){
     {hasVideo && paused && <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><span className="w-16 h-16 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white"><Ico d="M8 5v14l11-7z" fill="#fff" size={30}/></span></div>}
     {hasVideo && active && !soundOn && <button onClick={toggleSound} className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 rounded-full text-neutral-950 text-[13px] font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)',animation:'pulseSound 1.6s ease-in-out infinite'}}><Ico d={SPK_OFF} size={18}/> Tocá para activar el sonido</button>}
     <div className="absolute right-2.5 bottom-32 flex flex-col items-center gap-5 z-10 text-white">
-      <a href={isPost?('feed.html?u='+(p.userId||'')):p.href} onClick={function(e){e.stopPropagation();}} className="relative flex flex-col items-center active:scale-95" title="Ver el perfil"><AuraRing colors={avatarColors} size={54} active={active} fresh={fresh}/>{!isPost && <span className="w-5 h-5 -mt-2 rounded-full flex items-center justify-center text-neutral-950 text-sm font-bold" style={{background:aura[1]}}>+</span>}</a>
+      <a href={isNews?'noticias.html':(isPost?('feed.html?u='+(p.userId||'')):p.href)} onClick={function(e){e.stopPropagation();}} className="relative flex flex-col items-center active:scale-95" title="Ver el perfil"><AuraRing colors={avatarColors} size={54} active={active} fresh={fresh}/>{!isPost && !isNews && <span className="w-5 h-5 -mt-2 rounded-full flex items-center justify-center text-neutral-950 text-sm font-bold" style={{background:aura[1]}}>+</span>}</a>
       <button onClick={function(e){e.stopPropagation();setLiked(function(v){return !v;});}} className="flex flex-col items-center gap-1" style={{color:liked?'#f43f5e':'#fff'}}><Ico d={HEART} fill={liked?'#f43f5e':'none'}/><span className="text-[11px] font-semibold">{(p.likes||0)+(liked?1:0)}</span></button>
       <button onClick={function(e){e.stopPropagation();props.onComments(p);}} className="flex flex-col items-center gap-1"><Ico d={CHAT}/><span className="text-[11px] font-semibold">{props.count?props.count+' ':''}Comentar</span></button>
       <button onClick={function(e){e.stopPropagation();props.onReport(p);}} className="flex flex-col items-center gap-1 text-white/80"><Ico d={FLAG} size={22}/><span className="text-[11px] font-semibold">Reportar</span></button>
     </div>
     <div className="absolute left-4 right-20 bottom-24 z-10 text-white">
-      <div className="flex items-center gap-1.5 mb-1.5"><span className="font-bold text-[16px]">{isPost?('@'+(p.name||'usuario')):(p.name+(p.edad?(', '+p.edad):''))}</span>{p.verificado && <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-300 border border-emerald-400/40 bg-emerald-400/10 rounded-full px-1.5 py-0.5">✓ Verificado</span>}{isPost && <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border border-white/20 text-white/70">video</span>}</div>
-      {!isPost && p.ciudad && <div className="text-[12px] text-white/70 mb-1.5">📍 {p.ciudad}</div>}
-      {(p.caption||p.bio) && <p className="text-[14px] leading-snug text-white/95 mb-2 line-clamp-3">{p.caption||p.bio}</p>}
-      {!isPost && p.roles && p.roles.length>0 && <div className="flex flex-wrap gap-1.5">{p.roles.map(function(r){return <span key={r} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border border-amber-300/40 text-amber-200 bg-amber-300/10">{ROLES[r]||r}</span>;})}</div>}
+      <div className="flex items-center gap-1.5 mb-1.5"><span className="font-bold text-[16px]">{isNews?('📰 '+(p.fuente||'Aura Noticias')):(isPost?('@'+(p.name||'usuario')):(p.name+(p.edad?(', '+p.edad):'')))}</span>{p.verificado && <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-300 border border-emerald-400/40 bg-emerald-400/10 rounded-full px-1.5 py-0.5">✓ Verificado</span>}{isPost && <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border border-white/20 text-white/70">video</span>}{isNews && <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full text-neutral-950 font-bold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>noticia</span>}</div>
+      {!isPost && !isNews && p.ciudad && <div className="text-[12px] text-white/70 mb-1.5">📍 {p.ciudad}</div>}
+      {(p.caption||p.bio) && <p className={isNews?"text-[17px] font-semibold leading-snug text-white mb-2 line-clamp-4":"text-[14px] leading-snug text-white/95 mb-2 line-clamp-3"}>{p.caption||p.bio}</p>}
+      {!isPost && !isNews && p.roles && p.roles.length>0 && <div className="flex flex-wrap gap-1.5">{p.roles.map(function(r){return <span key={r} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border border-amber-300/40 text-amber-200 bg-amber-300/10">{ROLES[r]||r}</span>;})}</div>}
     </div>
-    {!isPost && <a href={p.href} onClick={function(e){e.stopPropagation();}} className="absolute left-4 bottom-12 z-10 px-5 py-2 rounded-full text-[13px] font-semibold text-neutral-950" style={{background:'linear-gradient(90deg, '+aura[0]+', '+aura[1]+')'}}>Conocer a {p.name} →</a>}
+    {!isPost && <a href={p.href} target={isNews&&p.external?'_blank':undefined} rel={isNews&&p.external?'noopener':undefined} onClick={function(e){e.stopPropagation();}} className="absolute left-4 bottom-12 z-10 px-5 py-2 rounded-full text-[13px] font-semibold text-neutral-950" style={{background:'linear-gradient(90deg, '+aura[0]+', '+aura[1]+')'}}>{isNews?('Leer en '+(p.fuente||'la fuente')+' →'):('Conocer a '+p.name+' →')}</a>}
   </section>;
 }
 
@@ -177,6 +177,7 @@ function ModeBar(props){
 function App(){
   const [rows,setRows]=useState(null);
   const [posts,setPosts]=useState([]);
+  const [noticias,setNoticias]=useState([]);
   const [soundOn,setSoundOn]=useState(false);
   const [counts,setCounts]=useState({});
   const [cmt,setCmt]=useState(null);
@@ -189,15 +190,16 @@ function App(){
   const touch=useRef({x:0,y:0});
   const scroller=useRef(null);
   function nav(dir){ const el=scroller.current; if(el) el.scrollBy({top: dir*el.clientHeight, behavior:'smooth'}); }
-  useEffect(function(){ if(rows===null) return; try{ const sid=new URLSearchParams(location.search).get('sid'); if(!sid) return; const el=scroller.current; if(!el) return; const t=setTimeout(function(){ const c=el.querySelector('[data-sid="'+sid+'"]'); if(c&&c.scrollIntoView) c.scrollIntoView(); },150); return function(){clearTimeout(t);}; }catch(e){} },[rows,posts,mode]);
+  useEffect(function(){ if(rows===null) return; try{ const sid=new URLSearchParams(location.search).get('sid'); if(!sid) return; const el=scroller.current; if(!el) return; const t=setTimeout(function(){ const c=el.querySelector('[data-sid="'+sid+'"]'); if(c&&c.scrollIntoView) c.scrollIntoView(); },150); return function(){clearTimeout(t);}; }catch(e){} },[rows,posts,noticias,mode]);
   function changeMode(k){ setMode(k); try{localStorage.setItem('aura_feed_mode',k);}catch(e){} }
   function onTS(e){ const t=e.touches[0]; touch.current={x:t.clientX,y:t.clientY}; }
   function onTE(e){ if(cmt||rep||upl||menu) return; const t=e.changedTouches[0]; const dx=t.clientX-touch.current.x, dy=t.clientY-touch.current.y; if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){ const i=MODES.findIndex(function(m){return m.k===mode;}); let ni=dx<0?i+1:i-1; if(ni<0)ni=0; if(ni>MODES.length-1)ni=MODES.length-1; if(ni!==i) changeMode(MODES[ni].k); } }
+  async function loadNoticias(){ try{ const r=await sb.from('noticias').select('id,titulo,resumen,imagen,fuente,url,tipo,publicado_at').eq('estado','publicado').not('imagen','is',null).order('publicado_at',{ascending:false}).limit(40); setNoticias(r.data||[]); }catch(e){} }
   async function loadPosts(){ try{ const r=await sb.from('feed_posts').select('*').order('created_at',{ascending:false}).limit(200); setPosts(r.data||[]); }catch(e){} }
   async function loadCounts(){ try{ const cr=await sb.from('comentarios').select('solicitud_id,video_url,post_id').eq('estado','visible').limit(8000); const m={}; (cr.data||[]).forEach(function(c){ const k=c.post_id?('P:'+c.post_id):(c.solicitud_id+'|'+(c.video_url||'')); m[k]=(m[k]||0)+1; }); setCounts(m); }catch(e){} }
   useEffect(()=>{ (async function(){
     try{ const res=await sb.from('perfiles_publicados').select('id,nombre,bio,ciudad,edad,roles,verificado,videos,fotos,puntos,created_at').limit(60); setRows(res.data||[]);}catch(e){ setRows([]); }
-    loadPosts(); loadCounts();
+    loadPosts(); loadCounts(); loadNoticias();
     try{ const u=await sb.auth.getUser(); if(u.data.user){ let nom=(u.data.user.email||'').split('@')[0]; try{ const pr=await sb.from('usuarios').select('nombre').eq('id',u.data.user.id).maybeSingle(); if(pr.data&&pr.data.nombre) nom=pr.data.nombre; }catch(e){} setMe({id:u.data.user.id, nombre:nom}); } }catch(e){}
   })(); },[]);
   function onPosted(card){ const k=ckey(card); setCounts(function(c){ const n=Object.assign({},c); n[k]=(n[k]||0)+1; return n; }); }
@@ -220,9 +222,11 @@ function App(){
     const pvids=[], fotos=[];
     rows.forEach(function(r){ const b=base(r); const vv=Array.isArray(r.videos)?r.videos:[]; vv.forEach(function(v){ pvids.push(Object.assign({},b,{video:v,videoUrl:v})); }); if(b.foto) fotos.push(Object.assign({},b,{video:null,videoUrl:null})); });
     const uposts=posts.map(function(p){ return { type:'post', postId:p.id, name:p.autor, caption:p.caption, video:p.video_url, videoUrl:p.video_url, foto:null, likes:0, freshTs: p.created_at? new Date(p.created_at).getTime():0, userId:p.user_id }; });
+    const nots=noticias.map(function(n){ return { type:'noticia', nid:n.id, name:'Aura Noticias', fuente:n.fuente, caption:n.titulo, bio:n.resumen, foto:n.imagen, video:null, videoUrl:null, likes:0, freshTs: n.publicado_at? new Date(n.publicado_at).getTime():0, href: (n.tipo==='propia'? ('nota.html?id='+n.id) : (n.url||'#')), external: n.tipo!=='propia' }; });
+    const fotosAll=nots.concat(fotos);
     const vids=uposts.concat(pvids);
     if(uParam){ items = uposts.filter(function(x){return x.userId===uParam;}); uAuthor=(items[0]&&items[0].name)||''; }
-    else { items = mode==='video'?vids : mode==='foto'?fotos : vids.concat(fotos); }
+    else { items = mode==='video'?vids : mode==='foto'?fotosAll : vids.concat(fotosAll); }
   }
 
   return <div className="h-full w-full flex justify-center bg-black"><div className="relative h-full w-full max-w-[460px] bg-neutral-950" onTouchStart={onTS} onTouchEnd={onTE}>
