@@ -39,6 +39,11 @@
   var esc=function(x){return (x==null?'':String(x)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
   window.auraShare=function(red,url,titulo){ var u=encodeURIComponent(url),t=encodeURIComponent(titulo);
     var m={wa:'https://wa.me/?text='+t+'%20'+u,fb:'https://www.facebook.com/sharer/sharer.php?u='+u,tw:'https://twitter.com/intent/tweet?text='+t+'&url='+u,tg:'https://t.me/share/url?url='+u+'&text='+t};
+    if(red==='ig'){
+      if(navigator.share){ navigator.share({ title: titulo||'Aura Experience', text: titulo||'', url: url }).catch(function(){}); }
+      else { navigator.clipboard.writeText(url).then(function(){ alert('Link copiado \u2713\n\nAbr\u00ed Instagram y peg\u00e1lo en tu historia o publicaci\u00f3n.'); }); }
+      return;
+    }
     if(red==='copy'){ navigator.clipboard.writeText(url).then(function(){alert('Link copiado ✓');}); return; }
     window.open(m[red],'_blank','noopener'); };
   if(!id){ el.innerHTML='<p style="color:var(--text-mute)">Falta la nota (?id=).</p>'; return; }
@@ -55,6 +60,7 @@
       +'<div class="nt-body">'+esc(n.contenido||n.resumen||'')+'</div>'+cita
       +'<div class="nt-share"><button onclick="auraShare(\'wa\',\''+url+'\',\''+t+'\')">💬 WhatsApp</button>'
       +'<button onclick="auraShare(\'fb\',\''+url+'\',\'\')">Facebook</button>'
+      +'<button onclick="auraShare(\'ig\',\''+url+'\',\''+t+'\')">📷 Instagram</button>'
       +'<button onclick="auraShare(\'tw\',\''+url+'\',\''+t+'\')">𝕏 Twitter</button>'
       +'<button onclick="auraShare(\'tg\',\''+url+'\',\''+t+'\')">✈ Telegram</button>'
       +'<button onclick="auraShare(\'copy\',\''+url+'\',\'\')">🔗 Copiar link</button></div>';

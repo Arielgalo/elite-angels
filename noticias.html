@@ -78,6 +78,11 @@
   window.auraShare=function(red, url, titulo){
     var u=encodeURIComponent(url), t=encodeURIComponent(titulo);
     var m={ wa:'https://wa.me/?text='+t+'%20'+u, fb:'https://www.facebook.com/sharer/sharer.php?u='+u, tw:'https://twitter.com/intent/tweet?text='+t+'&url='+u, tg:'https://t.me/share/url?url='+u+'&text='+t };
+    if(red==='ig'){
+      if(navigator.share){ navigator.share({ title: titulo||'Aura Experience', text: titulo||'', url: url }).catch(function(){}); }
+      else { navigator.clipboard.writeText(url).then(function(){ alert('Link copiado \u2713\n\nAbr\u00ed Instagram y peg\u00e1lo en tu historia o publicaci\u00f3n.'); }); }
+      return;
+    }
     if(red==='copy'){ navigator.clipboard.writeText(url).then(function(){ alert('Link copiado ✓'); }); return; }
     window.open(m[red],'_blank','noopener');
   };
@@ -96,6 +101,7 @@
       +'<div class="nw-share" style="margin-top:10px">'
         +'<button title="WhatsApp" onclick="auraShare(\'wa\',\''+shareUrl.replace(/'/g,"%27")+'\',\''+t.replace(/'/g,"%27").replace(/"/g,'')+'\')">💬</button>'
         +'<button title="Facebook" onclick="auraShare(\'fb\',\''+shareUrl.replace(/'/g,"%27")+'\',\'\')">f</button>'
+        +'<button title="Instagram" onclick="auraShare(\'ig\',\''+shareUrl.replace(/'/g,"%27")+'\',\''+t.replace(/'/g,"%27").replace(/"/g,'')+'\')">📷</button>'
         +'<button title="X" onclick="auraShare(\'tw\',\''+shareUrl.replace(/'/g,"%27")+'\',\''+t.replace(/'/g,"%27").replace(/"/g,'')+'\')">𝕏</button>'
         +'<button title="Telegram" onclick="auraShare(\'tg\',\''+shareUrl.replace(/'/g,"%27")+'\',\''+t.replace(/'/g,"%27").replace(/"/g,'')+'\')">✈</button>'
         +'<button title="Copiar link" onclick="auraShare(\'copy\',\''+shareUrl.replace(/'/g,"%27")+'\',\'\')">🔗</button>'
