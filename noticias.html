@@ -23,7 +23,11 @@
 .nw-card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--black-soft);display:flex;flex-direction:column;transition:.25s}
 .nw-card:hover{border-color:var(--gold);transform:translateY(-3px)}
 .nw-imgwrap{position:relative;display:block;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1c1c26,#141419);overflow:hidden}
-.nw-imgwrap::after{content:'📰';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.3}
+.nw-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;font-family:var(--serif);font-size:1.3rem;letter-spacing:.1em;color:rgba(212,175,110,.6);text-transform:uppercase;line-height:1.25}
+.nw-imgwrap.mundo{background:linear-gradient(135deg,#1b2a3a,#121820)}
+.nw-imgwrap.argentina{background:linear-gradient(135deg,#2a2333,#16131d)}
+.nw-imgwrap.ciudad{background:linear-gradient(135deg,#2e2418,#181410)}
+.nw-imgwrap.aura{background:linear-gradient(135deg,#3a2418,#1d1119)}
 .nw-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transition:.3s}
 .nw-card:hover .nw-img{transform:scale(1.04)}
 .nw-body{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
@@ -85,7 +89,7 @@
     var src = esAura? '<span class="nw-badge-aura">AURA</span>' : '<span class="nw-src"><span class="dot"></span>'+esc(n.fuente||'')+'</span>';
     var t=esc(n.titulo||'');
     return '<article class="nw-card'+(esAura?' nw-aura':'')+'">'
-      +'<a class="nw-imgwrap" href="'+esc(link)+'"'+(esAura?'':' target="_blank" rel="noopener"')+'>'+img+'</a>'
+      +'<a class="nw-imgwrap '+esc(esAura?'aura':(n.categoria||''))+'" href="'+esc(link)+'"'+(esAura?'':' target="_blank" rel="noopener"')+'><span class="nw-ph">'+esc(esAura?'Aura Experience':(n.fuente||''))+'</span>'+img+'</a>'
       +'<div class="nw-body">'+src+'<h3>'+t+'</h3><p>'+esc((n.resumen||'').slice(0,160))+(n.resumen&&n.resumen.length>160?'…':'')+'</p>'
       +'<div class="nw-meta"><a class="nw-link" href="'+esc(link)+'"'+(esAura?'':' target="_blank" rel="noopener"')+'>'+(esAura?'Leer la nota →':'Leer en '+esc(n.fuente||'la fuente')+' →')+'</a>'
       +'<span class="nw-date">'+fecha(n.publicado_at)+'</span></div>'
