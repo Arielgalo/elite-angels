@@ -8,94 +8,138 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/styles.css?v=7">
 <style>
-.ng-wrap{max-width:920px;margin:0 auto;padding:26px 18px 90px}
-.ng-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px}
-.ng-top a.logo{display:inline-flex;flex-direction:column;line-height:.86;text-decoration:none}
-.ng-top a.logo span{font-family:var(--serif);font-size:1.25rem;color:var(--text);letter-spacing:.08em}
-.ng-back{color:var(--text-mute);font-size:.88rem;text-decoration:none}
-.ng-hero{display:flex;gap:20px;align-items:center;flex-wrap:wrap;border:1px solid var(--gold);border-radius:20px;padding:24px;background:linear-gradient(120deg,rgba(212,175,110,.10),rgba(212,175,110,.02))}
-.ng-logo{width:96px;height:96px;border-radius:18px;object-fit:cover;flex-shrink:0;border:1px solid var(--line)}
-.ng-logo.ph{display:flex;align-items:center;justify-content:center;font-size:44px;background:rgba(212,175,110,.14)}
-.ng-hero h1{font-size:2rem;line-height:1.1;margin-bottom:6px}
-.ng-rubro{display:inline-block;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gold);border:1px solid var(--line);border-radius:999px;padding:3px 12px;margin-bottom:8px}
-.ng-owner{color:var(--text-mute);font-size:.85rem;margin-top:6px}
-.ng-sec{margin-top:30px}
-.ng-sec h2{font-size:1.15rem;letter-spacing:.02em;margin-bottom:14px;color:var(--gold);display:flex;align-items:center;gap:8px}
-.ng-desc{color:var(--text-soft);line-height:1.7;font-size:1.02rem}
-.ng-promo{background:linear-gradient(90deg,rgba(245,158,11,.16),rgba(244,63,94,.12));border:1px solid rgba(245,158,11,.4);border-radius:14px;padding:14px 18px;color:var(--gold-bright);font-weight:600;font-size:1.05rem;margin-top:14px}
-.ng-list .it{color:var(--text-soft);font-size:.98rem;line-height:1.55;padding-left:18px;position:relative;margin-bottom:8px}
-.ng-list .it:before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold)}
-.ng-gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.ng-gal a{display:block;aspect-ratio:1;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.ng-wrap{max-width:1000px;margin:0 auto;padding:22px 18px 120px}
+.ng-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.ng-nav a.logo{display:inline-flex;flex-direction:column;line-height:.86;text-decoration:none}
+.ng-nav a.logo span{font-family:var(--serif);font-size:1.22rem;color:var(--text);letter-spacing:.08em}
+.ng-nav .rt{display:flex;gap:8px;align-items:center}
+.ng-nav .rt a{color:var(--text-mute);font-size:.85rem;text-decoration:none}
+.ng-sh{border:1px solid var(--line);background:transparent;color:var(--text-mute);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:.2s;padding:0}
+.ng-sh:hover{border-color:var(--gold);color:var(--gold)}
+/* Portada */
+.ng-cover{height:150px;border-radius:22px 22px 0 0;background:linear-gradient(120deg,#2a2118,#3a2b1a 45%,#1a1520);position:relative;overflow:hidden}
+.ng-cover:after{content:'';position:absolute;inset:0;background:radial-gradient(120% 100% at 20% 0%,rgba(212,175,110,.28),transparent 60%)}
+.ng-headcard{border:1px solid var(--line);border-top:none;border-radius:0 0 22px 22px;padding:0 28px 26px;background:var(--black-soft);margin-bottom:26px}
+.ng-logo{width:112px;height:112px;border-radius:22px;object-fit:cover;border:3px solid var(--black-soft);margin-top:-56px;position:relative;background:#1a1520;display:block}
+.ng-logo.ph{display:flex;align-items:center;justify-content:center;font-size:46px}
+.ng-title{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:14px}
+.ng-title h1{font-size:2.05rem;line-height:1.12}
+.ng-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.ng-chip{font-size:.74rem;color:var(--text-soft);border:1px solid var(--line);border-radius:999px;padding:5px 13px}
+.ng-chip.gold{color:var(--gold);border-color:rgba(212,175,110,.45);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.ng-chip.ver{color:#7be3a0;border-color:rgba(123,227,160,.4)}
+.ng-owner{color:var(--text-mute);font-size:.84rem;margin-top:12px}
+/* Secciones */
+.ng-sec{margin-bottom:30px}
+.ng-sec h2{font-size:1.08rem;letter-spacing:.03em;margin-bottom:14px;color:var(--gold);display:flex;align-items:center;gap:9px}
+.ng-desc{color:var(--text-soft);line-height:1.75;font-size:1.02rem}
+.ng-promo{background:linear-gradient(90deg,rgba(245,158,11,.16),rgba(244,63,94,.10));border:1px solid rgba(245,158,11,.42);border-radius:16px;padding:16px 20px;color:var(--gold-bright);font-weight:600;font-size:1.06rem;display:flex;align-items:center;gap:11px}
+.ng-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.ng-item{border:1px solid var(--line);border-radius:14px;padding:15px 17px;background:rgba(255,255,255,.015);color:var(--text-soft);font-size:.94rem;line-height:1.5;display:flex;gap:11px;align-items:flex-start;transition:.2s}
+.ng-item:hover{border-color:var(--gold)}
+.ng-item .ic{color:var(--gold);flex-shrink:0}
+.ng-gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.ng-gal button{padding:0;border:1px solid var(--line);background:none;border-radius:14px;overflow:hidden;aspect-ratio:1;cursor:zoom-in}
 .ng-gal img{width:100%;height:100%;object-fit:cover;transition:.3s}
-.ng-gal a:hover img{transform:scale(1.05)}
-.ng-map{width:100%;height:320px;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:6px}
-.ng-map iframe{width:100%;height:100%;border:0;filter:grayscale(.2) contrast(1.05)}
-.ng-addr{color:var(--text-soft);margin-bottom:10px}
-.ng-press a{display:flex;align-items:center;gap:10px;color:var(--text-soft);text-decoration:none;padding:11px 14px;border:1px solid var(--line-soft);border-radius:12px;margin-bottom:8px;transition:.2s}
-.ng-press a:hover{border-color:var(--gold);color:var(--text)}
-.ng-cta{position:sticky;bottom:14px;display:flex;gap:10px;flex-wrap:wrap;margin-top:34px}
-.ng-cta .btn{flex:1;min-width:180px;justify-content:center}
-.ng-muted{color:var(--text-mute);font-size:.85rem}
+.ng-gal button:hover img{transform:scale(1.06)}
+.ng-loc{display:grid;grid-template-columns:1fr 1.3fr;gap:16px;align-items:stretch}
+@media(max-width:700px){.ng-loc{grid-template-columns:1fr}.ng-headcard{padding:0 18px 22px}.ng-title h1{font-size:1.65rem}}
+.ng-loccard{border:1px solid var(--line);border-radius:16px;padding:18px;background:rgba(255,255,255,.015)}
+.ng-map{border:1px solid var(--line);border-radius:16px;overflow:hidden;min-height:260px}
+.ng-map iframe{width:100%;height:100%;min-height:260px;border:0;display:block;filter:grayscale(.25) contrast(1.05)}
+.ng-press a{display:flex;align-items:center;gap:11px;color:var(--text-soft);text-decoration:none;padding:13px 16px;border:1px solid var(--line);border-radius:13px;margin-bottom:9px;transition:.2s}
+.ng-press a:hover{border-color:var(--gold);color:var(--text);transform:translateX(3px)}
+/* CTA fija */
+.ng-bar{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(12,10,16,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:11px 18px}
+.ng-bar .in{max-width:1000px;margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ng-bar .nm{flex:1;min-width:120px;color:var(--text);font-weight:600;font-size:.94rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ng-bar .btn{padding:11px 20px}
+.ng-foot{text-align:center;color:var(--text-mute);font-size:.8rem;margin-top:36px;line-height:1.7}
+.lb{position:fixed;inset:0;background:rgba(6,5,9,.95);z-index:200;display:none;align-items:center;justify-content:center;padding:24px}
+.lb.on{display:flex}
+.lb img{max-width:94vw;max-height:90vh;border-radius:8px}
+.lb span{position:absolute;top:18px;right:24px;color:#fff;font-size:30px;cursor:pointer}
 </style>
 </head>
 <body>
 <div class="ng-wrap">
-  <div class="ng-top">
+  <div class="ng-nav">
     <a class="logo" href="index.html"><span>Aura</span><span style="color:var(--gold)">Experience</span></a>
-    <a class="ng-back" id="back" href="index.html">← Volver</a>
+    <div class="rt">
+      <a id="back" href="index.html">← Perfil</a>
+      <button class="ng-sh" title="Compartir por WhatsApp" onclick="ngShare('wa')">💬</button>
+      <button class="ng-sh" title="Copiar link" onclick="ngShare('copy')">🔗</button>
+    </div>
   </div>
   <div id="ng"><p style="color:var(--text-mute);padding:40px 0">Cargando espacio comercial…</p></div>
+  <p class="ng-foot">Espacio comercial en <strong style="color:var(--gold)">Aura Experience</strong> · Los datos y ofertas son responsabilidad de cada negocio.</p>
 </div>
+<div class="lb" id="lb"><span onclick="document.getElementById('lb').classList.remove('on')">✕</span><img id="lbi" alt=""></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
-  var URL='https://fsjrimmurtnrorqhnbwu.supabase.co', KEY='sb_publishable_2lWllWfVLWsPnnko4TEa4Q_2sx0kdI4';
+  var sb=window.supabase.createClient('https://fsjrimmurtnrorqhnbwu.supabase.co','sb_publishable_2lWllWfVLWsPnnko4TEa4Q_2sx0kdI4');
   var sid=new URLSearchParams(location.search).get('sid');
   var esc=function(x){return (x==null?'':String(x)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
-  var el=document.getElementById('ng');
+  var el=document.getElementById('ng'); var NOM='';
   function lines(v){ return v? String(v).split(/\n/).map(function(t){return t.trim();}).filter(Boolean):[]; }
   function waLink(t){ var d=String(t||'').replace(/[^0-9]/g,''); if(d.length===10) d='54'+d; else if(d.length===11&&d[0]==='9') d='54'+d; return 'https://wa.me/'+d; }
   function webUrl(w){ if(!w) return ''; if(/^https?:/.test(w)) return w; if(w.charAt(0)==='@') return 'https://instagram.com/'+w.slice(1); return 'https://'+w; }
-  if(!sid){ el.innerHTML='<p class="ng-muted" style="padding:40px 0">Falta el perfil (?sid=).</p>'; return; }
+  window.ngShare=function(red){ var u=encodeURIComponent(location.href), t=encodeURIComponent(NOM||'Mirá este negocio en Aura');
+    if(red==='copy'){ navigator.clipboard.writeText(location.href).then(function(){alert('Link copiado ✓');}); return; }
+    window.open('https://wa.me/?text='+t+'%20'+u,'_blank','noopener'); };
+  window.ngZoom=function(src){ document.getElementById('lbi').src=src; document.getElementById('lb').classList.add('on'); };
+  if(!sid){ el.innerHTML='<p style="color:var(--text-mute);padding:40px 0">Falta el perfil (?sid=).</p>'; return; }
   document.getElementById('back').setAttribute('href','perfil.html?sid='+sid);
-  var sb=window.supabase.createClient(URL,KEY);
   sb.from('perfiles_publicados').select('*').eq('id',sid).maybeSingle().then(function(r){
-    if(r.error||!r.data){ el.innerHTML='<p class="ng-muted" style="padding:40px 0">No se encontró el espacio.</p>'; return; }
+    if(r.error||!r.data){ el.innerHTML='<p style="color:var(--text-mute);padding:40px 0">No se encontró el espacio.</p>'; return; }
     var p=r.data;
-    if(!(p.negocio_nombre||p.negocio||p.negocio_servicios||p.negocio_direccion)){ el.innerHTML='<p class="ng-muted" style="padding:40px 0">Este perfil todavía no cargó su espacio comercial.</p>'; return; }
-    document.title=(p.negocio_nombre||'Espacio comercial')+' · Aura';
+    if(!(p.negocio_nombre||p.negocio||p.negocio_servicios||p.negocio_direccion)){ el.innerHTML='<p style="color:var(--text-mute);padding:40px 0">Este perfil todavía no cargó su espacio comercial.</p>'; return; }
+    NOM=p.negocio_nombre||'Negocio'; document.title=NOM+' · Aura Experience';
     var logo=p.negocio_logo? '<img class="ng-logo" src="'+esc(p.negocio_logo)+'" alt="">' : '<div class="ng-logo ph">💼</div>';
-    var hero='<div class="ng-hero">'+logo+'<div style="flex:1;min-width:200px">'+(p.negocio_rubro?'<span class="ng-rubro">'+esc(p.negocio_rubro)+'</span><br>':'')+'<h1>'+esc(p.negocio_nombre||'Mi negocio')+'</h1>'+(p.negocio?'<div class="ng-desc">'+esc(p.negocio)+'</div>':'')+'<div class="ng-owner">Por '+esc(p.nombre||'')+(p.zona||p.negocio_zona?' · '+esc(p.negocio_zona||''):'')+'</div></div></div>';
+    var chips='';
+    if(p.negocio_rubro) chips+='<span class="ng-chip gold">'+esc(p.negocio_rubro)+'</span>';
+    if(p.verificado) chips+='<span class="ng-chip ver">✓ Verificado</span>';
+    if(p.negocio_zona) chips+='<span class="ng-chip">📍 '+esc(p.negocio_zona)+'</span>';
+    var out='<div class="ng-cover"></div><div class="ng-headcard">'+logo
+      +'<div class="ng-title"><h1>'+esc(NOM)+'</h1></div>'
+      +(chips?'<div class="ng-chips">'+chips+'</div>':'')
+      +'<div class="ng-owner">Por '+esc(p.nombre||'')+(p.ciudad?' · '+esc(p.ciudad):'')+'</div></div>';
 
-    var out=hero;
-    // Promos y descuentos
+    if(p.negocio) out+='<div class="ng-sec"><h2>✨ Sobre el negocio</h2><div class="ng-desc">'+esc(p.negocio)+'</div></div>';
+
     var descs=lines(p.negocio_descuentos);
     if(p.negocio_promo||descs.length){
-      out+='<div class="ng-sec"><h2>🎁 Descuentos y promociones</h2>'+(p.negocio_promo?'<div class="ng-promo">'+esc(p.negocio_promo)+'</div>':'')+(descs.length?'<div class="ng-list" style="margin-top:12px">'+descs.map(function(d){return '<div class="it">'+esc(d)+'</div>';}).join('')+'</div>':'')+'</div>';
+      out+='<div class="ng-sec"><h2>🎁 Beneficios y promociones</h2>'
+        +(p.negocio_promo?'<div class="ng-promo"><span>🔥</span><span>'+esc(p.negocio_promo)+'</span></div>':'')
+        +(descs.length?'<div class="ng-cards" style="margin-top:12px">'+descs.map(function(d){return '<div class="ng-item"><span class="ic">%</span><span>'+esc(d)+'</span></div>';}).join('')+'</div>':'')+'</div>';
     }
-    // Servicios
     var servs=lines(p.negocio_servicios);
-    if(servs.length){ out+='<div class="ng-sec"><h2>🛠️ Servicios y productos</h2><div class="ng-list">'+servs.map(function(x){return '<div class="it">'+esc(x)+'</div>';}).join('')+'</div></div>'; }
-    // Galeria
+    if(servs.length) out+='<div class="ng-sec"><h2>🛠️ Servicios y productos</h2><div class="ng-cards">'+servs.map(function(x){return '<div class="ng-item"><span class="ic">▸</span><span>'+esc(x)+'</span></div>';}).join('')+'</div></div>';
+
     var fotos=Array.isArray(p.negocio_fotos)?p.negocio_fotos:[];
-    if(fotos.length){ out+='<div class="ng-sec"><h2>📸 Fotos</h2><div class="ng-gal">'+fotos.map(function(u){return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(u)+'" loading="lazy"></a>';}).join('')+'</div></div>'; }
-    // Ubicacion + mapa
+    if(fotos.length) out+='<div class="ng-sec"><h2>📸 Galería</h2><div class="ng-gal">'+fotos.map(function(u){return '<button onclick="ngZoom(\''+esc(u)+'\')"><img src="'+esc(u)+'" loading="lazy" alt=""></button>';}).join('')+'</div></div>';
+
     if(p.negocio_direccion||p.negocio_mapa){
       var q=encodeURIComponent(p.negocio_direccion||'');
-      out+='<div class="ng-sec"><h2>📍 Ubicación</h2>'+(p.negocio_direccion?'<div class="ng-addr">'+esc(p.negocio_direccion)+'</div>':'')+(p.negocio_direccion?'<div class="ng-map"><iframe loading="lazy" src="https://maps.google.com/maps?q='+q+'&z=15&output=embed"></iframe></div>':'')+(p.negocio_mapa?'<a href="'+esc(p.negocio_mapa)+'" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;display:inline-block;margin-top:10px">🗺️ Abrir en Google Maps</a>':'')+'</div>';
+      out+='<div class="ng-sec"><h2>📍 Dónde encontrarnos</h2><div class="ng-loc">'
+        +'<div class="ng-loccard"><div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--gold);margin-bottom:7px">Dirección</div>'
+        +'<div style="color:var(--text-soft);line-height:1.6">'+esc(p.negocio_direccion||'—')+'</div>'
+        +(p.negocio_zona?'<div style="color:var(--text-mute);font-size:.86rem;margin-top:10px">Zona: '+esc(p.negocio_zona)+'</div>':'')
+        +(p.negocio_mapa?'<a href="'+esc(p.negocio_mapa)+'" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;display:inline-block;margin-top:14px;font-size:.9rem">🗺️ Abrir en Google Maps →</a>':'')
+        +'</div>'
+        +(p.negocio_direccion?'<div class="ng-map"><iframe loading="lazy" src="https://maps.google.com/maps?q='+q+'&z=15&output=embed"></iframe></div>':'')
+        +'</div></div>';
     }
-    // Prensa
     var press=lines(p.negocio_prensa);
-    if(press.length){ out+='<div class="ng-sec"><h2>📰 En la prensa</h2><div class="ng-press">'+press.map(function(l){ var mu=l.match(/https?:\/\/\S+/); var url=mu?mu[0]:''; var title=l.replace(/\s*[—-]\s*https?:\/\/\S+/,'').replace(/https?:\/\/\S+/,'').trim()||url; return url?'<a href="'+esc(url)+'" target="_blank" rel="noopener">🔗 '+esc(title)+'</a>':'<span class="it" style="display:block">'+esc(l)+'</span>'; }).join('')+'</div></div>'; }
-    // Contacto (sticky)
-    var cta='';
-    if(p.negocio_contacto) cta+='<a class="btn btn-wa" href="'+waLink(p.negocio_contacto)+'" target="_blank">💬 Contactar por WhatsApp</a>';
-    var wu=webUrl(p.negocio_web); if(wu) cta+='<a class="btn btn-ghost" href="'+esc(wu)+'" target="_blank">🔗 '+esc(p.negocio_web)+'</a>';
-    if(cta) out+='<div class="ng-cta">'+cta+'</div>';
+    if(press.length) out+='<div class="ng-sec"><h2>📰 En la prensa</h2><div class="ng-press">'+press.map(function(l){ var mu=l.match(/https?:\/\/\S+/); var url=mu?mu[0]:''; var ti=l.replace(/\s*[—-]\s*https?:\/\/\S+/,'').replace(/https?:\/\/\S+/,'').trim()||url; return url?'<a href="'+esc(url)+'" target="_blank" rel="noopener">🔗 <span>'+esc(ti)+'</span></a>':'<div class="ng-item">'+esc(l)+'</div>'; }).join('')+'</div></div>';
 
     el.innerHTML=out;
+    var cta='';
+    if(p.negocio_contacto) cta+='<a class="btn btn-wa" href="'+waLink(p.negocio_contacto)+'" target="_blank">💬 Contactar</a>';
+    var wu=webUrl(p.negocio_web); if(wu) cta+='<a class="btn btn-ghost" href="'+esc(wu)+'" target="_blank">🔗 '+esc(p.negocio_web)+'</a>';
+    if(cta){ var bar=document.createElement('div'); bar.className='ng-bar'; bar.innerHTML='<div class="in"><span class="nm">'+esc(NOM)+'</span>'+cta+'</div>'; document.body.appendChild(bar); }
   });
 })();
 </script>
