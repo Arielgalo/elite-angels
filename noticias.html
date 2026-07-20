@@ -22,7 +22,10 @@
 .nw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
 .nw-card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--black-soft);display:flex;flex-direction:column;transition:.25s}
 .nw-card:hover{border-color:var(--gold);transform:translateY(-3px)}
-.nw-img{width:100%;aspect-ratio:16/9;object-fit:cover;background:#15151c}
+.nw-imgwrap{position:relative;display:block;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1c1c26,#141419);overflow:hidden}
+.nw-imgwrap::after{content:'📰';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.3}
+.nw-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transition:.3s}
+.nw-card:hover .nw-img{transform:scale(1.04)}
 .nw-body{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
 .nw-src{display:inline-flex;align-items:center;gap:6px;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gold);margin-bottom:7px}
 .nw-src .dot{width:5px;height:5px;border-radius:50%;background:var(--gold)}
@@ -78,11 +81,11 @@
     var esAura = n.tipo==='propia';
     var link = esAura ? ('nota.html?id='+n.id) : (n.url||'#');
     var shareUrl = esAura ? (location.origin+'/nota.html?id='+n.id) : (n.url||location.origin);
-    var img = n.imagen? '<img class="nw-img" src="'+esc(n.imagen)+'" loading="lazy" alt="">' : '<div class="nw-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-mute);font-size:2rem">📰</div>';
+    var img = n.imagen? '<img class="nw-img" src="'+esc(n.imagen)+'" loading="lazy" referrerpolicy="no-referrer" alt="" onerror="this.remove()">' : '';
     var src = esAura? '<span class="nw-badge-aura">AURA</span>' : '<span class="nw-src"><span class="dot"></span>'+esc(n.fuente||'')+'</span>';
     var t=esc(n.titulo||'');
     return '<article class="nw-card'+(esAura?' nw-aura':'')+'">'
-      +'<a href="'+esc(link)+'"'+(esAura?'':' target="_blank" rel="noopener"')+'>'+img+'</a>'
+      +'<a class="nw-imgwrap" href="'+esc(link)+'"'+(esAura?'':' target="_blank" rel="noopener"')+'>'+img+'</a>'
       +'<div class="nw-body">'+src+'<h3>'+t+'</h3><p>'+esc((n.resumen||'').slice(0,160))+(n.resumen&&n.resumen.length>160?'…':'')+'</p>'
       +'<div class="nw-meta"><a class="nw-link" href="'+esc(link)+'"'+(esAura?'':' target="_blank" rel="noopener"')+'>'+(esAura?'Leer la nota →':'Leer en '+esc(n.fuente||'la fuente')+' →')+'</a>'
       +'<span class="nw-date">'+fecha(n.publicado_at)+'</span></div>'
