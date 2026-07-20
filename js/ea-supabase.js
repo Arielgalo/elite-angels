@@ -398,6 +398,15 @@
         </div>
         <div id="nnFuentes"></div></div>`;
       const msg=(t,ok)=>{ const e=document.getElementById('nnMsg'); e.textContent=t||''; e.style.color= ok===false?'#e08aa0':'var(--gold)'; };
+      const DK='aura_nota_draft';
+      const guardarBorrador=()=>{ try{ localStorage.setItem(DK, JSON.stringify({ tit:(document.getElementById('nnTit')||{}).value||'', res:(document.getElementById('nnRes')||{}).value||'', cont:(document.getElementById('nnCont')||{}).value||'' })); }catch(e){} };
+      try{ const d=JSON.parse(localStorage.getItem(DK)||'{}');
+        if(d.tit) document.getElementById('nnTit').value=d.tit;
+        if(d.res) document.getElementById('nnRes').value=d.res;
+        if(d.cont) document.getElementById('nnCont').value=d.cont;
+        if(d.tit||d.res||d.cont) msg('Borrador recuperado ✓');
+      }catch(e){}
+      ['nnTit','nnRes','nnCont'].forEach(function(id){ const e=document.getElementById(id); if(e){ e.addEventListener('input',guardarBorrador); e.addEventListener('blur',guardarBorrador); } });
       document.getElementById('nnPub').addEventListener('click', async ()=>{
         const tit=document.getElementById('nnTit').value.trim(); const res=document.getElementById('nnRes').value.trim(); const cont=document.getElementById('nnCont').value.trim();
         if(!tit){ msg('Poné un título.',false); return; }
@@ -407,6 +416,7 @@
           const up=await subirMedios(fIn&&fIn.files[0]?[fIn.files[0]]:[], vIn&&vIn.files[0]?[vIn.files[0]]:[], null);
           const row={ tipo:'propia', titulo:tit, resumen:res||cont.slice(0,200), contenido:cont, imagen:(up.fotos&&up.fotos[0])||null, video:(up.videos&&up.videos[0])||null, fuente:'Aura Experience', categoria:'aura', publicado_at:new Date().toISOString() };
           const r=await client.from('noticias').insert(row).select('id').single(); if(r.error) throw r.error;
+          try{ localStorage.removeItem(DK); }catch(_){}
           msg('✓ Publicada. Ver: /nota.html?id='+r.data.id);
           document.getElementById('nnTit').value=''; document.getElementById('nnRes').value=''; document.getElementById('nnCont').value='';
           if(fIn) fIn.value=''; if(vIn) vIn.value='';
@@ -614,9 +624,15 @@
   }
   async function initPanel() {
     const root = document.getElementById('panelRoot'); if (!root) return;
+    let montado = null;
     const { data } = await client.auth.getSession();
-    if (data.session) adminBoard(root, data.session.user.email); else adminLogin(root);
-    client.auth.onAuthStateChange((event, session) => { if (event === 'PASSWORD_RECOVERY') { setPasswordForm(root); return; } if (session) adminBoard(root, session.user.email); });
+    if (data.session) { montado = data.session.user.email; adminBoard(root, montado); } else adminLogin(root);
+    client.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') { setPasswordForm(root); return; }
+      if (event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION' || event === 'USER_UPDATED') return;
+      if (session) { if (montado === session.user.email) return; montado = session.user.email; adminBoard(root, montado); }
+      else { montado = null; adminLogin(root); }
+    });
   }
   function setPasswordForm(root) {
     root.innerHTML = `<div class="form-card" style="max-width:420px;margin:0 auto"><img src="assets/logo.svg" class="logo-emblem" style="margin:0 auto 16px"><h3 style="font-size:1.5rem;text-align:center;margin-bottom:6px">Defin\u00ed tu contrase\u00f1a</h3><p style="color:var(--text-soft);font-size:.9rem;text-align:center;margin-bottom:18px">Eleg\u00ed una contrase\u00f1a para entrar y salir desde cualquier dispositivo.</p><div class="field"><label>Nueva contrase\u00f1a</label><input type="password" id="npass" placeholder="m\u00ednimo 6 caracteres"></div><button class="btn btn-gold" id="nsave" style="width:100%;justify-content:center">Guardar contrase\u00f1a</button><p id="nmsg" style="color:var(--gold);font-size:.88rem;text-align:center;margin-top:12px"></p></div>`;
@@ -669,9 +685,14 @@
   }
   async function initPortal() {
     const root = document.getElementById('portalRoot'); if (!root) return;
+    let montadoP = null;
     const { data } = await client.auth.getSession();
-    if (data.session) portalBoard(root, data.session.user.email); else portalLogin(root);
-    client.auth.onAuthStateChange((_e, session) => { if (session) portalBoard(root, session.user.email); });
+    if (data.session) { montadoP = data.session.user.email; portalBoard(root, montadoP); } else portalLogin(root);
+    client.auth.onAuthStateChange((_e, session) => {
+      if (_e === 'TOKEN_REFRESHED' || _e === 'INITIAL_SESSION' || _e === 'USER_UPDATED') return;
+      if (session) { if (montadoP === session.user.email) return; montadoP = session.user.email; portalBoard(root, montadoP); }
+      else { montadoP = null; }
+    });
   }
 
   async function crearPagoPuntos(numero, monto, cliente_nombre, cliente_contacto) {
