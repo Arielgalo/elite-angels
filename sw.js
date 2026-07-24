@@ -1,10 +1,10 @@
-const CACHE='aura-v3';
-const SHELL=['/','/index.html','/feed.html','/css/styles.css?v=7','/assets/icon-192.png'];
+const CACHE='aura-v4';
+const SHELL=['/assets/icon-192.png'];
 self.addEventListener('install', e=>{ self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL).catch(()=>{}))); });
 self.addEventListener('activate', e=>{ e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))); self.clients.claim(); });
 self.addEventListener('fetch', e=>{
   const req=e.request; if(req.method!=='GET') return;
-  e.respondWith(fetch(req).catch(()=>caches.match(req).then(m=>m||caches.match('/index.html'))));
+  e.respondWith(fetch(req).catch(()=>caches.match(req).then(m=>m||new Response('',{status:504}))));
 });
 self.addEventListener('push', e=>{
   let d={}; try{ d=e.data.json(); }catch(_){ d={ body: e.data?e.data.text():'' }; }
