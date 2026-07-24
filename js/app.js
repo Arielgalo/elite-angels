@@ -29,7 +29,7 @@ function modelCard(m){
   const vid = (m.videos && m.videos.length) ? '<span class="card-flag">▶ Video</span>' : '';
   const cita = m.price || m.precio_cita || 15000;
   return `<a class="model-card plan-${m.plan||'estandar'}" href="${href}" data-prov="${m.provincia||''}">
-    <span class="model-price"><small>Acuerdo desde</small> <b>${fmtP(cita)}</b></span>
+    ${(m.negocio_nombre||m.negocio_rubro)?``:`<span class="model-price"><small>Acuerdo desde</small> <b>${fmtP(cita)}</b></span>`}
     ${planBadge(m)}${vid}
     ${cardMedia(m)}
     <div class="model-info"><h3>${m.name}</h3>
@@ -219,7 +219,7 @@ async function renderProfile(){
       +'<span style="flex:1;min-width:0"><span style="display:block;color:var(--text);font-weight:600;font-size:1.05rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+String(nomb).replace(/</g,"&lt;")+'</span><span style="display:block;color:var(--gold);font-size:.82rem">Ver espacio comercial · marca, productos y contacto →</span></span></a>';
     var acc=document.getElementById('profileActions'); if(acc) acc.insertAdjacentHTML('beforebegin', html);
   }catch(e){} })();
-  const rateBox=document.getElementById('rateBox'); if(rateBox){ const pn=planName(m.plan);
+  const rateBox=document.getElementById('rateBox'); var _esNeg=!!(m.negocio_nombre||m.negocio_rubro); if(rateBox&&_esNeg){ rateBox.style.display='none'; } if(rateBox&&!_esNeg){ const pn=planName(m.plan);
     rateBox.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:1.3rem">Pacto</h3><span class="tier-pill tier-${m.plan||'estandar'}">${pn}</span></div>
       <div class="rate-row"><span class="dur">Acordar o pactar · desde 30 min</span><span class="pr">${fmtP(m.price)}</span></div>
       <p style="color:var(--text-soft);font-size:.86rem;margin-top:14px">El valor del pacto se acuerda y se paga el tiempo <strong>a ${m.name}</strong> (transferencia o en efectivo). Lo que consuman —café, mates, una cena o una bebida— lo abona quien invita.</p>

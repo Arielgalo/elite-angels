@@ -34,8 +34,8 @@
   --text-mute: #8a8780;
 
   /* Tipografía */
-  --serif: 'Helvetica Neue', Helvetica, Arial, 'Inter', sans-serif;
-  --sans: 'Helvetica Neue', Helvetica, Arial, 'Inter', system-ui, sans-serif;
+  --serif: 'Sora', 'Helvetica Neue', Arial, sans-serif;
+  --sans: 'Manrope', 'Helvetica Neue', Arial, system-ui, sans-serif;
 
   /* Medidas */
   --container: 1240px;
@@ -48,7 +48,7 @@
 
 /* ===== Reset ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; font-size: 92%; }
 body {
   font-family: var(--sans);
   background: #08060e;
