@@ -56,13 +56,14 @@ function Eq(p){ return <div className="flex items-end gap-0.5 h-3.5">{[0,1,2,3].
 function AuraRing(p){ const c=p.colors; const fresh=p.fresh; return <div className="relative shrink-0" style={{width:p.size,height:p.size}}><div className="absolute rounded-full" style={{inset:0, background: fresh?('conic-gradient(from 0deg, '+c[0]+', '+c[1]+', '+c[2]+', '+c[0]+')'):'#3a3a40', animation: fresh?('auraspin '+(p.active?3:6)+'s linear infinite'):'none', boxShadow: fresh?('0 0 18px 3px '+c[1]+'aa'):'none'}}/><div className="absolute rounded-full overflow-hidden bg-neutral-900 flex items-center justify-center text-white font-bold" style={{inset: fresh?3:2}}>{c.img?<img src={c.img} className="w-full h-full object-cover" alt=""/>:(c.ini||'')}</div></div>; }
 
 function Card(props){
-  const p=props.p, aura=props.aura, soundOn=props.soundOn, setSoundOn=props.setSoundOn, isPost=p.type==='post', isNews=p.type==='noticia';
+  const p=props.p, aura=props.aura, soundOn=props.soundOn, setSoundOn=props.setSoundOn, vol=props.vol, setVol=props.setVol, isPost=p.type==='post', isNews=p.type==='noticia';
   const ref=useRef(null), vidRef=useRef(null);
-  const [active,setActive]=useState(false); const [paused,setPaused]=useState(false); const [liked,setLiked]=useState(false); const [vol,setVol]=useState(1); const volRef=useRef(1);
+  const [active,setActive]=useState(false); const [paused,setPaused]=useState(false); const [liked,setLiked]=useState(false); const volRef=useRef(typeof vol==='number'?vol:1);
   useEffect(()=>{ const el=ref.current; if(!el) return;
     const io=new IntersectionObserver(function(ent){ const e=ent[0]; const vis=e.intersectionRatio>0.6; setActive(vis); const v=vidRef.current; if(v){ if(vis){ v.muted=!soundOn; v.volume=volRef.current; v.play().then(function(){setPaused(false);}).catch(function(){}); } else { v.pause(); v.muted=true; } } },{threshold:[0,0.6,1]});
     io.observe(el); return function(){io.disconnect();}; },[soundOn]);
-  useEffect(()=>{ const v=vidRef.current; if(v&&active){ v.muted=!soundOn; v.volume=volRef.current; } },[soundOn,active,vol]);
+  useEffect(()=>{ const v=vidRef.current; if(v&&active){ v.muted=!soundOn; v.volume=volRef.current; } },[soundOn,active]);
+  useEffect(()=>{ volRef.current=vol; const v=vidRef.current; if(v&&active) v.volume=vol; },[vol,active]);
   function toggleSound(e){ if(e) e.stopPropagation(); const ns=!soundOn; setSoundOn(ns); const v=vidRef.current; if(v){ v.muted=!ns; v.volume=volRef.current; if(ns){ v.play().then(function(){setPaused(false);}).catch(function(){}); } } }
   function onMediaTap(){ if(!soundOn && p.video){ toggleSound(); return; } const v=vidRef.current; if(!v) return; if(v.paused){ v.play(); setPaused(false); } else { v.pause(); setPaused(true); } }
   const avatarColors=Object.assign([aura[0],aura[1],aura[2]],{img: isNews?'assets/logo.svg':p.foto, ini:(p.name||'A').slice(0,1).toUpperCase()});
@@ -179,6 +180,7 @@ function App(){
   const [posts,setPosts]=useState([]);
   const [noticias,setNoticias]=useState([]);
   const [soundOn,setSoundOn]=useState(false);
+  const [vol,setVol]=useState(1);
   const [counts,setCounts]=useState({});
   const [cmt,setCmt]=useState(null);
   const [rep,setRep]=useState(null);
@@ -236,7 +238,7 @@ function App(){
     {rows && uParam && items.length===0 && <div className="h-full flex items-center justify-center text-white/60 px-8 text-center">Esta persona todav\u00eda no subi\u00f3 videos.</div>}
 
     {rows && items.length===0 && <div className="h-full flex flex-col items-center justify-center text-white/60 gap-3 px-8 text-center"><p>{mode==='video'?'Todavía no hay videos. ¡Subí el primero!':'No hay publicaciones.'}</p><button onClick={function(){setUpl(true);}} className="px-5 py-2 rounded-full text-neutral-950 font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>🎬 Subir video</button></div>}
-    {rows && items.length>0 && <div ref={scroller} key={mode} className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">{items.map(function(p,i){return <div key={(p.postId||p.sid)+'|'+(p.videoUrl||'')+i} data-sid={p.sid||''} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]} soundOn={soundOn} setSoundOn={setSoundOn} count={counts[ckey(p)]} onComments={setCmt} onReport={setRep}/></div>;})}</div>}
+    {rows && items.length>0 && <div ref={scroller} key={mode} className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">{items.map(function(p,i){return <div key={(p.postId||p.sid)+'|'+(p.videoUrl||'')+i} data-sid={p.sid||''} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]} soundOn={soundOn} setSoundOn={setSoundOn} vol={vol} setVol={setVol} count={counts[ckey(p)]} onComments={setCmt} onReport={setRep}/></div>;})}</div>}
     {rows && items.length>0 && <div className="feed-arrows absolute left-2 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2.5"><button onClick={function(){nav(-1);}} className="w-9 h-9 rounded-full bg-white/10 text-white/55 text-base flex items-center justify-center active:scale-90 hover:bg-white/20 hover:text-white/90 transition">▲</button><button onClick={function(){nav(1);}} className="w-9 h-9 rounded-full bg-white/10 text-white/55 text-base flex items-center justify-center active:scale-90 hover:bg-white/20 hover:text-white/90 transition">▼</button></div>}
     {cmt && <Drawer card={cmt} onClose={function(){setCmt(null);}} onPosted={onPosted}/>}
     {rep && <ReportSheet card={rep} onClose={function(){setRep(null);}}/>}
