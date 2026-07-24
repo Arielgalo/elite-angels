@@ -241,14 +241,6 @@
       <div class="field"><label>Fotos actuales (arrastrá para ordenar · ✕ para borrar)</label>${fotoGrid(s.fotos)}<input type="file" data-ef="addFotos" accept="image/*" multiple style="margin-top:10px"></div>
       <div class="field"><label>Videos para el feed (verticales, tipo TikTok)</label><div class="ed-chips">${mediaChips(s.videos,'video')||'<span style="color:var(--text-mute)">sin videos</span>'}</div><input type="file" data-ef="addVideos" accept="video/*" multiple></div>
       <div class="field"><label>Mensaje de voz / Audio</label>${s.audio?`<div class="ed-chips"><span class="ed-chip">audio <button type="button" class="ed-rm" data-tipo="audio" data-url="${esc(s.audio)}">✕</button></span></div><audio controls src="${esc(s.audio)}" style="width:100%;margin-top:8px"></audio>`:'<span style="color:var(--text-mute)">sin audio</span>'}<input type="file" data-ef="addAudio" accept="audio/*,video/*"></div>
-      <div class="field" style="border-top:1px solid var(--line-soft);margin-top:8px;padding-top:16px">
-        <label>Verificación de identidad — <span class="verif-state verif-${s.verif_estado||'sin_verificar'}">${estadoVerifLbl(s.verif_estado)}</span></label>
-        <p style="color:var(--text-soft);font-size:.85rem;margin:6px 0 12px">Subí tu <strong>DNI (frente y dorso)</strong> y una <strong>selfie sosteniendo el DNI</strong> junto a tu cara. Cuando el equipo confirme que coincidís con tus fotos, tu perfil queda <strong>Verificado ✓</strong>. Tus documentos son privados: solo los ve el equipo de Aura.</p>
-        <div class="field-row"><div class="field"><label>DNI · frente</label><input type="file" data-verif="dni_frente" accept="image/*"></div><div class="field"><label>DNI · dorso</label><input type="file" data-verif="dni_dorso" accept="image/*"></div></div>
-        <div class="field"><label>Selfie sosteniendo el DNI</label><input type="file" data-verif="selfie" accept="image/*"></div>
-        <button type="button" class="btn btn-gold" data-verif-send="${s.id}" style="margin-top:4px">Enviar a verificación</button>
-        <div class="verif-msg" style="color:var(--gold);font-size:.86rem;margin-top:8px"></div>
-      </div>
       <div class="ed-actions"><button type="button" class="btn btn-ghost ed-cancel">Cancelar</button><button type="submit" class="btn btn-gold">Guardar cambios</button></div>
     </form>`;
   }
