@@ -1,4 +1,4 @@
-/* ELITE ANGELS — Backend (Supabase): media, edición, reseñas, auth admin y portal modelo */
+/* ELITE ANGELS — Backend (Supabase): media, edición, reseñas, auth admin y portal de perfil */
 (function () {
   const SUPABASE_URL = 'https://fsjrimmurtnrorqhnbwu.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_2lWllWfVLWsPnnko4TEa4Q_2sx0kdI4';
@@ -101,7 +101,7 @@
     return { totalPub, totalPuntos, pend, count: (mov || []).length };
   }
 
-  /* ---------- Formulario de edición (compartido admin/modelo) ---------- */
+  /* ---------- Formulario de edición (compartido admin/perfil) ---------- */
   function selUbic(s) {
     const L = window.EA_LOCATIONS || {};
     const paises = Object.keys(L);
@@ -539,7 +539,7 @@
           ${[0,1,2,3,4,5,6,7,8].map(i=>`<div class="field" style="margin:0"><div style="aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--line-soft);margin-bottom:6px;background:#1d0e28"><img id="cfg_carimg_${i}" src="${car[i]||defs[i%4]}" style="width:100%;height:100%;object-fit:cover"></div><input type="file" data-car="${i}" accept="image/*" style="font-size:.76rem;color:var(--text-soft)"></div>`).join('')}
         </div>
         ${H('Sección grande del inicio (arriba del catálogo)')}
-        <div class="field-row"><div class="field"><label>Título grande (ej: «Modelos y Asistentes Empresariales por tiempo»)</label><input id="cfg_feat_title" value="${v('feat_title')}" placeholder="Modelos destacadas"></div></div>
+        <div class="field-row"><div class="field"><label>Título grande (ej: «Perfiles y Asistentes Empresariales por tiempo»)</label><input id="cfg_feat_title" value="${v('feat_title')}" placeholder="Perfiles destacados"></div></div>
         ${tf('feat_sub','Subtítulo','Una cuidada selección...')}
         ${H('Sección «Servicios»')}
         <div class="field-row"><div class="field"><label>Título</label><input id="cfg_serv_title" value="${v('serv_title')}" placeholder="Nuestros servicios"></div></div>
@@ -589,18 +589,18 @@
       catch (e) { board.innerHTML = '<div class="panel-empty"><div class="pe-ic">🔒</div><h3>Solo administradores</h3></div>'; return; }
       board.innerHTML = `
       <div class="fin-grid">
-        <div class="fin-card"><div class="fin-lbl">Recaudado · publicaciones</div><div class="fin-num">${fmt(fin.totalPub)}</div><div class="fin-sub">lo que pagan las modelos a Aura</div></div>
-        <div class="fin-card"><div class="fin-lbl">Recaudado · puntos</div><div class="fin-num">${fmt(fin.totalPuntos)}</div><div class="fin-sub">clientes potenciando modelos</div></div>
+        <div class="fin-card"><div class="fin-lbl">Recaudado · publicaciones</div><div class="fin-num">${fmt(fin.totalPub)}</div><div class="fin-sub">lo que pagan los perfiles a Aura</div></div>
+        <div class="fin-card"><div class="fin-lbl">Recaudado · puntos</div><div class="fin-num">${fmt(fin.totalPuntos)}</div><div class="fin-sub">clientes potenciando perfiles</div></div>
         <div class="fin-card fin-total"><div class="fin-lbl">Total recaudado</div><div class="fin-num">${fmt(fin.totalPub + fin.totalPuntos)}</div><div class="fin-sub">${fin.pend} pago(s) de puntos pendientes</div></div>
       </div>
       <div class="form-card" style="margin:22px 0">
         <h3 style="font-size:1.3rem;margin-bottom:6px">Registrar pago de puntos de un cliente</h3>
-        <p style="color:var(--text-soft);font-size:.88rem;margin-bottom:16px"><strong>$1.000 = 1 punto.</strong> Verificás el pago y los puntos se acreditan solos a la modelo por su número.</p>
-        <div class="field-row"><div class="field"><label>N° de modelo</label><input id="mvNum" placeholder="AE-XXXX-XXXX"></div><div class="field"><label>Monto pagado (ARS)</label><input id="mvMonto" type="number" min="1000" step="1000" placeholder="5000"></div></div>
+        <p style="color:var(--text-soft);font-size:.88rem;margin-bottom:16px"><strong>$1.000 = 1 punto.</strong> Verificás el pago y los puntos se acreditan solos al perfil por su número.</p>
+        <div class="field-row"><div class="field"><label>N° de perfil</label><input id="mvNum" placeholder="AE-XXXX-XXXX"></div><div class="field"><label>Monto pagado (ARS)</label><input id="mvMonto" type="number" min="1000" step="1000" placeholder="5000"></div></div>
         <div class="field-row"><div class="field"><label>Cliente (nombre / alias)</label><input id="mvCli" placeholder="Cómo identificás al cliente"></div><div class="field"><label>Referencia de pago</label><input id="mvRef" placeholder="WhatsApp, alias, N° de operación"></div></div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:4px"><span id="mvPts" style="color:var(--gold);font-family:var(--serif);font-size:1.2rem">0 puntos</span><span style="flex:1"></span><button class="btn btn-ghost" id="mvAddPend" style="padding:11px 20px">Guardar pendiente</button><button class="btn btn-gold" id="mvAddVer" style="padding:11px 20px">Verificar y acreditar</button></div>
         <p id="mvMsg" style="color:var(--gold);font-size:.86rem;margin-top:12px"></p>
-        <div style="border-top:1px solid var(--line-soft);margin-top:18px;padding-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><button class="btn btn-ghost" disabled style="opacity:.45;cursor:not-allowed;padding:11px 20px">⚡ Cobro automático con N° de modelo</button><span style="color:var(--text-mute);font-size:.82rem">Próximamente — integración de pago directo (en desarrollo)</span></div>
+        <div style="border-top:1px solid var(--line-soft);margin-top:18px;padding-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><button class="btn btn-ghost" disabled style="opacity:.45;cursor:not-allowed;padding:11px 20px">⚡ Cobro automático con N° de perfil</button><span style="color:var(--text-mute);font-size:.82rem">Próximamente — integración de pago directo (en desarrollo)</span></div>
       </div>
       <h3 style="font-size:1.2rem;margin:10px 0 12px">Planilla de movimientos</h3>
       <div id="mvList"></div>`;
@@ -612,7 +612,7 @@
         const cli = document.getElementById('mvCli').value.trim();
         const ref = document.getElementById('mvRef').value.trim();
         const msg = document.getElementById('mvMsg');
-        if (!num || monto < 1000) { msg.textContent = 'Completá N° de modelo y monto (mínimo $1.000).'; return; }
+        if (!num || monto < 1000) { msg.textContent = 'Completá N° de perfil y monto (mínimo $1.000).'; return; }
         const puntos = Math.floor(monto / 1000);
         try {
           await addMovimiento({ numero_modelo: num, monto, puntos, cliente_nombre: cli, cliente_contacto: ref, estado });
@@ -623,7 +623,7 @@
       document.getElementById('mvAddVer').addEventListener('click', () => guardar('verificado'));
       const list = document.getElementById('mvList');
       if (!movs.length) { list.innerHTML = '<div class="panel-empty"><div class="pe-ic">💠</div><h3>Sin movimientos todavía</h3><p>Cuando un cliente pague puntos, registralo arriba.</p></div>'; return; }
-      list.innerHTML = `<div class="mv-table"><div class="mv-row mv-head"><span>Fecha</span><span>N° modelo</span><span>Cliente</span><span>Monto</span><span>Pts</span><span>Estado</span><span></span></div>` + movs.map(m => `<div class="mv-row"><span>${new Date(m.created_at).toLocaleDateString('es-AR')}</span><span style="color:var(--gold)">${esc(m.numero_modelo) || '—'}</span><span>${m.origen==='cliente'?'\ud83d\udcb3 ':''}${esc(m.cliente_nombre) || '—'}${m.cliente_contacto ? `<br><small style="color:var(--text-mute)">${esc(m.cliente_contacto)}</small>` : ''}</span><span>${fmt(m.monto)}</span><span>${m.puntos}</span><span>${m.origen==='cliente' ? (m.pagado ? '<span class="status-badge ready">pagado \u2713</span>' : '<span class="status-badge incomplete">sin pago</span>') : ''}<span class="status-badge ${m.estado === 'verificado' ? 'ready' : 'incomplete'}">${esc(m.estado)}</span></span><span style="display:flex;gap:6px;justify-content:flex-end">${m.estado !== 'verificado' ? `<button class="btn btn-gold mv-ver" data-id="${m.id}" style="padding:6px 12px;font-size:.7rem">Verificar</button>` : ''}<button class="btn btn-ghost mv-del" data-id="${m.id}" style="padding:6px 10px;font-size:.7rem">✕</button></span></div>`).join('') + `</div>`;
+      list.innerHTML = `<div class="mv-table"><div class="mv-row mv-head"><span>Fecha</span><span>N° perfil</span><span>Cliente</span><span>Monto</span><span>Pts</span><span>Estado</span><span></span></div>` + movs.map(m => `<div class="mv-row"><span>${new Date(m.created_at).toLocaleDateString('es-AR')}</span><span style="color:var(--gold)">${esc(m.numero_modelo) || '—'}</span><span>${m.origen==='cliente'?'\ud83d\udcb3 ':''}${esc(m.cliente_nombre) || '—'}${m.cliente_contacto ? `<br><small style="color:var(--text-mute)">${esc(m.cliente_contacto)}</small>` : ''}</span><span>${fmt(m.monto)}</span><span>${m.puntos}</span><span>${m.origen==='cliente' ? (m.pagado ? '<span class="status-badge ready">pagado \u2713</span>' : '<span class="status-badge incomplete">sin pago</span>') : ''}<span class="status-badge ${m.estado === 'verificado' ? 'ready' : 'incomplete'}">${esc(m.estado)}</span></span><span style="display:flex;gap:6px;justify-content:flex-end">${m.estado !== 'verificado' ? `<button class="btn btn-gold mv-ver" data-id="${m.id}" style="padding:6px 12px;font-size:.7rem">Verificar</button>` : ''}<button class="btn btn-ghost mv-del" data-id="${m.id}" style="padding:6px 10px;font-size:.7rem">✕</button></span></div>`).join('') + `</div>`;
       list.querySelectorAll('.mv-ver').forEach(b => b.addEventListener('click', async () => { await setMovimientoEstado(b.dataset.id, 'verificado'); renderMovimientos(board); }));
       list.querySelectorAll('.mv-del').forEach(b => b.addEventListener('click', async () => { if (confirm('¿Eliminar este movimiento?')) { await delMovimiento(b.dataset.id); renderMovimientos(board); } }));
     }
@@ -646,11 +646,11 @@
     document.getElementById('nsave').addEventListener('click', async () => { const p = document.getElementById('npass').value; const m = document.getElementById('nmsg'); if (p.length < 6) { m.textContent = 'La contrase\u00f1a debe tener al menos 6 caracteres.'; return; } const { error } = await client.auth.updateUser({ password: p }); if (error) { m.textContent = 'Error: ' + error.message; } else { m.textContent = '\u2713 Contrase\u00f1a guardada. Ya pod\u00e9s entrar con tu email y contrase\u00f1a.'; setTimeout(() => location.reload(), 1600); } });
   }
 
-  /* ---------- Portal de la modelo ---------- */
+  /* ---------- Portal del perfil ---------- */
   function portalLogin(root, msg) {
     root.innerHTML = `<div class="form-card" style="max-width:440px;margin:0 auto">
       <img src="assets/logo.svg" class="logo-emblem" style="margin:0 auto 16px">
-      <h3 style="font-size:1.5rem;text-align:center;margin-bottom:6px">Acceso de modelos</h3>
+      <h3 style="font-size:1.5rem;text-align:center;margin-bottom:6px">Acceso de perfiles</h3>
       <p style="color:var(--text-soft);font-size:.9rem;text-align:center;margin-bottom:20px">Editá tu perfil. Usá el email con el que publicaste.</p>
       <div class="field"><label>Email</label><input type="email" id="mEmail" placeholder="tu@email.com"></div>
       <div class="field"><label>Contraseña</label><input type="password" id="mPass" placeholder="••••••••"></div>
