@@ -46,9 +46,9 @@
       <div class="field"><label>Email</label><input id="rEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
       <div class="field"><label>Contraseña</label><input id="rPass" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div>
       <label style="display:flex;gap:8px;align-items:flex-start;font-size:.82rem;color:var(--text-soft);margin:2px 0 8px;cursor:pointer"><input type="checkbox" id="rAgree" style="width:auto;margin-top:3px;accent-color:var(--gold)"><span>Soy mayor de 18 años y acepto los <a href="terminos.html" target="_blank" style="color:var(--gold)">Términos</a> y la <a href="privacidad.html" target="_blank" style="color:var(--gold)">Privacidad</a>.</span></label>
-      <p style="font-size:.82rem;color:var(--text-mute);margin:0 0 14px">Elegí cómo verificar tu cuenta:</p>
+      <!-- WhatsApp oculto (backend intacto): para reactivar, quitar los display:none -->
 
-      <div style="border:1px solid var(--line);border-radius:14px;padding:14px 15px">
+      <div style="display:none;border:1px solid var(--line);border-radius:14px;padding:14px 15px">
         <div style="font-size:.95rem;font-weight:600;color:var(--gold-bright);margin-bottom:8px">📱 Verificación por WhatsApp</div>
         <div class="field"><label>Celular (WhatsApp)</label><input id="rTel" type="tel" placeholder="Ej: 221 555 1234" autocomplete="tel"><div style="font-size:.76rem;color:var(--text-mute);margin-top:5px">Con característica, sin 0 ni 15. Te llega un código por WhatsApp.</div></div>
         <button class="btn btn-gold" id="rSendBtn" style="width:100%;justify-content:center" onclick="doSendOtp()">📲 Enviar código por WhatsApp</button>
@@ -59,13 +59,9 @@
         </div>
       </div>
 
-      <div style="text-align:center;color:var(--text-mute);font-size:.82rem;margin:14px 0 6px">— o —</div>
+      <div style="display:none;text-align:center;color:var(--text-mute);font-size:.82rem;margin:14px 0 6px">— o —</div>
 
-      <div style="border:1px solid var(--line);border-radius:14px;padding:14px 15px">
-        <div style="font-size:.95rem;font-weight:600;color:var(--gold-bright);margin-bottom:4px">✉️ Verificación por correo</div>
-        <p style="font-size:.8rem;color:var(--text-mute);margin-bottom:10px">Creás tu cuenta al instante con tu email.</p>
-        <button class="btn btn-ghost" id="rEmailOnly" style="width:100%;justify-content:center" onclick="doSignupEmailOnly()">Crear cuenta con verificación por correo</button>
-      </div>
+      <button class="btn btn-gold" id="rEmailOnly" style="width:100%;justify-content:center" onclick="doSignupEmailOnly()">Crear mi cuenta</button>
     </div>
     <div id="formLog" style="display:none">
       <div class="field"><label>Email</label><input id="lEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
