@@ -2,12 +2,13 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<script>try{if(localStorage.getItem('aura_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <title>Aura Noticias · lo más buscado, citado y al instante</title>
 <meta name="description" content="Aura Noticias: lo último del mundo, Argentina y tu ciudad. Fuentes citadas y actualizadas cada 8 horas.">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/styles.css?v=8">
+<link rel="stylesheet" href="css/styles.css?v=9">
 <style>
 .nw-wrap{max-width:1080px;margin:0 auto;padding:24px 18px 90px}
 .nw-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;flex-wrap:wrap}
@@ -117,4 +118,5 @@
     TODAS=r.data||[]; pintar();
   });
 })();
-</script></body></html>
+</script><script src="js/theme.js?v=1" defer></script>
+</body></html>

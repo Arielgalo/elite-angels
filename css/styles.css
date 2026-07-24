@@ -4,34 +4,34 @@
    =================================================================== */
 
 :root {
-  /* Colores base — aubergine / morado profundo */
-  --black: #0c0913;
-  --black-soft: #120e1c;
-  --black-card: #181326;
-  --black-elevated: #201936;
-  --line: rgba(212, 175, 110, 0.18);
-  --line-soft: rgba(255, 255, 255, 0.08);
+  /* ===== TEMA CLARO (día) — predeterminado ===== */
+  --black: #ffffff;
+  --black-soft: #f2ece2;
+  --black-card: #ffffff;
+  --black-elevated: #ece3d5;
+  --line: rgba(154, 111, 42, 0.28);
+  --line-soft: rgba(40, 25, 55, 0.10);
 
-  /* Aurora */
+  /* Aurora (marca — iguales en ambos temas) */
   --magenta: #d81b8c;
   --magenta-deep: #a3146b;
   --purple: #7b1fa2;
   --purple-deep: #4a148c;
 
   /* Dorados */
-  --gold: #d4af6e;
+  --gold: #9a6f2a;            /* oro profundo, legible sobre claro */
   --gold-bright: #e8cf9a;
   --gold-deep: #b8924d;
   --gold-grad: linear-gradient(135deg, #f4e3bd 0%, #d4af6e 45%, #b8924d 100%);
 
   /* Nude / rosado */
-  --rose: #d9a7a0;
+  --rose: #c98a86;
   --rose-soft: #e7c7c1;
 
   /* Texto */
-  --text: #f2efe9;
-  --text-soft: #c6c2bb;
-  --text-mute: #8a8780;
+  --text: #241d2e;
+  --text-soft: #5a5166;
+  --text-mute: #8a8296;
 
   /* Tipografía */
   --serif: 'Sora', 'Helvetica Neue', Arial, sans-serif;
@@ -41,9 +41,55 @@
   --container: 1240px;
   --radius: 14px;
   --radius-lg: 22px;
+  --shadow: 0 24px 60px -30px rgba(60, 30, 80, 0.28);
+  --shadow-gold: 0 18px 50px -25px rgba(154, 111, 42, 0.40);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Fondo / superficies globales */
+  --bg: #f6f1ea;
+  --aurora:
+    radial-gradient(45% 55% at 18% 22%, rgba(216, 27, 140, 0.10), transparent 60%),
+    radial-gradient(50% 60% at 82% 30%, rgba(123, 31, 162, 0.10), transparent 62%),
+    radial-gradient(55% 55% at 50% 88%, rgba(212, 175, 110, 0.14), transparent 60%),
+    radial-gradient(60% 60% at 70% 75%, rgba(216, 27, 140, 0.08), transparent 62%);
+  --bg-after: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 38%, rgba(246,241,234,0.5) 100%);
+  --header-bg: rgba(250, 246, 240, 0.85);
+  --float-bg: rgba(255, 255, 255, 0.82);
+  --menu-bg: rgba(249, 244, 238, 0.98);
+}
+
+/* ===== TEMA OSCURO (noche) — alternativa ===== */
+html[data-theme="dark"] {
+  --black: #0c0913;
+  --black-soft: #120e1c;
+  --black-card: #181326;
+  --black-elevated: #201936;
+  --line: rgba(212, 175, 110, 0.18);
+  --line-soft: rgba(255, 255, 255, 0.08);
+
+  --gold: #d4af6e;
+  --gold-bright: #e8cf9a;
+  --gold-deep: #b8924d;
+
+  --rose: #d9a7a0;
+
+  --text: #f2efe9;
+  --text-soft: #c6c2bb;
+  --text-mute: #8a8780;
+
   --shadow: 0 30px 80px -30px rgba(0,0,0,0.8);
   --shadow-gold: 0 20px 60px -25px rgba(212, 175, 110, 0.4);
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --bg: #08060e;
+  --aurora:
+    radial-gradient(45% 55% at 18% 22%, rgba(90, 40, 150, 0.22), transparent 60%),
+    radial-gradient(50% 60% at 82% 30%, rgba(56, 48, 130, 0.22), transparent 62%),
+    radial-gradient(55% 55% at 50% 88%, rgba(70, 30, 120, 0.18), transparent 60%),
+    radial-gradient(60% 60% at 70% 75%, rgba(40, 44, 110, 0.22), transparent 62%);
+  --bg-after: linear-gradient(180deg, rgba(8,6,14,0.6) 0%, rgba(8,6,14,0.25) 35%, rgba(8,6,14,0.6) 100%);
+  --header-bg: rgba(10, 7, 16, 0.82);
+  --float-bg: rgba(24, 24, 29, 0.75);
+  --menu-bg: rgba(8, 6, 14, 0.98);
 }
 
 /* ===== Reset ===== */
@@ -51,7 +97,7 @@
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; font-size: 92%; }
 body {
   font-family: var(--sans);
-  background: #08060e;
+  background: var(--bg);
   color: var(--text);
   line-height: 1.6;
   font-weight: 300;
@@ -64,11 +110,7 @@ body::before {
   content: '';
   position: fixed; inset: -20% -10%;
   z-index: -2;
-  background:
-    radial-gradient(45% 55% at 18% 22%, rgba(90, 40, 150, 0.22), transparent 60%),
-    radial-gradient(50% 60% at 82% 30%, rgba(56, 48, 130, 0.22), transparent 62%),
-    radial-gradient(55% 55% at 50% 88%, rgba(70, 30, 120, 0.18), transparent 60%),
-    radial-gradient(60% 60% at 70% 75%, rgba(40, 44, 110, 0.22), transparent 62%);
+  background: var(--aurora);
   filter: blur(28px) saturate(0.95);
   animation: aurora 26s ease-in-out infinite alternate;
   will-change: transform;
@@ -76,8 +118,7 @@ body::before {
 body::after {
   content: '';
   position: fixed; inset: 0; z-index: -1;
-  background:
-    linear-gradient(180deg, rgba(8,6,14,0.6) 0%, rgba(8,6,14,0.25) 35%, rgba(8,6,14,0.6) 100%);
+  background: var(--bg-after);
   pointer-events: none;
 }
 @keyframes aurora {
@@ -145,7 +186,7 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.12;
 }
 .header.scrolled {
   padding: 14px 0;
-  background: rgba(10,7,16,.82);
+  background: var(--header-bg);
   backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--line-soft);
 }
@@ -226,7 +267,7 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.12;
 }
 .hero-float {
   position: absolute; top: 30px; right: 14px; z-index: 4;
-  background: rgba(24,24,29,.75); backdrop-filter: blur(14px);
+  background: var(--float-bg); backdrop-filter: blur(14px);
   border: 1px solid var(--line); border-radius: 50px;
   padding: 10px 20px 10px 12px; display: flex; align-items: center; gap: 12px;
 }
@@ -505,7 +546,7 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.12;
 
 /* ===== Mobile menu panel ===== */
 .mobile-menu {
-  position: fixed; inset: 0; z-index: 105; background: rgba(8,6,14,.98);
+  position: fixed; inset: 0; z-index: 105; background: var(--menu-bg);
   backdrop-filter: blur(20px); display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 30px;
   opacity: 0; visibility: hidden; transition: opacity .4s, visibility .4s;
@@ -876,3 +917,49 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.12;
 .verif-state.verif-en_revision{ color:var(--gold); }
 .verif-state.verif-rechazado{ color:#e08aa0; }
 .verif-state.verif-sin_verificar{ color:var(--text-mute); }
+
+/* ===================================================================
+   TEMA CLARO (día) — ajustes de contraste + alternador día/noche
+   =================================================================== */
+/* Header legible en claro: barra sutil también antes del scroll */
+html:not([data-theme="dark"]) .header:not(.scrolled){
+  background: var(--header-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line-soft);
+}
+/* Hero de inicio: el texto va sobre la imagen oscura → mantener claro */
+html:not([data-theme="dark"]) .hero-inner h1{ color:#fbf7f0; }
+html:not([data-theme="dark"]) .hero-inner .hero-lead{ color:rgba(255,255,255,.88); }
+html:not([data-theme="dark"]) .hero-inner .eyebrow{ color:var(--gold-bright); }
+html:not([data-theme="dark"]) .hero-inner .hero-stat .lbl{ color:rgba(255,255,255,.62); }
+html:not([data-theme="dark"]) .hero-inner .text-gold{
+  background:none; -webkit-text-fill-color:currentColor; color:var(--gold-bright);
+}
+/* Oro degradado como texto → sólido y legible sobre claro (resto del sitio) */
+html:not([data-theme="dark"]) .text-gold{
+  background:none; -webkit-text-fill-color:currentColor; color:var(--gold);
+}
+/* Chips y títulos dorados que quedan sobre fondo claro */
+html:not([data-theme="dark"]) .chip,
+html:not([data-theme="dark"]) .chip-lang,
+html:not([data-theme="dark"]) .dest-title{ color:var(--gold); }
+/* Bandas que eran oscuras → versiones claras y elegantes */
+html:not([data-theme="dark"]) .cta-inner{ background:linear-gradient(135deg,#ffffff,#f4ecdd); }
+html:not([data-theme="dark"]) .fin-card.fin-total{ background:linear-gradient(160deg,#ffffff,#f4ecdd); }
+/* Tarjeta de crédito (por si se muestra): texto legible sobre su fondo oscuro */
+html:not([data-theme="dark"]) .credit-card .cc-number{ color:#f5efe4; }
+html:not([data-theme="dark"]) .credit-card .cc-bottom .v{ color:#e9e2d6; }
+
+/* ===== Botón alternador día / noche ===== */
+.theme-toggle{
+  position:fixed; left:20px; bottom:24px; z-index:95;
+  width:46px; height:46px; border-radius:50%;
+  display:grid; place-items:center; color:var(--gold);
+  background:var(--header-bg); border:1px solid var(--line);
+  backdrop-filter:blur(12px);
+  box-shadow:0 10px 28px -12px rgba(40,20,60,.5);
+  transition:transform .35s var(--ease), color .3s, background .3s;
+}
+.theme-toggle:hover{ transform:translateY(-3px) rotate(-10deg); color:var(--gold-bright); }
+.theme-toggle svg{ width:20px; height:20px; }
+@media (max-width:560px){ .theme-toggle{ left:16px; bottom:18px; width:42px; height:42px; } }

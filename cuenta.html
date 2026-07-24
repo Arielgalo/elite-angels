@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<script>try{if(localStorage.getItem('aura_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Mi cuenta · Aura Experience</title>
@@ -13,7 +14,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
-<link rel="stylesheet" href="css/styles.css?v=8">
+<link rel="stylesheet" href="css/styles.css?v=9">
 <style>
   .cta-wrap{max-width:440px;margin:0 auto;padding:26px 18px 80px}
   .cta-card{background:var(--black-card);border:1px solid var(--line);border-radius:18px;padding:24px 20px}
@@ -196,5 +197,6 @@ document.addEventListener('DOMContentLoaded', function(){
   refresh();
 });
 </script>
+<script src="js/theme.js?v=1" defer></script>
 </body>
 </html>
