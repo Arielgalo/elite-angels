@@ -21,9 +21,9 @@ function tierRank(m){ return m.plan==='premium'?0:(m.plan==='top'?1:2); }
 function planBadge(m){ const p=m.plan||'estandar'; const cls=p==='premium'?'model-badge vip right':(p==='top'?'model-badge tier-top right':'model-badge tier-std right'); return `<span class="${cls}">${PLAN_BADGE[p]||'ESTÁNDAR'}</span>`; }
 function planName(p){ return p==='premium'?'Premium VIP':(p==='top'?'Top':'Estándar'); }
 
-function cardMedia(m){ return m.foto ? `<div class="figure" style="position:absolute;inset:0"><img src="${m.foto}" alt="${m.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"></div>` : `<div class="figure" style="position:absolute;inset:0">${figureSVG(m.tone||'#d4af6e')}</div>`; }
+function cardMedia(m){ if(!m.foto) return `<div class="figure" style="position:absolute;inset:0">${figureSVG(m.tone||'#d4af6e')}</div>`; var esNeg=!!(m.negocio_nombre||m.negocio_rubro); var fit=esNeg?'contain':'cover'; var bg=esNeg?'background:radial-gradient(120% 100% at 50% 30%,#25232c,#131018);padding:10% 12%;':''; return `<div class="figure" style="position:absolute;inset:0;${bg}"><img src="${m.foto}" alt="${m.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:${fit}"></div>`; }
 const ROLES_LBL={citas:'Pactos & Acuerdos',amigos:'Amigos & Salidas',eventos:'Eventos, Roles & Presencia'};
-const ROLES_SHORT={citas:'Citas',amigos:'Amigos',eventos:'Eventos'};
+const ROLES_SHORT={citas:'Reunirse o Entrevistas',amigos:'Amigos',eventos:'Eventos'};
 function modelCard(m){
   const href = m.sid ? `perfil.html?sid=${m.sid}` : `perfil.html?id=${m.id}`;
   const vid = (m.videos && m.videos.length) ? '<span class="card-flag">▶ Video</span>' : '';
@@ -179,7 +179,7 @@ async function renderProfile(){
   document.getElementById('pBio').textContent=m.bio||'';
   const fotos=(m.fotos&&m.fotos.length)?m.fotos:null;
   const mainImg=document.getElementById('mainImg');
-  mainImg.innerHTML=fotos?`<img src="${fotos[0]}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in">`:`<div class="figure" style="position:absolute;inset:0">${figureSVG(m.tone||'#d4af6e')}</div>`;
+  mainImg.innerHTML=fotos?(`<img src="${fotos[0]}" alt="${m.name}" style="width:100%;height:100%;object-fit:${(m.negocio_nombre||m.negocio_rubro)?'contain':'cover'};background:${(m.negocio_nombre||m.negocio_rubro)?'radial-gradient(120% 100% at 50% 30%,#25232c,#131018)':'transparent'};cursor:zoom-in">`):`<div class="figure" style="position:absolute;inset:0">${figureSVG(m.tone||'#d4af6e')}</div>`;
   if(fotos) mainImg.querySelector('img').addEventListener('click',()=>lightbox(fotos[0], fotos, 0));
   const thumbsEl=document.getElementById('thumbs');
   if(fotos){ thumbsEl.innerHTML=fotos.map((x,i)=>`<div class="thumb${i===0?' active':''}"><img src="${x}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"></div>`).join(''); thumbsEl.querySelectorAll('.thumb').forEach((t,i)=>t.addEventListener('click',()=>{ const im=mainImg.querySelector('img'); if(im) im.src=fotos[i]; thumbsEl.querySelectorAll('.thumb').forEach(x=>x.classList.remove('active')); t.classList.add('active'); })); }
