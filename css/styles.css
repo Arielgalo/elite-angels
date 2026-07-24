@@ -950,6 +950,13 @@ html:not([data-theme="dark"]) .fin-card.fin-total{ background:linear-gradient(16
 html:not([data-theme="dark"]) .credit-card .cc-number{ color:#f5efe4; }
 html:not([data-theme="dark"]) .credit-card .cc-bottom .v{ color:#e9e2d6; }
 
+/* Tarjetas de perfil: el texto va sobre foto/degradado oscuro → siempre claro */
+html:not([data-theme="dark"]) .model-info h3{ color:#f7f3ec; }
+html:not([data-theme="dark"]) .model-info .attrs{ color:rgba(255,255,255,.82); }
+html:not([data-theme="dark"]) .model-info .loc{ color:var(--gold-bright); }
+html:not([data-theme="dark"]) .figure .tag .name,
+html:not([data-theme="dark"]) .exc-art .tag .name{ color:#f7f3ec; }
+
 /* ===== Botón alternador día / noche ===== */
 .theme-toggle{
   position:fixed; left:20px; bottom:24px; z-index:95;
