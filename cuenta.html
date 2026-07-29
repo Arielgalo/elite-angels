@@ -14,7 +14,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
-<link rel="stylesheet" href="css/styles.css?v=11">
+<link rel="stylesheet" href="css/styles.css?v=13">
 <style>
   .cta-wrap{max-width:440px;margin:0 auto;padding:104px 18px 80px}
   .cta-card{background:var(--black-card);border:1px solid var(--line);border-radius:18px;padding:24px 20px}
@@ -45,7 +45,7 @@
     <div id="formReg">
       <div class="field"><label>Tu nombre o alias</label><input id="rName" placeholder="Cómo querés aparecer"></div>
       <div class="field"><label>Email</label><input id="rEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
-      <div class="field"><label>Contraseña</label><input id="rPass" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div>
+      <div class="field"><label>Contraseña</label><div style="position:relative"><input id="rPass" type="password" placeholder="6+ · letras, números y símbolos" autocomplete="new-password" style="padding-right:46px"><button type="button" class="pw-eye" data-for="rPass" aria-label="ver" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-mute);cursor:pointer;font-size:.95rem;padding:6px;line-height:1">👁</button></div><div style="font-size:.74rem;color:var(--text-mute);margin-top:5px">Podés combinar mayúsculas, números y símbolos (ej: Aura!2026).</div></div>
       <label style="display:flex;gap:8px;align-items:flex-start;font-size:.82rem;color:var(--text-soft);margin:2px 0 8px;cursor:pointer"><input type="checkbox" id="rAgree" style="width:auto;margin-top:3px;accent-color:var(--gold)"><span>Soy mayor de 18 años y acepto los <a href="terminos.html" target="_blank" style="color:var(--gold)">Términos</a> y la <a href="privacidad.html" target="_blank" style="color:var(--gold)">Privacidad</a>.</span></label>
       <!-- WhatsApp oculto (backend intacto): para reactivar, quitar los display:none -->
 
@@ -66,7 +66,7 @@
     </div>
     <div id="formLog" style="display:none">
       <div class="field"><label>Email</label><input id="lEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
-      <div class="field"><label>Contraseña</label><input id="lPass" type="password" placeholder="Tu contraseña" autocomplete="current-password"></div>
+      <div class="field"><label>Contraseña</label><div style="position:relative"><input id="lPass" type="password" placeholder="Tu contraseña" autocomplete="current-password" style="padding-right:46px"><button type="button" class="pw-eye" data-for="lPass" aria-label="ver" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-mute);cursor:pointer;font-size:.95rem;padding:6px;line-height:1">👁</button></div></div>
       <button class="btn btn-gold" style="width:100%;justify-content:center" onclick="doLogin()">Ingresar</button>
       <p style="text-align:center;margin-top:12px"><a href="#" onclick="doReset();return false" style="color:var(--gold);font-size:.85rem">¿Olvidaste tu contraseña?</a></p>
     </div>
@@ -87,7 +87,7 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="js/ea-supabase.js?v=31" defer></script>
+<script src="js/ea-supabase.js?v=33" defer></script>
 <script src="js/pwa.js?v=4" defer></script>
 <script defer>
 document.addEventListener('DOMContentLoaded', function(){
@@ -99,6 +99,34 @@ document.addEventListener('DOMContentLoaded', function(){
   if(!sb){ document.getElementById('authMsg').textContent='Error de carga. Recargá la página.'; return; }
   var msg=function(t,ok){ var e=document.getElementById('authMsg'); e.textContent=t||''; e.style.color= ok?'#7be3a0':'#e08aa0'; };
   var umsg=function(t){ var e=document.getElementById('userMsg'); e.textContent=t||''; e.style.color='#7be3a0'; };
+  function resendConfirm(email, target){
+    if(target){ target.style.color='#7be3a0'; target.textContent='Reenviando…'; }
+    sb.auth.resend({ type:'signup', email:email, options:{ emailRedirectTo: location.origin+'/cuenta.html' } }).then(function(rr){
+      if(!target) return;
+      if(rr.error){ target.style.color='#e08aa0'; target.textContent=rr.error.message; }
+      else { target.style.color='#7be3a0'; target.textContent='✓ Te reenviamos el correo de confirmación.'; }
+    });
+  }
+  function showResendLink(email){
+    if(document.getElementById('resendLink')) return;
+    var p=document.createElement('p'); p.style.textAlign='center'; p.style.marginTop='8px';
+    p.innerHTML='<a href="#" id="resendLink" style="color:var(--gold);font-size:.85rem">Reenviar correo de confirmación</a>';
+    document.getElementById('formLog').appendChild(p);
+    document.getElementById('resendLink').addEventListener('click', function(e){ e.preventDefault(); resendConfirm(email, document.getElementById('authMsg')); });
+  }
+  function showConfirmSent(email){
+    var box=document.getElementById('authBox');
+    box.innerHTML='<div style="text-align:center;padding:6px 4px">'
+      +'<div class="ava" style="margin:0 auto 14px">✉️</div>'
+      +'<h2 style="font-size:1.3rem;margin-bottom:8px">Revisá tu correo</h2>'
+      +'<p style="color:var(--text-soft);font-size:.92rem;margin-bottom:6px">Te enviamos un email a <strong>'+email+'</strong> con un enlace para confirmar tu cuenta.</p>'
+      +'<p style="color:var(--text-mute);font-size:.82rem;margin-bottom:18px">Abrí el correo y tocá <strong>“Confirmar mi cuenta”</strong>. Después volvés y ya quedás dentro. ¿No lo ves? Mirá en Spam o Promociones.</p>'
+      +'<button class="btn btn-gold" style="width:100%;justify-content:center;margin-bottom:10px" id="cbResend">Reenviar correo</button>'
+      +'<button class="btn btn-ghost" style="width:100%;justify-content:center" id="cbBack">Ya lo confirmé · ingresar</button>'
+      +'<p class="cta-msg" id="authMsg" style="text-align:center"></p></div>';
+    document.getElementById('cbResend').addEventListener('click', function(){ resendConfirm(email, document.getElementById('authMsg')); });
+    document.getElementById('cbBack').addEventListener('click', function(){ location.reload(); });
+  }
   window.tab=function(w){ document.getElementById('tabReg').classList.toggle('on',w==='reg'); document.getElementById('tabLog').classList.toggle('on',w==='log'); document.getElementById('formReg').style.display=w==='reg'?'block':'none'; document.getElementById('formLog').style.display=w==='log'?'block':'none'; msg(''); };
 
   async function refresh(){
@@ -140,16 +168,16 @@ document.addEventListener('DOMContentLoaded', function(){
   };
   window.doSignupEmailOnly=async function(){
     var nombre=g('rName'), email=g('rEmail'), pass=document.getElementById('rPass').value;
-    if(!email||pass.length<6){ msg('Poné un email válido y una contraseña de 6+ caracteres.'); return; }
+    if(!email||pass.length<6){ msg('Poné un email válido y una contraseña de 6 o más caracteres (podés usar letras, números y símbolos).'); return; }
     var ag=document.getElementById('rAgree'); if(ag && !ag.checked){ msg('Confirmá que sos mayor de 18 y aceptás los Términos.'); return; }
     msg('Creando tu cuenta…', true);
     try{
-      var resp=await fetch(FN+'/registrar',{ method:'POST', headers:H, body:JSON.stringify({ email:email, password:pass, nombre:nombre }) });
-      var j=await resp.json();
-      if(j.error){ msg(j.error); if(j.code==='exists'){ tab('log'); document.getElementById('lEmail').value=email; } return; }
-      var li=await sb.auth.signInWithPassword({ email:email, password:pass });
-      if(li.error){ msg('Cuenta creada ✓. Ahora ingresá.', true); tab('log'); document.getElementById('lEmail').value=email; return; }
-      msg('¡Bienvenido/a a Aura! 🎉', true); refresh();
+      var next=new URLSearchParams(location.search).get('next');
+      var redir=location.origin+'/cuenta.html'+(next?('?next='+encodeURIComponent(next)):'');
+      var r=await sb.auth.signUp({ email:email, password:pass, options:{ emailRedirectTo:redir, data:{ nombre:nombre } } });
+      if(r.error){ var m=(r.error.message||''); if(/registered|already|exists/i.test(m)){ msg('Ya existe una cuenta con ese email. Probá ingresar.'); tab('log'); document.getElementById('lEmail').value=email; } else { msg(m); } return; }
+      if(r.data && r.data.session){ msg('¡Bienvenido/a a Aura! 🎉', true); refresh(); return; }
+      showConfirmSent(email);
     }catch(e){ msg('No se pudo crear la cuenta. Probá de nuevo.'); }
   };
   window.doSignup=async function(){
@@ -174,7 +202,12 @@ document.addEventListener('DOMContentLoaded', function(){
     if(!email||!pass){ msg('Completá email y contraseña.'); return; }
     msg('Ingresando…', true);
     var r=await sb.auth.signInWithPassword({ email:email, password:pass });
-    if(r.error){ msg('Email o contraseña incorrectos, o falta confirmar el email.'); return; }
+    if(r.error){
+      var m=(r.error.message||'').toLowerCase();
+      if(m.indexOf('confirm')>=0){ msg('Tu cuenta todavía no está confirmada. Revisá tu correo (mirá también Spam/Promociones) y tocá "Confirmar mi cuenta".'); showResendLink(email); }
+      else { msg('Email o contraseña incorrectos.'); }
+      return;
+    }
     refresh();
   };
   window.doReset=async function(){
@@ -193,6 +226,9 @@ document.addEventListener('DOMContentLoaded', function(){
     umsg('✓ Guardado');
   };
   window.doLogout=async function(){ await sb.auth.signOut(); refresh(); };
+
+  document.addEventListener('click', function(e){ var b=e.target.closest && e.target.closest('.pw-eye'); if(!b) return; var inp=document.getElementById(b.getAttribute('data-for')); if(!inp) return; var show=inp.type==='password'; inp.type=show?'text':'password'; b.textContent=show?'\uD83D\uDE48':'\uD83D\uDC41'; });
+  sb.auth.onAuthStateChange(function(ev, session){ if(ev==='SIGNED_IN' && session){ refresh(); } });
 
   refresh();
 });
