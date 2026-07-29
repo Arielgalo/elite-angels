@@ -514,7 +514,13 @@
       });
     }
     let filtro = 'pendiente';
-    document.querySelectorAll('.panel-tab').forEach(t => t.addEventListener('click', () => { filtro = t.dataset.tab; render(); }));
+    document.querySelectorAll('.panel-tab').forEach(t => t.addEventListener('click', () => {
+      filtro = t.dataset.tab;
+      var mod = (filtro==='pendiente'||filtro==='publicado'||filtro==='rechazado');
+      ['admVerif','admNoticias','admReportes'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display = mod ? '' : 'none'; });
+      render();
+      try{ var bd=document.getElementById('eaBoard'); if(bd && bd.scrollIntoView) bd.scrollIntoView({behavior:'smooth', block:'start'}); }catch(e){}
+    }));
     async function render() {
       const board = document.getElementById('eaBoard');
       document.querySelectorAll('.panel-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === filtro));
