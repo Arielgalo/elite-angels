@@ -970,3 +970,17 @@ html:not([data-theme="dark"]) .exc-art .tag .name{ color:#f7f3ec; }
 .theme-toggle:hover{ transform:translateY(-3px) rotate(-10deg); color:var(--gold-bright); }
 .theme-toggle svg{ width:20px; height:20px; }
 @media (max-width:560px){ .theme-toggle{ left:16px; bottom:18px; width:42px; height:42px; } }
+
+/* ===== Panel: ficha completa de datos del perfil (moderación) ===== */
+.dc{margin:10px 0 4px;border:1px solid var(--line-soft);border-radius:10px;background:var(--black-soft);overflow:hidden}
+.dc>summary{cursor:pointer;padding:10px 14px;font-size:.82rem;letter-spacing:.05em;color:var(--gold);font-weight:600;list-style:none;user-select:none}
+.dc>summary::-webkit-details-marker{display:none}
+.dc>summary::before{content:'▸ ';display:inline-block;transition:transform .2s}
+.dc[open]>summary::before{content:'▾ '}
+.dc[open]>summary{border-bottom:1px solid var(--line-soft)}
+.dc-body{padding:12px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.dc-grp h5{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-mute);margin:0 0 6px;font-family:var(--sans)}
+.dc-row{display:flex;gap:8px;padding:4px 0;font-size:.86rem;border-bottom:1px solid var(--line-soft)}
+.dc-row:last-child{border-bottom:none}
+.dc-k{color:var(--text-mute);min-width:110px;flex:none}
+.dc-v{color:var(--text);word-break:break-word}
