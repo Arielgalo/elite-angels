@@ -154,6 +154,23 @@
       } catch (e) { msg.textContent = 'Error: ' + (e.message || e); vbtn.disabled = false; vbtn.textContent = 'Enviar a verificación'; }
     });
   }
+  function datosCompletos(s){
+    var row=function(k,v){ return (v===0||v)? '<div class="dc-row"><span class="dc-k">'+k+'</span><span class="dc-v">'+esc(String(v))+'</span></div>' : ''; };
+    var arr=function(v){ return Array.isArray(v)? v.join(', ') : (v||''); };
+    var grp=function(t,inner){ return inner.replace(/\s/g,'')? '<div class="dc-grp"><h5>'+t+'</h5>'+inner+'</div>' : ''; };
+    var esNeg = s.es_medio || s.negocio_nombre;
+    var h='';
+    h+=grp('Identidad', row('Nombre',s.nombre)+row('Género',s.genero)+row('Edad',s.edad)+row('Nacionalidad',s.nacionalidad));
+    h+=grp('Contacto', row('Teléfono',s.telefono)+row('Email',s.email));
+    h+=grp('Ubicación', row('País',s.pais)+row('Provincia',s.provincia)+row('Ciudad',s.ciudad));
+    h+=grp('Físico', row('Altura',s.altura)+row('Busto',s.busto)+row('Cintura',s.cintura)+row('Cola',s.cola)+row('Cabello',s.cabello)+row('Tipo de cuerpo',s.tipo_cuerpo));
+    h+=grp('Perfil', row('Bio',s.bio)+row('Idiomas',s.idiomas)+row('Estilo',s.estilo)+row('Roles',arr(s.roles)));
+    h+=grp('Educación', row('Nivel educativo',s.nivel_educativo)+row('Estado',s.edu_estado)+row('Estudio',s.estudio)+row('Cursos',s.cursos));
+    h+=grp('Intereses', row('Hobbies',s.hobbies)+row('Rutinas',s.rutinas)+row('Habilidades',s.habilidades)+row('Otros gustos',s.otros_gustos)+row('Comidas que gustan',s.comidas_gusta)+row('Comidas que rechaza',s.comidas_rechaza));
+    if(esNeg){ h+=grp('Comercial', row('Es medio/negocio', s.es_medio?'Sí':'')+row('Nombre del negocio',s.negocio_nombre)+row('Rubro',s.negocio_rubro)+row('Servicios',s.negocio_servicios)+row('Promo',s.negocio_promo)+row('Zona',s.negocio_zona)+row('Contacto',s.negocio_contacto)+row('Web',s.negocio_web)+row('Dirección',s.negocio_direccion)+row('Descuentos',s.negocio_descuentos)+row('Prensa',s.negocio_prensa)); }
+    h+=grp('Gestión', row('N° de perfil',s.numero)+row('Plan',s.plan)+row('Puntos',s.puntos)+row('Precio pacto',s.precio_cita)+row('Estado',s.estado)+row('Pago',s.pago)+row('Verificación',s.verif_estado)+row('Días',s.dias)+row('Alta', s.created_at? new Date(s.created_at).toLocaleString('es-AR') : '')+row('Fotos',(s.fotos||[]).length)+row('Videos',(s.videos||[]).length)+row('Audio', s.audio?'sí':'no'));
+    return '<details class="dc"><summary>▤ Ver toda la información</summary><div class="dc-body">'+h+'</div></details>';
+  }
   function editForm(s, isAdmin) {
     return `<form class="ed-form" data-id="${s.id}">
       <div class="field-row">
@@ -168,7 +185,11 @@
       ${selUbic(s)}
       <div class="field-row">
         <div class="field"><label>Teléfono / WhatsApp</label><input data-ef="telefono" value="${esc(s.telefono)}"></div>
+        <div class="field"><label>Email</label><input data-ef="email" type="email" value="${esc(s.email)}"></div>
+      </div>
+      <div class="field-row">
         <div class="field"><label>Tu tarifa (ARS) · plan de 30 min (lo cobrás vos, directo)</label><input data-ef="precio_cita" type="number" min="15000" value="${esc(s.precio_cita)}" placeholder="15000"></div>
+        <div class="field"></div>
       </div>
       ${isAdmin?`<div class="field-row"><div class="field"><label>Nivel</label><select data-ef="plan"><option value="estandar"${s.plan==='estandar'?' selected':''}>Estándar</option><option value="top"${s.plan==='top'?' selected':''}>Top</option><option value="premium"${s.plan==='premium'?' selected':''}>Premium VIP</option></select></div><div class="field"><label>Puntos (ranking)</label><input data-ef="puntos" type="number" value="${esc(s.puntos)}"></div></div>`:''}
       <div class="field-row">
@@ -260,7 +281,7 @@
     const lIn = formEl.querySelector('[data-ef="negocio_logo_file"]'); if(lIn && lIn.files[0]){ const upl = await subirMedios([lIn.files[0]],[],null); if(upl.fotos[0]) negLogo = upl.fotos[0]; }
     let negFotos = (Array.isArray(actual?.negocio_fotos)?actual.negocio_fotos:[]).filter(u => !removidos.includes(u));
     const pfIn = formEl.querySelector('[data-ef="negocio_fotos_file"]'); if(pfIn && pfIn.files.length){ const upp = await subirMedios([...pfIn.files],[],null); negFotos = negFotos.concat(upp.fotos); }
-    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), nivel_educativo:get('nivel_educativo'), edu_estado:get('edu_estado'), estudio:get('estudio'), cursos:get('cursos'), hobbies:get('hobbies'), rutinas:get('rutinas'), habilidades:get('habilidades'), otros_gustos:get('otros_gustos'), comidas_gusta:get('comidas_gusta'), comidas_rechaza:get('comidas_rechaza'), negocio:get('negocio'), negocio_nombre:get('negocio_nombre'), negocio_rubro:get('negocio_rubro'), negocio_servicios:get('negocio_servicios'), negocio_promo:get('negocio_promo'), negocio_zona:get('negocio_zona'), negocio_contacto:get('negocio_contacto'), negocio_web:get('negocio_web'), negocio_logo:negLogo, negocio_fotos:negFotos, negocio_direccion:get('negocio_direccion'), negocio_mapa:get('negocio_mapa'), negocio_descuentos:get('negocio_descuentos'), negocio_prensa:get('negocio_prensa'), fotos, videos, audio };
+    const patch = { nombre:get('nombre'), edad:+get('edad')||null, pais:get('pais'), provincia:get('provincia'), ciudad:get('ciudad'), altura:get('altura'), busto:get('busto'), cintura:get('cintura'), cola:get('cola'), genero:get('genero'), nacionalidad:get('nacionalidad'), cabello:get('cabello'), tipo_cuerpo:get('tipo_cuerpo'), telefono:get('telefono'), email:get('email'), bio:get('bio'), idiomas:get('idiomas'), estilo:get('estilo'), nivel_educativo:get('nivel_educativo'), edu_estado:get('edu_estado'), estudio:get('estudio'), cursos:get('cursos'), hobbies:get('hobbies'), rutinas:get('rutinas'), habilidades:get('habilidades'), otros_gustos:get('otros_gustos'), comidas_gusta:get('comidas_gusta'), comidas_rechaza:get('comidas_rechaza'), negocio:get('negocio'), negocio_nombre:get('negocio_nombre'), negocio_rubro:get('negocio_rubro'), negocio_servicios:get('negocio_servicios'), negocio_promo:get('negocio_promo'), negocio_zona:get('negocio_zona'), negocio_contacto:get('negocio_contacto'), negocio_web:get('negocio_web'), negocio_logo:negLogo, negocio_fotos:negFotos, negocio_direccion:get('negocio_direccion'), negocio_mapa:get('negocio_mapa'), negocio_descuentos:get('negocio_descuentos'), negocio_prensa:get('negocio_prensa'), fotos, videos, audio };
     patch.precio_cita = +get('precio_cita')||15000;
     patch.roles = [...formEl.querySelectorAll('input[data-rol]:checked')].map(e => e.dataset.rol);
     if (isAdmin) { patch.plan = get('plan'); patch.puntos = +get('puntos')||0; }
@@ -298,6 +319,7 @@
       <span style="color:var(--text-soft);font-size:.88rem">Admin: <strong style="color:var(--gold)">${esc(email)}</strong></span>
       <div style="display:flex;gap:10px"><button class="btn btn-gold" id="aNew" style="padding:9px 18px">+ Nuevo perfil</button><button class="btn btn-ghost" id="aOut" style="padding:9px 18px">Cerrar sesión</button></div></div><div id="admVerif"></div><div id="admNoticias"></div><div id="admReportes"></div><div id="eaBoard"></div>`;
     document.getElementById('aOut').addEventListener('click', async () => { await client.auth.signOut(); location.reload(); });
+    (async()=>{ try{ const { data: meRow } = await client.from('admins').select('es_owner').eq('email', email).maybeSingle(); if (meRow && meRow.es_owner) { const et=document.getElementById('tabEquipo'); if(et) et.style.display=''; } }catch(e){} })();
     document.getElementById('aNew').addEventListener('click', async () => {
       const nsid = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '');
       const nts = Date.now(); let nh = 0; const nstr = 'nueva|' + nts; for (let i = 0; i < nstr.length; i++) { nh = (nh * 31 + nstr.charCodeAt(i)) >>> 0; }
@@ -453,6 +475,44 @@
       });
     }
     renderAdmNotif();
+    async function renderEquipo(board){
+      const { data: list, error } = await client.from('admins').select('*').order('es_owner', { ascending:false }).order('created_at', { ascending:true });
+      if (error) { board.innerHTML = '<div class="panel-empty"><div class="pe-ic">🔒</div><h3>Solo el dueño</h3><p>Esta sección es exclusiva del dueño del sitio.</p></div>'; return; }
+      const rows = (list||[]).map(function(a){
+        var owner = a.es_owner;
+        var badge = owner ? '<span class="tier-pill tier-premium">Dueño · llave final</span>' : '<span class="tier-pill tier-estandar">Equipo · administra el sitio</span>';
+        var rm = owner ? '' : '<button class="btn btn-ghost eq-rm" data-email="'+esc(a.email)+'" style="padding:8px 16px">Quitar acceso</button>';
+        return '<div class="review-card" style="grid-template-columns:1fr;padding:18px 20px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><div style="font-family:var(--serif);font-size:1.15rem">'+esc(a.nombre||a.email)+'</div><div style="color:var(--text-mute);font-size:.84rem">'+esc(a.email)+'</div><div style="margin-top:6px">'+badge+'</div></div>'+rm+'</div></div>';
+      }).join('');
+      board.innerHTML =
+        '<div class="form-card" style="margin-bottom:18px;border:1px solid var(--gold)">'+
+          '<h3 style="color:var(--gold);font-size:1.2rem;margin-bottom:4px">🔑 Equipo de Aura</h3>'+
+          '<p style="color:var(--text-soft);font-size:.86rem;margin-bottom:14px">Dale acceso de administración a alguien de tu confianza para que trabaje en el sitio. Vos seguís siendo el dueño: solo vos podés dar o quitar accesos, y tu acceso no se puede eliminar desde acá.</p>'+
+          '<div class="field-row"><div class="field"><label>Email de la persona</label><input id="eqEmail" type="email" placeholder="persona@email.com"></div><div class="field"><label>Nombre (opcional)</label><input id="eqNombre" placeholder="Cómo la identificás"></div></div>'+
+          '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn btn-gold" id="eqAdd" style="padding:10px 20px">Dar acceso al equipo</button><span id="eqMsg" style="font-size:.86rem"></span></div>'+
+          '<p style="color:var(--text-mute);font-size:.8rem;margin-top:10px">La persona debe tener una cuenta creada con ese email (puede registrarse en «Mi cuenta»). Con el acceso podrá revisar y publicar perfiles, moderar reseñas y editar el sitio — pero no gestionar el equipo.</p>'+
+        '</div>'+
+        '<h3 style="font-size:1.1rem;margin:6px 0 12px;color:var(--text-soft)">Accesos actuales</h3>'+
+        (rows || '<div class="panel-empty"><p>Todavía no hay nadie más.</p></div>');
+      var msg = document.getElementById('eqMsg');
+      document.getElementById('eqAdd').addEventListener('click', async function(){
+        var em = (document.getElementById('eqEmail').value||'').trim().toLowerCase();
+        var nom = (document.getElementById('eqNombre').value||'').trim();
+        if (!em || em.indexOf('@') < 1) { msg.style.color='#e0928c'; msg.textContent='Escribí un email válido.'; return; }
+        msg.style.color='var(--gold)'; msg.textContent='Guardando…';
+        var res = await client.from('admins').insert({ email: em, nombre: nom||null, agregado_por: email });
+        if (res.error) { msg.style.color='#e0928c'; msg.textContent = /duplicate|unique/i.test(res.error.message) ? 'Esa persona ya tiene acceso.' : ('No se pudo: '+res.error.message); return; }
+        msg.textContent='✓ Acceso otorgado.'; renderEquipo(board);
+      });
+      Array.prototype.forEach.call(board.querySelectorAll('.eq-rm'), function(b){
+        b.addEventListener('click', async function(){
+          var em = b.dataset.email; if (!confirm('¿Quitar el acceso de administración a '+em+'?')) return;
+          var res = await client.from('admins').delete().eq('email', em);
+          if (res.error) { alert('No se pudo quitar: '+res.error.message); return; }
+          renderEquipo(board);
+        });
+      });
+    }
     let filtro = 'pendiente';
     document.querySelectorAll('.panel-tab').forEach(t => t.addEventListener('click', () => { filtro = t.dataset.tab; render(); }));
     async function render() {
@@ -461,6 +521,7 @@
       if (filtro === 'resenas') return renderResenas(board);
       if (filtro === 'sitio') return renderSitio(board);
       if (filtro === 'movimientos') return renderMovimientos(board);
+      if (filtro === 'equipo') return renderEquipo(board);
       const { data, error } = await client.from('solicitudes').select('*').order('created_at', { ascending: false });
       if (error) { adminLogin(root, 'Tu usuario no es administrador.'); return; }
       const counts = { pendiente:0, publicado:0, rechazado:0 }; data.forEach(s => counts[s.estado] = (counts[s.estado]||0)+1);
@@ -476,6 +537,7 @@
           <span class="status-badge ${s.pago==='pagado'?'ready':'incomplete'}">Pago: ${esc(s.pago)}</span></div>
           <div class="rev-contact"><span>📞 ${esc(s.telefono)||'—'}</span><span>✉ ${esc(s.email)||'—'}</span><span>🎬 ${(s.videos||[]).length} video(s)</span><span>🎤 ${s.audio?'voz ✓':'sin voz'}</span></div>
           ${s.bio?`<p class="rev-bio">"${esc(s.bio)}"</p>`:''}
+          ${datosCompletos(s)}
           <div class="rev-actions">
             <button class="btn btn-gold" data-ap="${s.id}">✓ Aprobar y publicar</button>
             <button class="btn btn-ghost" data-ed="${s.id}">✎ Editar</button>
