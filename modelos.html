@@ -5,7 +5,7 @@
 <script>try{if(localStorage.getItem('aura_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>(function(){try{var g=false;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(/^sb-.*-auth-token$/.test(k)&&localStorage.getItem(k)){g=true;break;}}if(!g)location.replace("cuenta.html?next="+encodeURIComponent(location.pathname.replace(/^\//,"")+location.search));}catch(e){}})();</script>
+<!-- M1: catálogo abierto a visitantes anónimos. El acceso profundo (contacto, galería completa, videos) se gatea con modal en app.js. Confirmación +18 inyectada por app.js (eaAgeGate). -->
 <title>Perfiles · Aura Experience</title>
 <meta name="description" content="Perfiles y conexiones en Aura Experience, para personas de todos los géneros. Filtrá por género, ciudad y más.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +19,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
-<link rel="stylesheet" href="css/styles.css?v=11">
+<link rel="stylesheet" href="css/styles.css?v=40">
 </head>
 <body>
 
@@ -128,9 +128,9 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="js/ea-supabase.js?v=31" defer></script>
+<script src="js/ea-supabase.js?v=40" defer></script>
 <script src="js/locations.js" defer></script>
-<script src="js/app.js?v=30" defer></script>
+<script src="js/app.js?v=40" defer></script>
 <script src="js/pwa.js?v=4" defer></script>
 <script src="js/theme.js?v=1" defer></script>
 </body>
