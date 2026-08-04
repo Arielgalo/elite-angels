@@ -1,4 +1,84 @@
 /* AURA EXPERIENCE — Lógica del sitio */
+
+/* ============================================================
+   M1 · Gatekeeping progresivo
+   - eaIsLogged(): true si hay sesión de Supabase en localStorage.
+   - eaNextParam(): ruta actual para volver tras el login.
+   - eaAuthGate(): modal rápido de registro/login para acciones profundas.
+   - eaAgeGate(): confirmación +18 inyectada (reemplaza el viejo muro de login).
+   ============================================================ */
+function eaIsLogged(){ try{ for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(/^sb-.*-auth-token$/.test(k)&&localStorage.getItem(k)) return true; } }catch(e){} return false; }
+function eaNextParam(){ try{ return encodeURIComponent(location.pathname.replace(/^\//,'')+location.search); }catch(e){ return ''; } }
+function eaAuthGate(o){
+  o=o||{};
+  var titulo=o.title||'Creá tu cuenta para continuar';
+  var msg=o.msg||'Registrate gratis o iniciá sesión para acceder a esta información.';
+  var next=eaNextParam();
+  var prev=document.getElementById('eaGateModal'); if(prev) prev.remove();
+  var ov=document.createElement('div'); ov.id='eaGateModal'; ov.className='ea-gate-ov';
+  ov.innerHTML='<div class="ea-gate-card" role="dialog" aria-modal="true" aria-label="Ingresar">'
+    +'<button class="ea-gate-x" aria-label="Cerrar">&times;</button>'
+    +'<img src="assets/logo.svg" alt="Aura Experience" class="ea-gate-logo">'
+    +'<h3>'+titulo+'</h3><p>'+msg+'</p>'
+    +'<a class="btn btn-gold ea-gate-cta" href="cuenta.html?next='+next+'">Crear cuenta gratis</a>'
+    +'<a class="ea-gate-alt" href="cuenta.html?next='+next+'">Ya tengo cuenta · Ingresar</a>'
+    +'</div>';
+  document.body.appendChild(ov);
+  document.body.style.overflow='hidden';
+  function close(){ ov.remove(); document.body.style.overflow=''; document.removeEventListener('keydown',onKey); }
+  function onKey(e){ if(e.key==='Escape') close(); }
+  ov.addEventListener('click',function(e){ if(e.target===ov) close(); });
+  ov.querySelector('.ea-gate-x').addEventListener('click',close);
+  document.addEventListener('keydown',onKey);
+  requestAnimationFrame(function(){ ov.classList.add('show'); });
+  return false;
+}
+function eaAgeGate(){
+  try{ if(sessionStorage.getItem('ea_age_ok')) return; }catch(e){}
+  if(eaIsLogged()){ try{sessionStorage.setItem('ea_age_ok','1');}catch(e){} return; }
+  var ov=document.createElement('div'); ov.id='eaAgeGate'; ov.className='ea-gate-ov show';
+  ov.innerHTML='<div class="ea-gate-card" role="dialog" aria-modal="true" aria-label="Acceso +18">'
+    +'<img src="assets/logo.svg" alt="Aura Experience" class="ea-gate-logo">'
+    +'<h3>Acceso exclusivo +18</h3>'
+    +'<p>Este sitio contiene contenido para personas mayores de edad. Al ingresar confirmás que tenés 18 años o más y aceptás los <a href="terminos.html" style="color:var(--gold)">Términos</a> y la <a href="privacidad.html" style="color:var(--gold)">Privacidad</a>.</p>'
+    +'<button class="btn btn-gold ea-gate-cta" id="eaAgeOk">Soy mayor de 18 · Ingresar</button>'
+    +'<a class="ea-gate-alt" href="https://www.google.com">Salir</a>'
+    +'</div>';
+  document.body.appendChild(ov); document.body.style.overflow='hidden';
+  ov.querySelector('#eaAgeOk').addEventListener('click',function(){ try{sessionStorage.setItem('ea_age_ok','1');}catch(e){} ov.remove(); document.body.style.overflow=''; });
+}
+
+/* ============================================================
+   M3 · Protocolo de seguridad — bloque en footer y en cada perfil.
+   Inyectado por JS para mantenerlo consistente en todo el sitio.
+   ============================================================ */
+function eaSafetyItems(){ return [
+  'Coordiná los primeros encuentros únicamente en lugares públicos y concurridos.',
+  'Verificá la identidad de la otra persona por los canales oficiales de la Plataforma antes de encontrarte.',
+  'Avisá siempre a una persona de confianza dónde vas a estar y con quién.',
+  'No adelantes pagos ni compartas datos bancarios o personales fuera de la Plataforma.',
+  'Ante cualquier situación incómoda o sospechosa, cortá el contacto y reportá el perfil de inmediato.'
+]; }
+function eaInjectFooterSafety(){
+  var f=document.querySelector('.footer .container'); if(!f || f.querySelector('.footer-safety')) return;
+  var bottom=f.querySelector('.footer-bottom');
+  var box=document.createElement('div'); box.className='footer-safety';
+  box.innerHTML='<h4>Tu seguridad es la prioridad</h4><ul>'+eaSafetyItems().map(function(t){return '<li>'+t+'</li>';}).join('')+'</ul>';
+  if(bottom) f.insertBefore(box, bottom); else f.appendChild(box);
+}
+function eaInjectProfileSafety(){
+  var acc=document.getElementById('profileActions'); if(!acc || document.querySelector('.profile-safety')) return;
+  var box=document.createElement('div'); box.className='profile-safety';
+  box.innerHTML='<div class="ps-head"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></svg> Encontrémonos con cuidado</div>'
+    +'<ul>'
+    +'<li>El primer encuentro, siempre en un lugar público y concurrido.</li>'
+    +'<li>Verificá la identidad por los canales oficiales de Aura antes de verse.</li>'
+    +'<li>Contale a alguien de confianza dónde y con quién vas a estar.</li>'
+    +'<li>Nunca adelantes dinero ni compartas datos bancarios fuera de la Plataforma.</li>'
+    +'</ul>';
+  acc.insertAdjacentElement('afterend', box);
+}
+
 const fmtP = (n) => '$' + Number(n || 0).toLocaleString('es-AR');
 const ubicTxt = (m) => [m.ciudad, m.provincia].filter(Boolean).join(', ');
 const waLink = (tel) => 'https://wa.me/' + String(tel || '').replace(/[^\d]/g, '');
@@ -96,8 +176,27 @@ function aplicar(){
     if(ftipo && (m.tipo||'')!==ftipo) return false;
     return true;
   });
-  el.innerHTML = res.length ? res.map(modelCard).join('') : '<div class="panel-empty" style="grid-column:1/-1"><div class="pe-ic">🔎</div><h3>Sin resultados</h3><p>Probá ampliar tu búsqueda.</p></div>';
+  // M4: render por lotes (evita inyectar miles de nodos de golpe)
+  _catFiltered = res; _catShown = 0;
+  if(!res.length){ el.innerHTML='<div class="panel-empty" style="grid-column:1/-1"><div class="pe-ic">🔎</div><h3>Sin resultados</h3><p>Probá ampliar tu búsqueda.</p></div>'; }
+  else { el.innerHTML=''; renderCatalogChunk(); }
   const cont=document.getElementById('qCount'); if(cont) cont.textContent = res.length+' resultado'+(res.length===1?'':'s');
+}
+let _catFiltered=[], _catShown=0; const CAT_PAGE=24; let _catIO=null;
+function renderCatalogChunk(){
+  const el=document.getElementById('modelsGrid'); if(!el) return;
+  const oldLm=el.querySelector('.ea-loadmore-wrap'); if(oldLm) oldLm.remove();
+  const next=_catFiltered.slice(_catShown, _catShown+CAT_PAGE);
+  el.insertAdjacentHTML('beforeend', next.map(modelCard).join(''));
+  _catShown += next.length;
+  if(_catShown < _catFiltered.length){
+    el.insertAdjacentHTML('beforeend','<div class="ea-loadmore-wrap"><button class="btn btn-ghost" id="catLoadMore">Ver más perfiles ('+(_catFiltered.length-_catShown)+')</button></div>');
+    const b=document.getElementById('catLoadMore');
+    if(b){ b.addEventListener('click',renderCatalogChunk);
+      // carga automática al acercarse (scroll infinito) con respaldo del botón
+      try{ if(_catIO) _catIO.disconnect(); _catIO=new IntersectionObserver(function(en){ if(en[0].isIntersecting){ _catIO.disconnect(); renderCatalogChunk(); } },{rootMargin:'600px 0px'}); _catIO.observe(b); }catch(e){}
+    }
+  }
 }
 
 function lightbox(src, list, idx){
@@ -180,19 +279,28 @@ async function renderProfile(){
   const fotos=(m.fotos&&m.fotos.length)?m.fotos:null;
   const mainImg=document.getElementById('mainImg');
   mainImg.innerHTML=fotos?(`<img src="${fotos[0]}" alt="${m.name}" style="width:100%;height:100%;object-fit:${m.es_medio?'contain':'cover'};background:${m.es_medio?'radial-gradient(120% 100% at 50% 30%,#25232c,#131018)':'transparent'};cursor:zoom-in">`):`<div class="figure" style="position:absolute;inset:0">${figureSVG(m.tone||'#d4af6e')}</div>`;
-  if(fotos) mainImg.querySelector('img').addEventListener('click',()=>lightbox(fotos[0], fotos, 0));
+  const _galleryOpen = eaIsLogged(); const _freeFotos = 1; // M1: anónimo ve la foto principal; galería completa gateada
+  function _gateGaleria(){ return eaAuthGate({title:'Ver galería completa de '+m.name, msg:'Registrate gratis o iniciá sesión para ampliar y ver todas las fotos.'}); }
+  if(fotos){ const _mi=mainImg.querySelector('img'); if(_mi) _mi.addEventListener('click',()=>{ _galleryOpen ? lightbox(fotos[0], fotos, 0) : _gateGaleria(); }); }
   const thumbsEl=document.getElementById('thumbs');
-  if(fotos){ thumbsEl.innerHTML=fotos.map((x,i)=>`<div class="thumb${i===0?' active':''}"><img src="${x}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"></div>`).join(''); thumbsEl.querySelectorAll('.thumb').forEach((t,i)=>t.addEventListener('click',()=>{ const im=mainImg.querySelector('img'); if(im) im.src=fotos[i]; thumbsEl.querySelectorAll('.thumb').forEach(x=>x.classList.remove('active')); t.classList.add('active'); })); }
+  if(fotos){ thumbsEl.innerHTML=fotos.map((x,i)=>{ const lock=(!_galleryOpen && i>=_freeFotos); return `<div class="thumb${i===0?' active':''}${lock?' ea-thumb-lock':''}"><img src="${x}" loading="lazy" decoding="async" width="120" height="150" style="width:100%;height:100%;object-fit:cover">${lock?'<span class="ea-thumb-lockic">🔒</span>':''}</div>`; }).join(''); thumbsEl.querySelectorAll('.thumb').forEach((t,i)=>t.addEventListener('click',()=>{ if(!_galleryOpen && i>=_freeFotos){ _gateGaleria(); return; } const im=mainImg.querySelector('img'); if(im) im.src=fotos[i]; thumbsEl.querySelectorAll('.thumb').forEach(x=>x.classList.remove('active')); t.classList.add('active'); })); }
   else { thumbsEl.innerHTML=[m.tone||'#d4af6e','#d9a7a0','#e8cf9a','#a4b8cf'].map(t=>`<div class="thumb"><div class="figure" style="position:absolute;inset:0">${figureSVG(t)}</div></div>`).join(''); }
   try{ if(window.matchMedia('(max-width: 760px)').matches){
     var _mi=document.getElementById('mainImg'); if(_mi) _mi.style.display='none';
     var _av=document.querySelector('.aura-avatar'); if(_av){ _av.style.display='flex'; _av.style.width='max-content'; _av.style.margin='6px auto 16px'; var _rw=_av.querySelector('span'); if(_rw){ _rw.style.width='140px'; _rw.style.height='140px'; } }
     var _th=document.getElementById('thumbs'); var _hd=document.querySelector('.profile-header'); if(_th&&_hd){ _hd.insertAdjacentElement('afterend', _th); _th.style.margin='2px 0 20px'; }
-    if(fotos&&_th){ _th.querySelectorAll('.thumb').forEach(function(t,i){ t.style.cursor='zoom-in'; t.addEventListener('click',function(){ if(typeof lightbox==='function') lightbox(fotos[i], fotos, i); }); }); }
+    if(fotos&&_th){ _th.querySelectorAll('.thumb').forEach(function(t,i){ t.style.cursor='zoom-in'; t.addEventListener('click',function(){ if(!_galleryOpen && i>=_freeFotos){ _gateGaleria(); return; } if(typeof lightbox==='function') lightbox(fotos[i], fotos, i); }); }); }
   } }catch(e){}
   const allMedia=[...(m.videos||[])]; if(m.audio) allMedia.push(m.audio);
   const vids=allMedia.filter(u=>mediaKind(u)==='video'); const auds=allMedia.filter(u=>mediaKind(u)==='audio');
-  const vidWrap=document.getElementById('profileVideos'); if(vidWrap){ vidWrap.innerHTML=vids.length?`<h3 style="font-size:1.4rem;margin:8px 0 14px">Videos</h3><div class="video-grid">${vids.map(v=>`<video controls preload="metadata" playsinline><source src="${v}">Tu navegador no puede reproducir este video.</video>`).join('')}</div>`:''; }
+  const vidWrap=document.getElementById('profileVideos'); if(vidWrap){
+    if(vids.length && !eaIsLogged()){
+      vidWrap.innerHTML=`<h3 style="font-size:1.4rem;margin:8px 0 14px">Videos</h3><div class="ea-lock-panel"><span class="ea-lock-ic">🔒</span><p>${vids.length} video${vids.length===1?'':'s'} disponible${vids.length===1?'':'s'}. Creá tu cuenta gratis para verlos.</p><button type="button" class="btn btn-gold ea-lock-btn">Ver videos</button></div>`;
+      const _lb=vidWrap.querySelector('.ea-lock-btn'); if(_lb) _lb.addEventListener('click',()=>eaAuthGate({title:'Ver videos de '+m.name, msg:'Registrate gratis o iniciá sesión para ver la galería de videos.'}));
+    } else {
+      vidWrap.innerHTML=vids.length?`<h3 style="font-size:1.4rem;margin:8px 0 14px">Videos</h3><div class="video-grid">${vids.map(v=>`<video controls preload="metadata" playsinline><source src="${v}">Tu navegador no puede reproducir este video.</video>`).join('')}</div>`:'';
+    }
+  }
   const audWrap=document.getElementById('profileAudio'); if(audWrap){ audWrap.innerHTML=auds.length?auds.map(a=>`<div class="voice-card"><span class="voice-ic">🎤</span><div style="flex:1"><div class="voice-t">Mensaje de voz</div><audio controls src="${a}" style="width:100%;margin-top:6px"></audio></div></div>`).join(''):''; }
   const specs=[['Edad',(m.age||m.edad||'—')+' años'],['Altura',(m.height||'—')],['Acuerdo desde',fmtP(m.price)],['Ubicación',m.ciudad||'—']];
   var _masc=(m.genero==='Varón'||m.genero==='Trans masculino'); if(!_masc){ if(m.busto) specs.push(['Busto',m.busto]); if(m.cintura) specs.push(['Cintura',m.cintura]); if(m.cola) specs.push(['Cola',m.cola]); }
@@ -224,7 +332,15 @@ async function renderProfile(){
       <div class="rate-row"><span class="dur">Acordar o pactar · desde 30 min</span><span class="pr">${fmtP(m.price)}</span></div>
       <p style="color:var(--text-soft);font-size:.86rem;margin-top:14px">El valor del pacto se acuerda y se paga el tiempo <strong>a ${m.name}</strong> (transferencia o en efectivo). Lo que consuman —café, mates, una cena o una bebida— lo abona quien invita.</p>
       ${m.numero?`<p style="color:var(--text-mute);font-size:.78rem;margin-top:10px">Código de perfil: <strong style="color:var(--gold)">${m.numero}</strong>${m.puntos?` · <span style=\"color:var(--gold)\">★ ${m.puntos} puntos</span>`:''}</p>`:''}`; }
-  const acc=document.getElementById('profileActions'); if(acc){ const tel=real?m.telefono:''; acc.innerHTML=tel?`<a href="${waLink(tel)}" target="_blank" class="btn btn-wa" style="justify-content:center">Contratar por WhatsApp</a><p style="color:var(--text-mute);font-size:.82rem;margin-top:10px">Contratación directa y privada con ${m.name}.</p>`:`<a href="https://wa.me/" target="_blank" class="btn btn-wa" style="justify-content:center">Contactar</a>`; }
+  const acc=document.getElementById('profileActions'); if(acc){ const tel=real?m.telefono:'';
+    if(!eaIsLogged()){
+      acc.innerHTML=`<button type="button" class="btn btn-wa ea-lock-btn" style="justify-content:center;width:100%">🔒 Ver contacto y coordinar</button><p style="color:var(--text-mute);font-size:.82rem;margin-top:10px">Creá tu cuenta gratis para ver el contacto directo de ${m.name} y coordinar de forma segura desde la plataforma.</p>`;
+      const _cb=acc.querySelector('.ea-lock-btn'); if(_cb) _cb.addEventListener('click',()=>eaAuthGate({title:'Contactar a '+m.name, msg:'Registrate gratis o iniciá sesión para ver el contacto directo y coordinar el encuentro.'}));
+    } else {
+      acc.innerHTML=tel?`<a href="${waLink(tel)}" target="_blank" class="btn btn-wa" style="justify-content:center">Contratar por WhatsApp</a><p style="color:var(--text-mute);font-size:.82rem;margin-top:10px">Contratación directa y privada con ${m.name}.</p>`:`<a href="https://wa.me/" target="_blank" class="btn btn-wa" style="justify-content:center">Contactar</a>`;
+    }
+  }
+  eaInjectProfileSafety();
   if(real&&window.eaSupa) renderResenas(m.sid, m); if(new URLSearchParams(location.search).get('pts')==='ok'){ setTimeout(()=>alert('¡Gracias! Recibimos tu pago de puntos. Se acreditarán a '+m.name+' tras la moderación.'),300); }
   const rel=document.getElementById('relatedGrid'); if(rel){ const reales=await getReales(); rel.innerHTML=[...reales,...MODELS].filter(x=>(x.sid||x.id)!==(m.sid||m.id)).slice(0,4).map(modelCard).join(''); }
 }
@@ -236,7 +352,7 @@ async function renderResenas(sid, modelo){
   const numNota = (modelo&&modelo.numero)?`<div class="pts-nota"><strong>¿Te gustó ${modelo.name}?</strong> Valorá con estrellas a ${modelo.name}. Cada estrella suma <strong>1 punto</strong> a su ranking. Para potenciar su lugar, reconocela con <strong>$1.000 por punto</strong> pagando de forma segura por Mercado Pago — se asignan a su número <span class="num-chip">${modelo.numero}</span> y suben tras la moderación.<div class="pts-buy"><span class="cur">$</span><input id="ptsMonto" type="number" min="5000" step="1000" placeholder="5000" value="5000"><span id="ptsCalc">5 puntos</span><button class="btn btn-gold" id="ptsPagar">Potenciar a ${modelo.name}</button></div><div id="ptsMsg" class="pts-msg"></div></div>`:'';
   cont.innerHTML=`<div class="section-head" style="margin-bottom:22px"><span class="eyebrow">Experiencias</span><h2 style="font-size:clamp(1.8rem,4vw,2.6rem);margin-top:10px">Reseñas</h2><div class="divider"></div></div>${numNota}
     <div class="resenas-grid">${items}</div>
-    <div class="form-card" style="max-width:560px;margin:34px auto 0"><h3 style="font-size:1.3rem;margin-bottom:6px">Dejá tu reseña</h3><p style="color:var(--text-soft);font-size:.88rem;margin-bottom:18px">Se publica luego de ser revisada.</p>
+    <div class="form-card" style="max-width:560px;margin:34px auto 0"><h3 style="font-size:1.3rem;margin-bottom:6px">Dejá tu reseña</h3><p style="color:var(--text-soft);font-size:.88rem;margin-bottom:18px">${eaIsLogged()?'Con tu cuenta iniciada, tu reseña se verifica y <strong>se publica automáticamente</strong>. La calificación no puede alterarse después.':'Podés reseñar de forma anónima: pasa por una <strong>moderación imparcial</strong> antes de publicarse. Si iniciás sesión, se publica al instante.'}</p>
       <div class="field-row"><div class="field"><label>Tu nombre</label><input id="rsAutor" placeholder="Cómo querés aparecer"></div>
       <div class="field"><label>Puntaje</label><select id="rsEstrellas"><option value="5">★★★★★</option><option value="4">★★★★</option><option value="3">★★★</option><option value="2">★★</option><option value="1">★</option></select></div></div>
       <div class="field"><label>Tu experiencia</label><textarea id="rsTexto" placeholder="Contá tu experiencia..."></textarea></div>
@@ -246,7 +362,7 @@ async function renderResenas(sid, modelo){
   if(pMonto&&pCalc){ const upd=()=>{ pCalc.textContent=Math.floor((+pMonto.value||0)/1000)+' puntos'; }; pMonto.addEventListener('input',upd); upd(); }
   if(pBtn&&modelo&&modelo.numero){ pBtn.addEventListener('click',async()=>{ const monto=+pMonto.value||0; if(monto<5000){ pMsg.textContent='El mínimo para potenciar es $5.000 (5 puntos).'; return; } pBtn.textContent='Redirigiendo al pago…'; pBtn.disabled=true; try{ await window.eaSupa.crearPagoPuntos(modelo.numero, monto, '', ''); }catch(e){ pMsg.textContent='No se pudo iniciar el pago. Probá de nuevo.'; pBtn.textContent='Potenciar a '+modelo.name; pBtn.disabled=false; } }); }
   const btn=document.getElementById('rsEnviar');
-  btn.addEventListener('click',async()=>{ const autor=document.getElementById('rsAutor').value.trim(),texto=document.getElementById('rsTexto').value.trim(),estrellas=+document.getElementById('rsEstrellas').value; if(!autor||!texto){ document.getElementById('rsMsg').textContent='Completá nombre y experiencia.'; return; } btn.textContent='Enviando…'; btn.disabled=true; try{ await window.eaSupa.submitResena({solicitud_id:sid,autor,texto,estrellas}); document.getElementById('rsMsg').textContent='¡Gracias! Tu reseña quedó pendiente de aprobación.'; document.getElementById('rsAutor').value=''; document.getElementById('rsTexto').value=''; }catch(e){ document.getElementById('rsMsg').textContent='No se pudo enviar.'; } btn.textContent='Enviar reseña'; btn.disabled=false; });
+  btn.addEventListener('click',async()=>{ const autor=document.getElementById('rsAutor').value.trim(),texto=document.getElementById('rsTexto').value.trim(),estrellas=+document.getElementById('rsEstrellas').value; if(!autor||!texto){ document.getElementById('rsMsg').textContent='Completá nombre y experiencia.'; return; } btn.textContent='Enviando…'; btn.disabled=true; try{ await window.eaSupa.submitResena({solicitud_id:sid,autor,texto,estrellas}); document.getElementById('rsMsg').textContent= eaIsLogged()?'¡Gracias! Tu reseña quedó publicada (verificada por tu cuenta).':'¡Gracias! Tu reseña pasa por una moderación imparcial antes de publicarse.'; document.getElementById('rsAutor').value=''; document.getElementById('rsTexto').value=''; }catch(e){ document.getElementById('rsMsg').textContent='No se pudo enviar.'; } btn.textContent='Enviar reseña'; btn.disabled=false; });
 }
 
 function heroCarousel(){ const c=document.getElementById('heroCarousel'); if(!c) return; const slides=[...c.querySelectorAll('.hero-slide')]; const dotsW=document.getElementById('heroDots'); if(!slides.length) return; let i=0; if(dotsW){ dotsW.innerHTML=slides.map((_,k)=>`<button class="${k===0?'active':''}" data-k="${k}"></button>`).join(''); dotsW.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>go(+b.dataset.k))); } function go(n){ slides[i].classList.remove('active'); if(dotsW)dotsW.children[i].classList.remove('active'); i=(n+slides.length)%slides.length; slides[i].classList.add('active'); if(dotsW)dotsW.children[i].classList.add('active'); } setInterval(()=>go(i+1),5000); }
@@ -303,4 +419,4 @@ async function aplicarConfig(){
 function panelInit(){ const root=document.getElementById('panelRoot'); if(!root) return; if(window.eaSupa){ window.eaSupa.initPanel(); return; } root.innerHTML='<div class="panel-empty"><div class="pe-ic">📭</div><h3>Conectá el backend</h3></div>'; }
 function portalInit(){ const root=document.getElementById('portalRoot'); if(!root) return; if(window.eaSupa){ window.eaSupa.initPortal(); } }
 
-document.addEventListener('DOMContentLoaded',()=>{ ageGate(); headerScroll(); mobileMenu(); heroCarousel(); renderFeatured(); renderDestacados(); renderCatalog(); renderProfile(); reveals(); publishWizard(); panelInit(); portalInit(); aplicarConfig(); setTimeout(reveals,120); });
+document.addEventListener('DOMContentLoaded',()=>{ ageGate(); if(!document.getElementById('ageGate') && (document.getElementById('modelsGrid')||document.getElementById('pName'))) eaAgeGate(); headerScroll(); mobileMenu(); heroCarousel(); renderFeatured(); renderDestacados(); renderCatalog(); renderProfile(); reveals(); publishWizard(); panelInit(); portalInit(); aplicarConfig(); eaInjectFooterSafety(); setTimeout(reveals,120); });

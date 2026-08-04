@@ -80,7 +80,10 @@
   }
 
   /* ---------- Lecturas públicas ---------- */
-  async function getPublicados() { const { data, error } = await client.from('perfiles_publicados').select('*').order('created_at', { ascending: false }); return error ? [] : data; }
+  // M4: proyección de columnas para el catálogo (payload liviano) + límite.
+  // No trae 'telefono' ni campos pesados (CV/negocio extendido): el contacto se resuelve en getPerfil.
+  const LIST_COLS = 'id,nombre,provincia,ciudad,edad,altura,busto,cintura,cola,nacionalidad,cabello,tipo_cuerpo,precio_cita,precio,plan,puntos,numero,fotos,videos,genero,roles,verificado,created_at,bio,idiomas,estilo,es_medio,negocio_nombre,negocio';
+  async function getPublicados() { const { data, error } = await client.from('perfiles_publicados').select(LIST_COLS).order('created_at', { ascending: false }).limit(500); return error ? [] : data; }
   async function getPerfil(id) { const { data, error } = await client.from('perfiles_publicados').select('*').eq('id', id).single(); return error ? null : data; }
   async function getResenas(id) { const { data, error } = await client.from('resenas_aprobadas').select('*').eq('solicitud_id', id).order('created_at', { ascending: false }); return error ? [] : data; }
   async function submitResena(r) { const { error } = await client.from('resenas').insert({ solicitud_id: r.solicitud_id, autor: r.autor, texto: r.texto, estrellas: r.estrellas }); if (error) throw error; return true; }
@@ -572,15 +575,21 @@
       const pend = data.filter(r=>r.estado==='pendiente');
       const cTab = document.querySelector('.panel-tab[data-tab="resenas"] .cnt'); if(cTab) cTab.textContent = pend.length;
       if(!data.length){ board.innerHTML='<div class="panel-empty"><div class="pe-ic">💬</div><h3>Sin reseñas todavía</h3></div>'; return; }
-      board.innerHTML = data.map(r=>`<div class="review-card" style="grid-template-columns:1fr"><div class="rev-body">
+      board.innerHTML = data.map(r=>{
+        const badgeCls = r.estado==='aprobado'?'ready':(r.estado==='rechazado'?'incomplete':'');
+        const verif = r.interaccion_verificada?'<span style="color:#34d399;font-size:.72rem">✓ interacción verificada</span>':'<span style="color:var(--text-mute);font-size:.72rem">sin verificar (anónima)</span>';
+        const modInfo = r.moderado_por?`<div class="rev-meta" style="font-size:.74rem;color:var(--text-mute)">Moderada por ${esc(r.moderado_por)}${r.motivo_rechazo?(' · motivo: '+esc(r.motivo_rechazo)):''}${r.reclamo?(' · reclamo: '+esc(r.reclamo)):''}</div>`:'';
+        return `<div class="review-card" style="grid-template-columns:1fr"><div class="rev-body">
         <div class="rev-head"><div><h3 style="font-size:1.2rem">${esc(r.autor)} <span style="color:var(--gold)">${'★'.repeat(r.estrellas)}</span></h3>
-        <div class="rev-meta">sobre ${esc(r.solicitudes?.nombre)||'—'} · ${new Date(r.created_at).toLocaleDateString('es-AR')}</div></div>
-        <span class="status-badge ${r.estado==='aprobado'?'ready':'incomplete'}">${esc(r.estado)}</span></div>
+        <div class="rev-meta">sobre ${esc(r.solicitudes?.nombre)||'—'} · ${new Date(r.created_at).toLocaleDateString('es-AR')} · ${verif}</div>${modInfo}</div>
+        <span class="status-badge ${badgeCls}">${esc(r.estado)}</span></div>
         <p class="rev-bio">"${esc(r.texto)}"</p>
-        <div class="rev-actions">${r.estado!=='aprobado'?`<button class="btn btn-gold" data-rap="${r.id}">✓ Aprobar</button>`:''}<button class="btn btn-ghost" data-rdel="${r.id}">Eliminar</button></div>
-        </div></div>`).join('');
-      board.querySelectorAll('[data-rap]').forEach(b=>b.addEventListener('click', async()=>{ await client.from('resenas').update({estado:'aprobado'}).eq('id',b.dataset.rap); renderResenas(board); }));
-      board.querySelectorAll('[data-rdel]').forEach(b=>b.addEventListener('click', async()=>{ if(confirm('¿Eliminar reseña?')){ await client.from('resenas').delete().eq('id',b.dataset.rdel); renderResenas(board); } }));
+        <div class="rev-actions">${r.estado!=='aprobado'?`<button class="btn btn-gold" data-rap="${r.id}">✓ Aprobar</button>`:''}${r.estado!=='rechazado'?`<button class="btn btn-ghost" data-rrej="${r.id}">Rechazar con motivo</button>`:''}${r.estado!=='en_mediacion'?`<button class="btn btn-ghost" data-rmed="${r.id}">Mediación</button>`:''}<button class="btn btn-ghost" data-rdel="${r.id}" style="color:#f66">Eliminar (ilícito)</button></div>
+        </div></div>`;}).join('');
+      board.querySelectorAll('[data-rap]').forEach(b=>b.addEventListener('click', async()=>{ try{ await client.from('resenas').update({estado:'aprobado'}).eq('id',b.dataset.rap); }catch(e){ alert('Error: '+(e.message||e)); } renderResenas(board); }));
+      board.querySelectorAll('[data-rrej]').forEach(b=>b.addEventListener('click', async()=>{ const motivo=prompt('Motivo objetivo del rechazo (obligatorio):',''); if(motivo===null) return; if(!motivo.trim()){ alert('El rechazo requiere una justificación objetiva.'); return; } try{ await client.from('resenas').update({estado:'rechazado', motivo_rechazo:motivo.trim()}).eq('id',b.dataset.rrej); }catch(e){ alert('Error: '+(e.message||e)); } renderResenas(board); }));
+      board.querySelectorAll('[data-rmed]').forEach(b=>b.addEventListener('click', async()=>{ const rec=prompt('Reclamo fundado que motiva la mediación (obligatorio):',''); if(rec===null) return; if(!rec.trim()){ alert('La mediación requiere un reclamo fundado.'); return; } try{ await client.from('resenas').update({estado:'en_mediacion', reclamo:rec.trim(), reclamo_at:new Date().toISOString()}).eq('id',b.dataset.rmed); }catch(e){ alert('Error: '+(e.message||e)); } renderResenas(board); }));
+      board.querySelectorAll('[data-rdel]').forEach(b=>b.addEventListener('click', async()=>{ if(confirm('Eliminar definitivamente. Usá esto SOLO para contenido ilícito (datos de terceros, menores, difamación grave). ¿Continuar?')){ try{ await client.from('resenas').delete().eq('id',b.dataset.rdel); }catch(e){ alert('Error: '+(e.message||e)); } renderResenas(board); } }));
     }
     async function renderSitio(board) {
       let cfg = {}; try { cfg = await getConfig(); } catch (e) {}
