@@ -984,3 +984,49 @@ html:not([data-theme="dark"]) .exc-art .tag .name{ color:#f7f3ec; }
 .dc-row:last-child{border-bottom:none}
 .dc-k{color:var(--text-mute);min-width:110px;flex:none}
 .dc-v{color:var(--text);word-break:break-word}
+
+/* ============================================================
+   M1 · Gatekeeping progresivo — modal de registro/login y +18
+   ============================================================ */
+.ea-gate-ov{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(8,7,11,.72);backdrop-filter:blur(8px);opacity:0;transition:opacity .2s ease}
+.ea-gate-ov.show{opacity:1}
+.ea-gate-card{width:100%;max-width:400px;text-align:center;background:var(--black-soft,#141118);border:1px solid var(--line,rgba(255,255,255,.1));border-radius:22px;padding:34px 28px 30px;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.5);transform:translateY(8px);transition:transform .22s ease}
+.ea-gate-ov.show .ea-gate-card{transform:translateY(0)}
+.ea-gate-logo{width:58px;height:58px;margin:0 auto 14px;display:block}
+.ea-gate-card h3{font-size:1.5rem;margin:0 0 8px;color:var(--text,#fff)}
+.ea-gate-card p{color:var(--text-soft,rgba(255,255,255,.7));font-size:.92rem;line-height:1.5;margin:0 0 22px}
+.ea-gate-cta{width:100%;justify-content:center;margin-bottom:12px}
+.ea-gate-alt{display:block;color:var(--text-soft,rgba(255,255,255,.7));font-size:.88rem;text-decoration:none}
+.ea-gate-alt:hover{color:var(--gold,#d4af6e)}
+.ea-gate-x{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text-mute,rgba(255,255,255,.5));font-size:1.5rem;line-height:1;cursor:pointer;padding:4px}
+.ea-gate-x:hover{color:var(--text,#fff)}
+
+/* Miniaturas y paneles bloqueados en el perfil */
+.thumb.ea-thumb-lock{position:relative;cursor:pointer}
+.thumb.ea-thumb-lock img{filter:blur(7px) brightness(.6);transform:scale(1.06)}
+.ea-thumb-lockic{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.ea-lock-panel{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:26px 22px;border:1px dashed var(--line,rgba(255,255,255,.14));border-radius:16px;background:rgba(255,255,255,.02)}
+.ea-lock-panel .ea-lock-ic{font-size:1.6rem}
+.ea-lock-panel p{color:var(--text-soft,rgba(255,255,255,.7));font-size:.9rem;margin:0}
+.ea-lock-panel .ea-lock-btn{margin-top:2px}
+
+/* ============================================================
+   M4 · Rendimiento — saltar el render de tarjetas fuera de viewport.
+   contain-intrinsic-size reserva el alto aproximado para evitar saltos (CLS).
+   ============================================================ */
+.models-grid .model-card{content-visibility:auto;contain-intrinsic-size:1px 430px}
+.ea-loadmore-wrap{grid-column:1/-1;display:flex;justify-content:center;padding:8px 0 4px}
+
+/* ============================================================
+   M3 · Bloques de seguridad (footer + perfil)
+   ============================================================ */
+.footer-safety{border-top:1px solid var(--line,rgba(255,255,255,.1));border-bottom:1px solid var(--line,rgba(255,255,255,.1));margin:28px 0 6px;padding:20px 0}
+.footer-safety h4{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gold,#d4af6e);margin:0 0 12px}
+.footer-safety ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px 26px}
+.footer-safety li{position:relative;padding-left:22px;color:var(--text-soft,rgba(255,255,255,.7));font-size:.86rem;line-height:1.5}
+.footer-safety li::before{content:"✓";position:absolute;left:0;top:0;color:var(--gold,#d4af6e);font-weight:700}
+.profile-safety{border:1px solid var(--line,rgba(255,255,255,.12));border-radius:16px;padding:16px 18px;margin-top:18px;background:rgba(212,175,110,.05)}
+.profile-safety .ps-head{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--gold,#d4af6e);margin-bottom:10px;font-size:.98rem}
+.profile-safety ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.profile-safety li{position:relative;padding-left:20px;color:var(--text-soft,rgba(255,255,255,.72));font-size:.86rem;line-height:1.45}
+.profile-safety li::before{content:"•";position:absolute;left:4px;top:-1px;color:var(--gold,#d4af6e);font-size:1.1rem}
