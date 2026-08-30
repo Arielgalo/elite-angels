@@ -1037,3 +1037,11 @@ html:not([data-theme="dark"]) .exc-art .tag .name{ color:#f7f3ec; }
    ============================================================ */
 @view-transition { navigation: auto; }
 @media (prefers-reduced-motion: reduce){ @view-transition { navigation: none; } }
+
+/* ============================================================
+   Fase 1 · Skeletons de carga (velocidad percibida)
+   ============================================================ */
+.ea-skel-card{position:relative;overflow:hidden;border-radius:16px;background:var(--black-soft,#141118);aspect-ratio:3/4;border:1px solid var(--line,rgba(255,255,255,.06))}
+.ea-skel-card::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:eaShimmer 1.3s infinite}
+@keyframes eaShimmer{100%{transform:translateX(100%)}}
+@media (prefers-reduced-motion: reduce){ .ea-skel-card::after{animation:none} }
