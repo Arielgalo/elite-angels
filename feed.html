@@ -233,7 +233,7 @@ function App(){
 
   return <div className="h-full w-full flex justify-center bg-black"><div className="relative h-full w-full max-w-[460px] bg-neutral-950" onTouchStart={onTS} onTouchEnd={onTE}>
     <ModeBar mode={mode} setMode={changeMode} onMenu={function(){setMenu(true);}} onUpload={function(){setUpl(true);}}/>
-    {rows===null && <div className="h-full flex items-center justify-center text-white/60">Cargando feed…</div>}
+    {rows===null && <div className="absolute inset-0 flex flex-col gap-3 p-4 pt-16 pointer-events-none"><div className="flex-1 rounded-2xl bg-neutral-800/60 animate-pulse"/><div className="h-24 rounded-2xl bg-neutral-800/60 animate-pulse"/></div>}
     {uParam && <a href="feed.html" onClick={function(e){e.stopPropagation();}} className="absolute top-16 left-3 z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur text-white text-[13px] font-semibold">\u2190 @{uAuthor||'usuario'} \u00b7 sus videos</a>}
     {rows && uParam && items.length===0 && <div className="h-full flex items-center justify-center text-white/60 px-8 text-center">Esta persona todav\u00eda no subi\u00f3 videos.</div>}
 
