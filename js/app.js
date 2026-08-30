@@ -130,11 +130,14 @@ async function renderDestacados(){
   if(nEl){ const nuevos=reales.slice().sort((a,b)=>new Date(b.created||0)-new Date(a.created||0)).slice(0,4); nEl.innerHTML=nuevos.map(modelCard).join(''); }
   if(sEl){ const suben=reales.slice().filter(m=>(m.puntos||0)>0).sort((a,b)=>(b.puntos||0)-(a.puntos||0)).slice(0,4); sEl.innerHTML=suben.map(modelCard).join(''); }
 }
-async function renderFeatured(){ const reales=await getReales(); const base=(reales.length?reales:MODELS).slice().sort((a,b)=>tierRank(a)-tierRank(b)||(b.puntos||0)-(a.puntos||0)); setHeroStats(base); const el=document.getElementById('featuredGrid'); if(!el) return; el.innerHTML=base.slice(0,8).map(modelCard).join(''); }
+async function renderFeatured(){ const el=document.getElementById('featuredGrid'); if(el) eaSkeletons(el, 8); const reales=await getReales(); const base=(reales.length?reales:MODELS).slice().sort((a,b)=>tierRank(a)-tierRank(b)||(b.puntos||0)-(a.puntos||0)); setHeroStats(base); if(!el) return; el.innerHTML=base.slice(0,8).map(modelCard).join(''); }
 
+// Fase 1: skeletons de carga (se reemplazan cuando llegan los datos)
+function eaSkeletons(el, n){ if(!el) return; el.innerHTML = Array.from({length:n||8}).map(()=>'<div class="ea-skel-card"></div>').join(''); }
 let CATALOGO=[];
 async function renderCatalog(){
   const el=document.getElementById('modelsGrid'); if(!el) return;
+  eaSkeletons(el, 8);                 // velocidad percibida: mostramos placeholders al instante
   const reales=await getReales(); CATALOGO=(reales.length?reales:MODELS).slice().sort((a,b)=>tierRank(a)-tierRank(b)||(b.puntos||0)-(a.puntos||0)); setHeroStats(CATALOGO);
   // cascada de ubicación en el buscador
   const L=window.EA_LOCATIONS||{}; const qP=document.getElementById('qPais'),qPr=document.getElementById('qProv'),qC=document.getElementById('qCiudad');
