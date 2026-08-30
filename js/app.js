@@ -420,3 +420,28 @@ function panelInit(){ const root=document.getElementById('panelRoot'); if(!root)
 function portalInit(){ const root=document.getElementById('portalRoot'); if(!root) return; if(window.eaSupa){ window.eaSupa.initPortal(); } }
 
 document.addEventListener('DOMContentLoaded',()=>{ ageGate(); if(!document.getElementById('ageGate') && (document.getElementById('modelsGrid')||document.getElementById('pName'))) eaAgeGate(); headerScroll(); mobileMenu(); heroCarousel(); renderFeatured(); renderDestacados(); renderCatalog(); renderProfile(); reveals(); publishWizard(); panelInit(); portalInit(); aplicarConfig(); eaInjectFooterSafety(); setTimeout(reveals,120); });
+
+/* ============================================================
+   Fase 0 · Latencia percibida — preconnect + prefetch de navegación.
+   ============================================================ */
+function eaPerf(){
+  try{
+    var head = document.head || document.getElementsByTagName('head')[0]; if(!head) return;
+    if(!document.querySelector('link[data-ea-preconnect]')){
+      var pc = document.createElement('link');
+      pc.rel='preconnect'; pc.href='https://fsjrimmurtnrorqhnbwu.supabase.co';
+      pc.crossOrigin='anonymous'; pc.setAttribute('data-ea-preconnect','1');
+      head.appendChild(pc);
+    }
+    if(typeof HTMLScriptElement!=='undefined' && HTMLScriptElement.supports
+       && HTMLScriptElement.supports('speculationrules')
+       && !document.querySelector('script[type="speculationrules"]')){
+      var s = document.createElement('script'); s.type='speculationrules';
+      s.textContent = JSON.stringify({ prefetch:[{ source:'document',
+        where:{ and:[ {href_matches:'/*'}, {not:{href_matches:'/panel*'}} ] },
+        eagerness:'moderate' }] });
+      head.appendChild(s);
+    }
+  }catch(e){}
+}
+eaPerf();
