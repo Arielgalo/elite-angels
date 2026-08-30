@@ -1030,3 +1030,10 @@ html:not([data-theme="dark"]) .exc-art .tag .name{ color:#f7f3ec; }
 .profile-safety ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
 .profile-safety li{position:relative;padding-left:20px;color:var(--text-soft,rgba(255,255,255,.72));font-size:.86rem;line-height:1.45}
 .profile-safety li::before{content:"•";position:absolute;left:4px;top:-1px;color:var(--gold,#d4af6e);font-size:1.1rem}
+
+/* ============================================================
+   Fase 0 · Navegación fluida — View Transitions entre documentos.
+   Progressive enhancement: navegadores sin soporte lo ignoran.
+   ============================================================ */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce){ @view-transition { navigation: none; } }
