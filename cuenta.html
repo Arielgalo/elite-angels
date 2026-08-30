@@ -219,16 +219,28 @@ document.addEventListener('DOMContentLoaded', function(){
   };
   window.saveProfile=async function(){
     var s=await sb.auth.getSession(); if(!s.data.session) return;
-    var nombre=document.getElementById('uName').value.trim(); var bio=document.getElementById('uBio').value.trim();
-    var r=await sb.from('usuarios').update({ nombre:nombre, bio:bio }).eq('id', s.data.session.user.id);
-    if(r.error){ umsg(''); document.getElementById('userMsg').style.color='#e08aa0'; document.getElementById('userMsg').textContent='Error: '+r.error.message; return; }
-    document.getElementById('uAva').textContent=(nombre||'A').slice(0,1).toUpperCase();
+    var nEl=document.getElementById('uName'), bEl=document.getElementById('uBio'), ava=document.getElementById('uAva');
+    var nombre=nEl.value.trim(), bio=bEl.value.trim();
+    var prevN=nEl.getAttribute('data-saved')!==null?nEl.getAttribute('data-saved'):nEl.defaultValue;
+    var prevB=bEl.getAttribute('data-saved')!==null?bEl.getAttribute('data-saved'):bEl.defaultValue;
+    if(ava) ava.textContent=(nombre||'A').slice(0,1).toUpperCase();
+    nEl.setAttribute('data-saved',nombre); bEl.setAttribute('data-saved',bio);
     umsg('✓ Guardado');
+    var r=await sb.from('usuarios').update({ nombre:nombre, bio:bio }).eq('id', s.data.session.user.id);
+    if(r.error){ nEl.setAttribute('data-saved',prevN); bEl.setAttribute('data-saved',prevB); var um=document.getElementById('userMsg'); if(um){ um.style.color='#e08aa0'; um.textContent='No se pudo guardar, reintentá.'; } }
   };
   window.doLogout=async function(){ await sb.auth.signOut(); refresh(); };
 
   document.addEventListener('click', function(e){ var b=e.target.closest && e.target.closest('.pw-eye'); if(!b) return; var inp=document.getElementById(b.getAttribute('data-for')); if(!inp) return; var show=inp.type==='password'; inp.type=show?'text':'password'; b.textContent=show?'\uD83D\uDE48':'\uD83D\uDC41'; });
   sb.auth.onAuthStateChange(function(ev, session){ if(ev==='SIGNED_IN' && session){ refresh(); } });
+
+  (function(){ var otp=document.getElementById('rOtp'); if(!otp) return;
+    otp.addEventListener('input', function(){
+      var v=otp.value.replace(/[^0-9]/g,'').slice(0,6);
+      if(v!==otp.value) otp.value=v;
+      if(v.length===6 && typeof window.doSignup==='function'){ otp.blur(); window.doSignup(); }
+    });
+  })();
 
   refresh();
 });
