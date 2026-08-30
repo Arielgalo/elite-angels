@@ -93,6 +93,8 @@ function Card(props){
 function Drawer(props){
   const card=props.card; const [list,setList]=useState(null); const [autor,setAutor]=useState(''); const [texto,setTexto]=useState(''); const [sending,setSending]=useState(false);
   useEffect(()=>{ (async function(){ try{ let q=sb.from('comentarios').select('*').eq('estado','visible').order('created_at',{ascending:false}).limit(200); if(card.type==='post'){ q=q.eq('post_id',card.postId);} else { q=q.eq('solicitud_id',card.sid); q= card.videoUrl?q.eq('video_url',card.videoUrl):q.is('video_url',null);} const res=await q; setList(res.data||[]); }catch(e){ setList([]); } })(); },[]);
+  // Fase 2: comentarios en vivo para esta tarjeta (prepend con dedupe por id)
+  useEffect(function(){ const filt=card.type==='post'?('post_id=eq.'+card.postId):('solicitud_id=eq.'+card.sid); const ch=sb.channel('rt-com-'+(card.type==='post'?card.postId:card.sid)).on('postgres_changes',{event:'INSERT',schema:'public',table:'comentarios',filter:filt},function(payload){ const c=payload.new; if(!c||c.estado!=='visible') return; if(card.type!=='post' && card.videoUrl && c.video_url!==card.videoUrl) return; setList(function(l){ if(l&&l.some(function(x){return x.id===c.id;})) return l; return [c].concat(l||[]); }); }).subscribe(); return function(){ try{sb.removeChannel(ch);}catch(e){} }; },[]);
   async function send(){ const t=texto.trim(); if(!t){return;} setSending(true); const row= card.type==='post' ? {post_id:card.postId, autor:(autor.trim()||'Anónimo').slice(0,40), texto:t.slice(0,500)} : {solicitud_id:card.sid, video_url:card.videoUrl||null, autor:(autor.trim()||'Anónimo').slice(0,40), texto:t.slice(0,500)}; try{ const res=await sb.from('comentarios').insert(row).select().single(); if(res.error) throw res.error; setList(function(l){return [res.data].concat(l||[]);}); setTexto(''); props.onPosted(card); }catch(e){ alert('No se pudo enviar el comentario.'); } setSending(false); }
   const n=list?list.length:0;
   return <div className="absolute inset-0 z-40" onClick={props.onClose}><div className="absolute inset-0 bg-black/50"/><div className="absolute bottom-0 inset-x-0 bg-neutral-900 rounded-t-2xl flex flex-col" style={{height:'68%',animation:'upsheet .22s ease-out'}} onClick={function(e){e.stopPropagation();}}>
@@ -204,6 +206,8 @@ function App(){
     loadPosts(); loadCounts(); loadNoticias();
     try{ const u=await sb.auth.getUser(); if(u.data.user){ let nom=(u.data.user.email||'').split('@')[0]; try{ const pr=await sb.from('usuarios').select('nombre').eq('id',u.data.user.id).maybeSingle(); if(pr.data&&pr.data.nombre) nom=pr.data.nombre; }catch(e){} setMe({id:u.data.user.id, nombre:nom}); } }catch(e){}
   })(); },[]);
+  // Fase 2: feed en vivo — videos nuevos aparecen sin recargar (respeta RLS estado=visible)
+  useEffect(function(){ const ch=sb.channel('rt-feed-posts').on('postgres_changes',{event:'INSERT',schema:'public',table:'posts'},function(){ loadPosts(); }).subscribe(); return function(){ try{sb.removeChannel(ch);}catch(e){} }; },[]);
   function onPosted(card){ const k=ckey(card); setCounts(function(c){ const n=Object.assign({},c); n[k]=(n[k]||0)+1; return n; }); }
   async function uploadVideo(file, caption){
     const u=await sb.auth.getUser(); if(!u.data.user) throw new Error('Iniciá sesión');
