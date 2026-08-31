@@ -6,7 +6,7 @@
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Mi perfil · Aura Experience</title>
+<title>Mi Aura · Aura</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,48 +18,157 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
-<link rel="stylesheet" href="css/styles.css?v=11">
+<link rel="stylesheet" href="css/styles.css?v=41">
+<style>
+  .ma-empty{text-align:center;max-width:600px;margin:40px auto}
+  .ma-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:6px 0 22px;border-bottom:1px solid var(--line,rgba(255,255,255,.08))}
+  .ma-av{width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8a6a3a);display:flex;align-items:center;justify-content:center;font-family:var(--serif,'Sora');font-weight:700;font-size:1.5rem;color:#0a0a0c;overflow:hidden;flex:0 0 auto}
+  .ma-av img{width:100%;height:100%;object-fit:cover}
+  .ma-id{flex:1 1 auto;min-width:0}
+  .ma-id h1{font-size:clamp(1.5rem,3.4vw,2.1rem);margin:2px 0 3px;line-height:1.1}
+  .ma-id .ma-sub{color:var(--text-mute);font-size:.9rem}
+  .ma-actions{flex:0 0 auto}
+  .ma-tabs{display:flex;gap:6px;overflow-x:auto;padding:20px 0 4px;-webkit-overflow-scrolling:touch}
+  .ma-tab{flex:0 0 auto;padding:9px 16px;border-radius:999px;border:1px solid var(--line,rgba(255,255,255,.12));background:transparent;color:var(--text-soft);font-family:var(--sans,'Manrope');font-weight:600;font-size:.9rem;cursor:pointer;white-space:nowrap;transition:.15s}
+  .ma-tab.on{background:var(--gold);border-color:var(--gold);color:#0a0a0c}
+  .ma-panel{padding:22px 0 10px;min-height:200px}
+  .ma-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .ma-card{border:1px solid var(--line,rgba(255,255,255,.1));border-radius:14px;overflow:hidden;background:var(--black-soft,rgba(255,255,255,.02))}
+  .ma-card-b{padding:16px 18px}
+  .ma-card-t{font-weight:600;margin-bottom:6px}
+  .ma-card-m{font-size:.82rem;color:var(--gold)}
+  .ma-empty2{text-align:center;color:var(--text-mute);padding:40px 16px;border:1px dashed var(--line,rgba(255,255,255,.14));border-radius:16px}
+  .ma-empty2 p{margin:0 0 14px;max-width:440px;margin-inline:auto;line-height:1.55}
+</style>
 </head>
 <body>
 
 <header class="header scrolled" id="header" style="position:sticky">
   <div class="container nav">
-    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience"><span class="logo-text">Aura<span> Experience</span></span></a>
+    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura"><span class="logo-text">Aura</span></a>
     <nav class="nav-links">
       <a href="index.html">Inicio</a>
-      <a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a>
-      <a href="publicar.html">Publicá</a>
-      <a href="mi-perfil.html" class="active">Mi perfil</a>
+      <a href="modelos.html">Talentos</a>
+      <a href="feed.html">Feed</a>
+      <a href="nosotros.html">Qué es Aura</a>
+      <a href="mi-perfil.html" class="active">Mi Aura</a>
     </nav>
-    <div class="nav-actions"><a href="publicar.html" class="btn btn-gold" style="padding:13px 22px">Publicar</a></div>
+    <div class="nav-actions">
+      <a href="publicar.html" class="btn btn-gold" style="padding:13px 22px">Publicar</a>
+      <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+    </div>
   </div>
 </header>
 
-<section class="section" style="padding-top:60px">
-  <div class="container">
-    <div style="text-align:center;max-width:620px;margin:0 auto 36px">
-      <span class="eyebrow">Acceso de perfiles</span>
-      <h1 style="font-size:clamp(2rem,4.5vw,3rem);margin-top:12px">Editá tu perfil</h1>
-      <p style="color:var(--text-soft);margin-top:10px">Ingresá con el email que usaste al publicar. Podés actualizar tus fotos, videos, voz, descripción y datos cuando quieras.</p>
-    </div>
-    <div id="portalRoot"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Inicio</a>
+  <a href="modelos.html">Talentos</a>
+  <a href="feed.html">Feed</a>
+  <a href="nosotros.html">Qué es Aura</a>
+  <a href="publicar.html">Publicar</a>
+  <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
+</div>
+
+<section class="section" style="padding-top:34px">
+  <div class="container" id="miAura" style="max-width:960px">
+    <div class="ma-empty2"><p>Cargando tu Aura…</p></div>
   </div>
 </section>
 
 <footer class="footer" style="padding:50px 0 30px">
   <div class="container">
     <div class="footer-bottom" style="border:none;padding:0">
-      <p>© 2026 Aura Experience</p>
-      <div class="age"><span class="b18">18+</span><span>Solo para mayores de edad</span></div>
+      <p>© 2026 Aura · La Plata, Argentina.</p>
     </div>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="js/ea-supabase.js?v=31" defer></script>
-<script src="js/locations.js" defer></script>
-<script src="js/app.js?v=30" defer></script>
+<script src="js/app.js?v=41" defer></script>
 <script src="js/pwa.js?v=4" defer></script>
 <script src="js/theme.js?v=1" defer></script>
+<script>
+(function(){
+  var root=document.getElementById('miAura'), client=null, user=null;
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function money(c){ if(c==null) return ''; return '$'+(c/100).toLocaleString('es-AR'); }
+  function badge(e){ return {borrador:'Borrador',en_revision:'En revisión',publicado:'Publicado',pausado:'Pausado',archivado:'Archivado'}[e]||e||''; }
+  var TABS=[['posteos','Posteos'],['trabajos','Mis trabajos'],['servicios','Servicios'],['sesiones','Sesiones'],['planes','Mis planes']];
+
+  function loginView(){
+    root.innerHTML='<div class="ma-empty"><span class="eyebrow">Mi Aura</span>'
+      +'<h1>Ingresá a tu cuenta</h1>'
+      +'<p style="color:var(--text-soft)">Con tu cuenta gestionás tus posteos, tus trabajos, tus servicios, tus sesiones y tus planes.</p>'
+      +'<div class="hero-actions" style="justify-content:center;margin-top:18px"><a href="cuenta.html?next=mi-perfil.html" class="btn btn-gold">Ingresar o crear cuenta</a></div></div>';
+  }
+  function emptyState(msg, cta){
+    return '<div class="ma-empty2"><p>'+msg+'</p>'+(cta?'<a href="publicar.html" class="btn btn-ghost">'+cta+'</a>':'')+'</div>';
+  }
+  function listingList(rows){
+    return '<div class="ma-grid">'+rows.map(function(x){
+      return '<div class="ma-card"><div class="ma-card-b"><div class="ma-card-t">'+esc(x.titulo)+'</div>'
+        +'<div class="ma-card-m">'+esc(badge(x.estado))+(x.precio_centavos?(' · '+money(x.precio_centavos)):'')+'</div></div></div>';
+    }).join('')+'</div>';
+  }
+  async function loadTab(id){
+    var p=document.getElementById('maPanel'); if(!p) return;
+    p.innerHTML='<div class="ma-empty2"><p>Cargando…</p></div>';
+    try{
+      if(id==='posteos'){
+        var r=await client.from('posts').select('*').eq('user_id',user.id).order('created_at',{ascending:false});
+        var d=r.data||[];
+        p.innerHTML = d.length? '<div class="ma-grid">'+d.map(function(x){return '<div class="ma-card"><div class="ma-card-b"><div class="ma-card-t">'+esc(x.caption||'Posteo')+'</div><div class="ma-card-m">'+esc(x.estado||'')+'</div></div></div>';}).join('')+'</div>' : emptyState('Todavía no publicaste posteos.','Crear un posteo');
+      } else if(id==='trabajos'){
+        p.innerHTML = emptyState('Acá va tu galería de trabajos: fotos de resultados de lo que hiciste. Todavía no cargaste ninguno.','Cargar un trabajo');
+      } else if(id==='servicios'){
+        var rs=await client.from('listings').select('*').eq('account_id',user.id).in('tipo',['servicio','producto','negocio']).order('creado_en',{ascending:false});
+        var ds=rs.data||[];
+        p.innerHTML = ds.length? listingList(ds) : emptyState('Todavía no publicaste servicios, productos ni negocios.','Publicar un servicio');
+      } else if(id==='sesiones'){
+        var rse=await client.from('listings').select('*').eq('account_id',user.id).eq('tipo','sesion').order('creado_en',{ascending:false});
+        var dse=rse.data||[];
+        p.innerHTML = dse.length? listingList(dse) : emptyState('Todavía no ofreciste sesiones por videollamada.','Crear una sesión');
+      } else if(id==='planes'){
+        var rp=await client.from('plans').select('*').eq('account_id',user.id).order('creado_en',{ascending:false});
+        var dp=rp.data||[];
+        p.innerHTML = dp.length? '<div class="ma-grid">'+dp.map(function(x){return '<div class="ma-card"><div class="ma-card-b"><div class="ma-card-t">'+esc(x.titulo)+'</div><div class="ma-card-m">'+esc(x.estado||'')+' · gratis</div></div></div>';}).join('')+'</div>' : emptyState('Todavía no creaste ningún plan. Los planes son gratis, en lugares públicos.','Crear un plan');
+      }
+    }catch(err){ p.innerHTML=emptyState('No pudimos cargar esta sección ahora. Probá de nuevo en un rato.'); }
+  }
+  function shell(){
+    var md=(user.user_metadata||{});
+    var nombre=md.nombre||md.name||user.email||'Mi cuenta';
+    var avatar=md.avatar_url||'';
+    var inicial=(nombre||'A').trim().charAt(0).toUpperCase();
+    root.innerHTML='<div class="ma-head">'
+      +'<div class="ma-av">'+(avatar?'<img src="'+esc(avatar)+'" alt="">':esc(inicial))+'</div>'
+      +'<div class="ma-id"><span class="eyebrow">Mi Aura</span><h1>'+esc(nombre)+'</h1><div class="ma-sub">'+esc(user.email||'')+'</div></div>'
+      +'<div class="ma-actions"><a href="publicar.html" class="btn btn-gold">Publicar</a></div></div>'
+      +'<div class="ma-tabs" id="maTabs">'+TABS.map(function(t,i){return '<button class="ma-tab'+(i===0?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'
+      +'<div class="ma-panel" id="maPanel"></div>';
+    document.getElementById('maTabs').addEventListener('click',function(e){
+      var b=e.target.closest('.ma-tab'); if(!b) return;
+      Array.prototype.forEach.call(document.querySelectorAll('.ma-tab'),function(x){x.classList.remove('on');});
+      b.classList.add('on'); loadTab(b.dataset.t);
+    });
+    loadTab('posteos');
+  }
+  async function boot(){
+    try{
+      var r=await client.auth.getSession();
+      user=r&&r.data&&r.data.session&&r.data.session.user;
+    }catch(e){ user=null; }
+    if(!user){ loginView(); return; }
+    shell();
+  }
+  var tries=0;
+  (function wait(){
+    if(window.eaSupa && window.eaSupa.client){ client=window.eaSupa.client; boot(); return; }
+    if(tries++>60){ loginView(); return; }
+    setTimeout(wait,100);
+  })();
+})();
+</script>
 </body>
 </html>
