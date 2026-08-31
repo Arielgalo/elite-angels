@@ -5,9 +5,8 @@
 <script>try{if(localStorage.getItem('aura_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- M1: perfil previsualizable por anónimos. Contacto, galería completa y videos se gatean con modal (app.js). Confirmación +18 inyectada por app.js (eaAgeGate). -->
-<title>Perfil · Aura Experience</title>
-<meta name="description" content="Perfil en Aura Experience — presencia y conexiones para todos los géneros.">
+<title>Ficha · Aura</title>
+<meta name="description" content="Ficha de talento en Aura: qué entregás, precio y zona a la vista.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,24 +18,39 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
-<link rel="stylesheet" href="css/styles.css?v=40">
-<style>@media (max-width:760px){#mainImg{display:none !important}.profile-gallery{margin-bottom:0 !important}}</style>
+<link rel="stylesheet" href="css/styles.css?v=41">
+<style>
+  .pf-wrap{display:grid;grid-template-columns:minmax(0,420px) 1fr;gap:34px;align-items:start}
+  @media(max-width:760px){.pf-wrap{grid-template-columns:1fr}}
+  .pf-photo{border-radius:18px;overflow:hidden;background:#1a1a1f;aspect-ratio:4/5;position:relative}
+  .pf-photo img{width:100%;height:100%;object-fit:cover}
+  .pf-verif{position:absolute;top:12px;left:12px;background:rgba(10,10,12,.8);color:var(--gold);font-size:.75rem;font-weight:700;padding:5px 11px;border-radius:999px}
+  .pf-tipo{color:var(--gold);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem}
+  .pf-titulo{font-size:clamp(1.7rem,4vw,2.5rem);margin:8px 0 6px;line-height:1.1}
+  .pf-zona{color:var(--text-mute);margin-bottom:18px}
+  .pf-precio{font-size:1.5rem;font-weight:700;color:var(--gold);margin:6px 0 20px}
+  .pf-qe h3{margin:0 0 8px;font-size:1rem}
+  .pf-qe p{color:var(--text-soft);line-height:1.65;white-space:pre-line}
+  .pf-cta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
+  .pf-note{margin-top:14px;color:var(--text-mute);font-size:.85rem}
+  .pf-block{margin-top:34px;border-top:1px solid var(--line,rgba(255,255,255,.08));padding-top:24px}
+</style>
 </head>
 <body>
 
-
-<header class="header" id="header">
+<header class="header scrolled" id="header" style="position:sticky">
   <div class="container nav">
-    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience"><span class="logo-text">Aura<span> Experience</span></span></a>
+    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura"><span class="logo-text">Aura</span></a>
     <nav class="nav-links">
       <a href="index.html">Inicio</a>
-      <a href="modelos.html" class="active">Perfiles</a>
-      <a href="noticias.html">Noticias</a><a href="nosotros.html">Nosotros</a>
-      <a href="contacto.html">Contacto</a><a href="instalar.html">Instalá la app</a><a href="cuenta.html">Mi cuenta</a>
+      <a href="modelos.html">Talentos</a>
+      <a href="feed.html">Feed</a>
+      <a href="nosotros.html">Qué es Aura</a>
+      <a href="contacto.html">Contacto</a>
     </nav>
     <div class="nav-actions">
-      <a href="publicar.html" class="btn btn-ghost" style="padding:13px 22px">Publicá</a>
-      <a href="mi-perfil.html" class="btn btn-gold">Mi perfil</a>
+      <a href="publicar.html" class="btn btn-ghost" style="padding:13px 22px">Publicar</a>
+      <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
       <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -44,96 +58,85 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html">Inicio</a>
-  <a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a>
-  <a href="nosotros.html">Nosotros</a>
+  <a href="modelos.html">Talentos</a>
+  <a href="feed.html">Feed</a>
+  <a href="nosotros.html">Qué es Aura</a>
   <a href="contacto.html">Contacto</a>
-  <a href="publicar.html">Publicá tu perfil</a>
-  <a href="mi-perfil.html" class="btn btn-gold">Mi perfil</a>
+  <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
 </div>
 
-<section class="section" style="padding-top:140px">
-  <div class="container">
-    <div class="breadcrumb" style="margin-bottom:34px"><a href="index.html">Inicio</a> · <a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a> · <span id="crumbName">Perfil</span></div>
-    <div class="profile-grid">
-      <!-- Galería -->
-      <div class="profile-gallery reveal">
-        <div class="profile-main-img" id="mainImg"></div>
-        <div class="profile-thumbs" id="thumbs"></div>
-      </div>
-      <!-- Info -->
-      <div class="profile-info reveal reveal-d1">
-        <div class="profile-header">
-          <span class="model-badge vip" style="position:static;display:inline-block;margin-bottom:14px">VIP Aura</span>
-          <h1 id="pName">—</h1>
-          <div class="profile-loc">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
-            <span id="pLoc">—</span>
-          </div>
-          <div class="profile-rating"><span>★★★★★</span><span style="color:var(--text-soft);font-size:.9rem">5.0 · Perfil verificado</span></div>
-        </div>
-
-        <div class="spec-grid" id="specGrid"></div>
-
-        <h3 style="font-size:1.4rem;margin-bottom:12px">Sobre mí</h3>
-        <p class="profile-bio" id="pBio">—</p>
-
-        <h3 style="font-size:1.4rem;margin:24px 0 14px">Idiomas & Estilo</h3>
-        <div class="tag-chips" id="pChips"></div>
-
-        <div class="rate-box" id="rateBox">
-          <h3 style="font-size:1.3rem;margin-bottom:8px">Tarifas</h3>
-        </div>
-
-        <div id="profileAudio"></div>
-        <div class="profile-actions" id="profileActions"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" style="padding-top:10px"><div class="container"><div id="profileVideos"></div></div></section>
-<section class="section" style="background:var(--black-soft)"><div class="container" id="resenasSection"></div></section>
-
-<!-- Perfiles relacionados -->
-<section class="section" style="background:var(--black-soft)">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">Quizás también te gusten</span>
-      <h2>Otros perfiles</h2>
-      <div class="divider"></div>
-    </div>
-    <div class="models-grid" id="relatedGrid"></div>
+<section class="section" style="padding-top:40px">
+  <div class="container" id="pfRoot" style="max-width:1000px">
+    <div style="text-align:center;color:var(--text-mute);padding:60px 0">Cargando ficha…</div>
   </div>
 </section>
 
 <footer class="footer">
   <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience"><span class="logo-text">Aura<span> Experience</span></span></a>
-        <p>Aura Experience — Alquilá presencia humana para lo que necesites: citas, amigos, eventos, roles o simple compañía. Personas reales y verificadas, para todas las personas y todos los géneros. El primer paso siempre es conocerse.</p>
-        <div class="socials">
-          <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
-          <a href="#" aria-label="Telegram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 4L3 11l5 2 2 6 3-4 5 4z"/></svg></a>
-          <a href="https://wa.me/5492214982243" aria-label="WhatsApp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 0 1-13 8l-5 1 1-5A9 9 0 1 1 21 12z"/></svg></a>
-        </div>
-      </div>
-      <div class="footer-col"><h4>Navegación</h4><a href="index.html">Inicio</a><a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a><a href="nosotros.html">Nosotros</a><a href="contacto.html">Contacto</a></div>
-      <div class="footer-col"><h4>Servicios</h4><a href="modelos.html">Eventos & Galas</a><a href="modelos.html">Viajes</a><a href="modelos.html">Cenas privadas</a><a href="contacto.html">Reservas VIP</a></div>
-      <div class="footer-col"><h4>Contacto</h4><a href="tel:+5492214982243" class="js-phone">+54 9 221 498-2243</a><a href="contacto.html">staffcontactos@gmail.com</a><a href="https://wa.me/5492214982243">WhatsApp 24/7</a></div>
-    </div>
     <div class="footer-bottom">
-      <p>© 2026 Aura Experience. Todos los derechos reservados. · <a href="terminos.html" style="color:inherit;text-decoration:underline">Términos</a> · <a href="privacidad.html" style="color:inherit;text-decoration:underline">Privacidad</a></p>
-      <div class="age"><span class="b18">18+</span><span>Solo para mayores de edad</span></div>
+      <p>© 2026 Aura · La Plata, Argentina. · <a href="terminos.html" style="color:inherit;text-decoration:underline">Términos</a> · <a href="privacidad.html" style="color:inherit;text-decoration:underline">Privacidad</a></p>
     </div>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="js/ea-supabase.js?v=40" defer></script>
-<script src="js/app.js?v=40" defer></script>
+<script src="js/ea-supabase.js?v=31" defer></script>
+<script src="js/app.js?v=41" defer></script>
 <script src="js/pwa.js?v=4" defer></script>
 <script src="js/theme.js?v=1" defer></script>
+<script>
+(function(){
+  var root=document.getElementById('pfRoot'), client=null;
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function money(c){ if(c==null) return ''; return '$'+(c/100).toLocaleString('es-AR'); }
+  var TLABEL={servicio:'Servicio / oficio',producto:'Producto',negocio:'Negocio',sesion:'Sesión · videollamada'};
+  function id(){ try{ return new URLSearchParams(location.search).get('id'); }catch(e){ return null; } }
+  function notFound(){
+    root.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--text-mute)"><h1 style="color:var(--text)">Esta ficha no está disponible.</h1>'
+      +'<p>Puede que todavía no esté publicada.</p><div style="margin-top:18px"><a href="modelos.html" class="btn btn-gold">Ver Talentos</a></div></div>';
+  }
+  function render(x){
+    var foto=x.foto_principal? '<img src="'+esc(x.foto_principal)+'" alt="'+esc(x.titulo||'')+'">':'';
+    var verif=x.verificado? '<span class="pf-verif">✓ Identidad verificada</span>':'';
+    var cta = (x.tipo==='sesion')? 'Reservar sesión' : (x.tipo==='negocio'? 'Contactar' : 'Reservar');
+    root.innerHTML=''
+      +'<div class="pf-wrap">'
+      +'  <div class="pf-photo">'+foto+verif+'</div>'
+      +'  <div class="pf-info">'
+      +'    <div class="pf-tipo">'+esc(TLABEL[x.tipo]||'')+'</div>'
+      +'    <h1 class="pf-titulo">'+esc(x.titulo||'')+'</h1>'
+      +'    <div class="pf-zona">'+(x.zona?('📍 '+esc(x.zona)):'')+'</div>'
+      +(x.precio_centavos?('<div class="pf-precio">'+money(x.precio_centavos)+'</div>'):'')
+      +'    <div class="pf-qe"><h3>'+(x.tipo==='sesion'?'Qué te llevás':'Qué entregás')+'</h3><p>'+esc(x.que_entrega||'')+'</p></div>'
+      +'    <div class="pf-cta"><button class="btn btn-gold" id="pfCta">'+cta+'</button><a class="btn btn-ghost" href="modelos.html">Volver a Talentos</a></div>'
+      +'    <div class="pf-note" id="pfNote"></div>'
+      +'    <div class="pf-block"><h3 style="margin:0 0 6px">Reseñas</h3><p style="color:var(--text-mute);margin:0">Las reseñas son gratis y se habilitan después de una interacción real. Todavía no hay reseñas.</p></div>'
+      +'  </div>'
+      +'</div>';
+    var btn=document.getElementById('pfCta');
+    if(btn) btn.addEventListener('click',function(){
+      var n=document.getElementById('pfNote');
+      n.textContent = (x.tipo==='sesion')
+        ? 'Las reservas de sesiones con agenda y videollamada se activan en breve.'
+        : 'Las reservas dentro de Aura se activan en breve.';
+      n.style.color='var(--gold)';
+    });
+  }
+  async function boot(){
+    var q=id(); if(!q){ notFound(); return; }
+    try{
+      var r=await client.from('listings').select('*').eq('id',q).single();
+      if(r.error || !r.data || r.data.estado!=='publicado'){ notFound(); return; }
+      render(r.data);
+    }catch(e){ notFound(); }
+  }
+  var tries=0;
+  (function wait(){
+    if(window.eaSupa && window.eaSupa.client){ client=window.eaSupa.client; boot(); return; }
+    if(tries++>60){ notFound(); return; }
+    setTimeout(wait,100);
+  })();
+})();
+</script>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                             
