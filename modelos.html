@@ -5,9 +5,8 @@
 <script>try{if(localStorage.getItem('aura_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- M1: catálogo abierto a visitantes anónimos. El acceso profundo (contacto, galería completa, videos) se gatea con modal en app.js. Confirmación +18 inyectada por app.js (eaAgeGate). -->
-<title>Perfiles · Aura Experience</title>
-<meta name="description" content="Perfiles y conexiones en Aura Experience, para personas de todos los géneros. Filtrá por género, ciudad y más.">
+<title>Talentos · Aura</title>
+<meta name="description" content="Buscá por tema y por zona: oficios, servicios, productos, negocios y sesiones. Cada persona es la cara de su propio servicio. Precio y tema siempre a la vista.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,23 +18,44 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
-<link rel="stylesheet" href="css/styles.css?v=40">
+<link rel="stylesheet" href="css/styles.css?v=41">
+<style>
+  .tl-search{display:flex;gap:10px;flex-wrap:wrap;max-width:640px;margin:0 auto}
+  .tl-search input{flex:1 1 260px;padding:14px 18px;border-radius:12px;border:1px solid var(--line,rgba(255,255,255,.14));background:var(--black-soft,rgba(255,255,255,.03));color:var(--text);font-size:1rem;font-family:var(--sans,'Manrope')}
+  .tl-chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:22px auto 0;max-width:760px}
+  .tl-chip{padding:8px 15px;border-radius:999px;border:1px solid var(--line,rgba(255,255,255,.14));background:transparent;color:var(--text-soft);font-weight:600;font-size:.85rem;cursor:pointer;white-space:nowrap}
+  .tl-chip.on{background:var(--gold);border-color:var(--gold);color:#0a0a0c}
+  .tl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:34px}
+  .tl-card{border:1px solid var(--line,rgba(255,255,255,.1));border-radius:16px;overflow:hidden;background:var(--black-soft,rgba(255,255,255,.02));text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:.15s}
+  .tl-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+  .tl-ph{aspect-ratio:4/5;background:linear-gradient(135deg,#1a1a1f,#0d0d10);position:relative;overflow:hidden}
+  .tl-ph img{width:100%;height:100%;object-fit:cover}
+  .tl-verif{position:absolute;top:10px;left:10px;background:rgba(10,10,12,.78);color:var(--gold);font-size:.7rem;font-weight:700;padding:4px 9px;border-radius:999px;display:flex;align-items:center;gap:4px}
+  .tl-body{padding:14px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .tl-titulo{font-weight:600;line-height:1.25}
+  .tl-zona{font-size:.8rem;color:var(--text-mute)}
+  .tl-qe{font-size:.85rem;color:var(--text-soft);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .tl-precio{margin-top:auto;padding-top:8px;color:var(--gold);font-weight:700}
+  .tl-empty{text-align:center;color:var(--text-mute);padding:60px 20px;border:1px dashed var(--line,rgba(255,255,255,.14));border-radius:18px;margin-top:34px}
+  .tl-empty p{max-width:460px;margin:0 auto 6px;line-height:1.6}
+</style>
 </head>
 <body>
 
-
 <header class="header" id="header">
   <div class="container nav">
-    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience"><span class="logo-text">Aura<span> Experience</span></span></a>
+    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura"><span class="logo-text">Aura</span></a>
     <nav class="nav-links">
       <a href="index.html">Inicio</a>
-      <a href="modelos.html" class="active">Perfiles</a>
-      <a href="noticias.html">Noticias</a><a href="nosotros.html">Nosotros</a>
-      <a href="contacto.html">Contacto</a><a href="instalar.html">Instalá la app</a><a href="cuenta.html">Mi cuenta</a>
+      <a href="modelos.html" class="active">Talentos</a>
+      <a href="feed.html">Feed</a>
+      <a href="nosotros.html">Qué es Aura</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="cuenta.html">Mi cuenta</a>
     </nav>
     <div class="nav-actions">
-      <a href="publicar.html" class="btn btn-ghost" style="padding:13px 22px">Publicá</a>
-      <a href="mi-perfil.html" class="btn btn-gold">Mi perfil</a>
+      <a href="publicar.html" class="btn btn-ghost" style="padding:13px 22px">Publicar</a>
+      <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
       <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -43,64 +63,37 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html">Inicio</a>
-  <a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a>
-  <a href="nosotros.html">Nosotros</a>
+  <a href="modelos.html">Talentos</a>
+  <a href="feed.html">Feed</a>
+  <a href="nosotros.html">Qué es Aura</a>
   <a href="contacto.html">Contacto</a>
-  <a href="publicar.html">Publicá tu perfil</a>
-  <a href="mi-perfil.html" class="btn btn-gold">Mi perfil</a>
+  <a href="publicar.html">Publicar</a>
+  <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
 </div>
 
 <section class="page-hero">
   <div class="hero-bg"></div>
   <div class="container page-hero-content">
-    <span class="eyebrow">Nuestra selección</span>
-    <h1>Perfiles <span class="text-gold">Aura</span></h1>
-    <p>Personas de todos los géneros para conocer. Filtrá por género, ciudad, edad y más, y encontrá a quien buscás.</p>
-    <div class="breadcrumb"><a href="index.html">Inicio</a> · Perfiles</div>
+    <span class="eyebrow">Talentos</span>
+    <h1>Buscá <span class="text-gold">por tema y por zona.</span></h1>
+    <p>Oficios, servicios, productos, negocios y sesiones. Cada persona es la cara de su propio servicio. Precio y tema siempre a la vista.</p>
+    <div class="tl-search" style="margin-top:26px">
+      <input id="tlQ" type="search" placeholder="Buscá un oficio, un negocio o un tema" aria-label="Buscar">
+    </div>
+    <div class="tl-chips" id="tlTipos">
+      <button class="tl-chip on" data-tipo="todo">Todo</button>
+      <button class="tl-chip" data-tipo="servicio">Oficios y servicios</button>
+      <button class="tl-chip" data-tipo="negocio">Negocios</button>
+      <button class="tl-chip" data-tipo="producto">Productos</button>
+      <button class="tl-chip" data-tipo="sesion">Sesiones</button>
+    </div>
+    <div class="tl-chips" id="tlZonas"></div>
   </div>
 </section>
 
-<section class="section" style="padding-top:30px">
+<section class="section" style="padding-top:20px">
   <div class="container">
-    <div class="search-panel">
-      <div class="sp-top">
-        <span class="sp-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
-        <input id="qText" placeholder="Buscar por nombre, ciudad, nacionalidad...">
-        <button class="btn btn-gold" id="qBuscar">Buscar</button>
-      </div>
-      <div class="sp-grid">
-        <select id="qRol"><option value="">Todos los roles</option><option value="citas">Pactos & Acuerdos</option><option value="amigos">Amigos & Salidas</option><option value="eventos">Eventos, Roles & Presencia</option></select><label class="verif-filter" style="display:flex;align-items:center;gap:8px;color:var(--text-soft);font-size:.9rem;padding:0 6px"><input type="checkbox" id="qVerif" style="width:auto;accent-color:var(--gold)"> Solo verificados</label><select id="qGenero"><option value="">Todos los géneros</option><option>Mujer</option><option>Varón</option><option>No binarie</option><option>Trans femenina</option><option>Trans masculino</option><option>Crossdresser</option><option>Otro / prefiero no decir</option></select>
-        <select id="qPais"><option value="">Todos los países</option></select>
-        <select id="qProv"><option value="">Toda provincia</option></select>
-        <select id="qCiudad"><option value="">Toda ciudad</option></select>
-        <select id="qCabello"><option value="">Cabello</option><option>Rubia</option><option>Morena</option><option>Castaña</option><option>Pelirroja</option><option>Otro</option></select>
-        <select id="qTipo"><option value="">Tipo de cuerpo</option><option>Delgada</option><option>Atlética</option><option>Curvas</option><option>Voluptuosa</option></select>
-        <input id="qEdadMin" type="number" inputmode="numeric" placeholder="Edad mín">
-        <input id="qEdadMax" type="number" inputmode="numeric" placeholder="Edad máx">
-        <input id="qPrecioMin" type="number" inputmode="numeric" placeholder="Tarifa mín $">
-        <input id="qPrecioMax" type="number" inputmode="numeric" placeholder="Tarifa máx $">
-        <input id="qAltura" placeholder="Altura mín (cm)">
-        <input id="qBusto" placeholder="Busto">
-        <input id="qCintura" placeholder="Cintura">
-        <input id="qCola" placeholder="Cola">
-      </div>
-      <div class="sp-foot"><span id="qCount" class="sp-count"></span><button class="btn btn-ghost" id="qLimpiar">Limpiar filtros</button></div>
-    </div>
-    <div class="models-grid" id="modelsGrid"></div>
-  </div>
-</section>
-
-<section class="section cta-band" style="padding-top:0">
-  <div class="container">
-    <div class="cta-inner reveal">
-      <span class="eyebrow">¿No encontrás lo que buscás?</span>
-      <h2>Te ayudamos a elegir</h2>
-      <p>Te ayudamos: podemos producir buenas fotos, sugerirte ideas, o si buscás un perfil que no encontrás, te ayudamos a buscarlo.</p>
-      <div class="hero-actions" style="justify-content:center">
-        <a href="contacto.html" class="btn btn-gold">Consultar disponibilidad</a>
-        <a href="https://wa.me/5492214982243" class="btn btn-wa">WhatsApp</a>
-      </div>
-    </div>
+    <div id="tlResults"><div class="tl-empty"><p>Cargando talentos…</p></div></div>
   </div>
 </section>
 
@@ -108,30 +101,87 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience"><span class="logo-text">Aura<span> Experience</span></span></a>
-        <p>Aura Experience — Alquilá presencia humana para lo que necesites: planes, amigos, eventos, roles o simple compañía. Personas reales y verificadas, para todas las personas y todos los géneros. El primer paso siempre es conocerse.</p>
-        <div class="socials">
-          <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
-          <a href="#" aria-label="Telegram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 4L3 11l5 2 2 6 3-4 5 4z"/></svg></a>
-          <a href="https://wa.me/5492214982243" aria-label="WhatsApp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 0 1-13 8l-5 1 1-5A9 9 0 1 1 21 12z"/></svg></a>
-        </div>
+        <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura"><span class="logo-text">Aura</span></a>
+        <p><strong>En Aura se cobra por un servicio, nunca por un encuentro.</strong> Los planes son gratis siempre. Las sesiones pagas son por videollamada. Un proyecto de VIVE, en La Plata.</p>
       </div>
-      <div class="footer-col"><h4>Navegación</h4><a href="index.html">Inicio</a><a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a><a href="nosotros.html">Nosotros</a><a href="contacto.html">Contacto</a></div>
-      <div class="footer-col"><h4>Servicios</h4><a href="modelos.html">Eventos & Galas</a><a href="modelos.html">Viajes</a><a href="modelos.html">Cenas privadas</a><a href="contacto.html">Reservas</a></div>
-      <div class="footer-col"><h4>Contacto</h4><a href="tel:+5492214982243" class="js-phone">+54 9 221 498-2243</a><a href="contacto.html">staffcontactos@gmail.com</a><a href="https://wa.me/5492214982243">WhatsApp 24/7</a></div>
+      <div class="footer-col"><h4>Navegación</h4><a href="index.html">Inicio</a><a href="modelos.html">Talentos</a><a href="feed.html">Feed</a><a href="nosotros.html">Qué es Aura</a><a href="contacto.html">Contacto</a></div>
+      <div class="footer-col"><h4>En Aura</h4><a href="modelos.html">Talentos y oficios</a><a href="feed.html">Sesiones</a><a href="feed.html">Planes</a><a href="publicar.html">Publicar lo mío</a></div>
+      <div class="footer-col"><h4>Contacto</h4><a href="mailto:zebraargentinasa@gmail.com">zebraargentinasa@gmail.com</a><a href="https://wa.me/5492214982243">WhatsApp</a></div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 Aura Experience. Todos los derechos reservados. · <a href="terminos.html" style="color:inherit;text-decoration:underline">Términos</a> · <a href="privacidad.html" style="color:inherit;text-decoration:underline">Privacidad</a></p>
-      <div class="age"><span class="b18">18+</span><span>Solo para mayores de edad</span></div>
+      <p>© 2026 Aura · La Plata, Argentina. · <a href="terminos.html" style="color:inherit;text-decoration:underline">Términos</a> · <a href="privacidad.html" style="color:inherit;text-decoration:underline">Privacidad</a></p>
     </div>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="js/ea-supabase.js?v=40" defer></script>
-<script src="js/locations.js" defer></script>
-<script src="js/app.js?v=40" defer></script>
+<script src="js/ea-supabase.js?v=31" defer></script>
+<script src="js/app.js?v=41" defer></script>
 <script src="js/pwa.js?v=4" defer></script>
 <script src="js/theme.js?v=1" defer></script>
+<script>
+(function(){
+  var client=null, ALL=[], tipo='todo', zona='', q='';
+  var results=document.getElementById('tlResults');
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function money(c){ if(c==null) return ''; return '$'+(c/100).toLocaleString('es-AR'); }
+  var TLABEL={servicio:'Servicio',producto:'Producto',negocio:'Negocio',sesion:'Sesión'};
+
+  function card(x){
+    var foto=x.foto_principal? '<img src="'+esc(x.foto_principal)+'" alt="" loading="lazy">':'';
+    var verif=x.verificado? '<span class="tl-verif">✓ Verificado</span>':'';
+    return '<a class="tl-card" href="perfil.html?id='+encodeURIComponent(x.id)+'">'
+      +'<div class="tl-ph">'+foto+verif+'</div>'
+      +'<div class="tl-body">'
+      +'<div class="tl-titulo">'+esc(x.titulo||'')+'</div>'
+      +'<div class="tl-zona">'+esc(TLABEL[x.tipo]||'')+(x.zona?(' · '+esc(x.zona)):'')+'</div>'
+      +(x.que_entrega?'<div class="tl-qe">'+esc(x.que_entrega)+'</div>':'')
+      +(x.precio_centavos?('<div class="tl-precio">'+money(x.precio_centavos)+'</div>'):'')
+      +'</div></a>';
+  }
+  function render(){
+    var list=ALL.filter(function(x){
+      if(tipo!=='todo' && x.tipo!==tipo) return false;
+      if(zona && x.zona!==zona) return false;
+      if(q){ var h=((x.titulo||'')+' '+(x.que_entrega||'')+' '+(x.zona||'')).toLowerCase(); if(h.indexOf(q)<0) return false; }
+      return true;
+    });
+    if(!list.length){
+      results.innerHTML='<div class="tl-empty"><p><strong>Todavía no hay talentos publicados en esta búsqueda.</strong></p>'
+        +'<p>El descubrimiento es por tema y por zona. Cuando haya servicios publicados, aparecen acá — cada uno con su precio y su “qué entregás”.</p>'
+        +'<div style="margin-top:16px"><a href="publicar.html" class="btn btn-gold">Publicar lo mío</a></div></div>';
+      return;
+    }
+    results.innerHTML='<div class="tl-grid">'+list.map(card).join('')+'</div>';
+  }
+  function buildZonas(){
+    var z={}; ALL.forEach(function(x){ if(x.zona) z[x.zona]=1; });
+    var zonas=Object.keys(z).sort();
+    var wrap=document.getElementById('tlZonas');
+    if(!zonas.length){ wrap.innerHTML=''; return; }
+    wrap.innerHTML='<button class="tl-chip on" data-zona="">Toda la zona</button>'+zonas.map(function(z){return '<button class="tl-chip" data-zona="'+esc(z)+'">'+esc(z)+'</button>';}).join('');
+    wrap.addEventListener('click',function(e){var b=e.target.closest('.tl-chip'); if(!b)return; Array.prototype.forEach.call(wrap.children,function(c){c.classList.remove('on');}); b.classList.add('on'); zona=b.dataset.zona; render();});
+  }
+  document.getElementById('tlTipos').addEventListener('click',function(e){
+    var b=e.target.closest('.tl-chip'); if(!b)return;
+    Array.prototype.forEach.call(this.children,function(c){c.classList.remove('on');}); b.classList.add('on'); tipo=b.dataset.tipo; render();
+  });
+  document.getElementById('tlQ').addEventListener('input',function(){ q=this.value.trim().toLowerCase(); render(); });
+
+  async function boot(){
+    try{
+      var r=await client.from('listings').select('id,tipo,titulo,que_entrega,precio_centavos,zona,foto_principal,verificado').eq('estado','publicado').order('creado_en',{ascending:false});
+      ALL=r.data||[];
+    }catch(e){ ALL=[]; }
+    buildZonas(); render();
+  }
+  var tries=0;
+  (function wait(){
+    if(window.eaSupa && window.eaSupa.client){ client=window.eaSupa.client; boot(); return; }
+    if(tries++>60){ results.innerHTML='<div class="tl-empty"><p>No pudimos cargar los talentos ahora.</p></div>'; return; }
+    setTimeout(wait,100);
+  })();
+})();
+</script>
 </body>
 </html>
