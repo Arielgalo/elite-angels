@@ -122,6 +122,10 @@
     <label class="ma-f"><span class="lbl">Sobre vos / experiencia (CV)</span><textarea id="fSobre" placeholder="Tu experiencia, estudios, lo que sabés hacer…"></textarea></label>
     <label class="ma-f"><span class="lbl">Edad</span><input id="fEdad" type="number" min="0" placeholder="Opcional"></label>
     <label class="ma-f"><span class="lbl">Estatura</span><input id="fEstatura" placeholder="Opcional, ej: 1,70 m"></label>
+    <label class="ma-f"><span class="lbl">Video de presentación (URL)</span><input id="fVideo" placeholder="https://… mp4 o link de video"></label>
+    <label class="ma-f"><span class="lbl">Estudios</span><input id="fEstudios" placeholder="Opcional"></label>
+    <label class="ma-f"><span class="lbl">Habilidades</span><input id="fHabilidades" placeholder="Opcional"></label>
+    <label class="ma-f"><span class="lbl">Idiomas</span><input id="fIdiomas" placeholder="Opcional"></label>
 
     <div id="fNegocio" style="display:none">
       <hr class="ma-hr">
@@ -211,7 +215,7 @@
 
   var modal=document.getElementById('maModal');
   var F={};
-  ['fTitulo','fTipo','fQe','fPrecio','fZona','fFoto','fWhatsapp','fSobre','fEdad','fEstatura','fRubro','fDireccion','fHorarios','fMapa','fMsg','fCount','fPrecioWrap','fNegocio'].forEach(function(id){ F[id]=document.getElementById(id); });
+  ['fTitulo','fTipo','fQe','fPrecio','fZona','fFoto','fWhatsapp','fSobre','fEdad','fEstatura','fVideo','fEstudios','fHabilidades','fIdiomas','fRubro','fDireccion','fHorarios','fMapa','fMsg','fCount','fPrecioWrap','fNegocio'].forEach(function(id){ F[id]=document.getElementById(id); });
   function updCount(){ var n=(F.fQe.value||'').trim().length; F.fCount.textContent=n; F.fCount.className='ma-count'+(n>=80?' ok':''); }
   F.fQe.addEventListener('input',updCount);
   function tipoUI(){ F.fPrecioWrap.style.display=(F.fTipo.value==='negocio')?'none':'block'; F.fNegocio.style.display=(F.fTipo.value==='negocio')?'block':'none'; }
@@ -224,6 +228,7 @@
     F.fZona.value=listing?(listing.zona||''):''; F.fFoto.value=listing?(listing.foto_principal||''):'';
     F.fWhatsapp.value=listing?(listing.contacto_whatsapp||''):''; F.fSobre.value=listing?(listing.sobre||''):'';
     F.fEdad.value=(listing&&listing.edad!=null)?listing.edad:''; F.fEstatura.value=listing?(listing.estatura||''):'';
+    F.fVideo.value=listing?(listing.video_presentacion||''):''; F.fEstudios.value=listing?(listing.estudios||''):''; F.fHabilidades.value=listing?(listing.habilidades||''):''; F.fIdiomas.value=listing?(listing.idiomas||''):'';
     F.fRubro.value=listing?(listing.negocio_rubro||''):''; F.fDireccion.value=listing?(listing.negocio_direccion||''):'';
     F.fHorarios.value=listing?(listing.negocio_horarios||''):''; F.fMapa.value=listing?(listing.negocio_mapa||''):'';
     tipoUI(); F.fMsg.textContent=''; F.fMsg.className='ma-msg'; updCount(); modal.classList.add('on');
@@ -241,6 +246,7 @@
       precio_centavos:(isNaN(precioNum)?null:Math.round(precioNum*100)),
       contacto_whatsapp:F.fWhatsapp.value.trim()||null, sobre:F.fSobre.value.trim()||null,
       edad:(isNaN(edadNum)?null:edadNum), estatura:F.fEstatura.value.trim()||null,
+      video_presentacion:F.fVideo.value.trim()||null, estudios:F.fEstudios.value.trim()||null, habilidades:F.fHabilidades.value.trim()||null, idiomas:F.fIdiomas.value.trim()||null,
       negocio_rubro:F.fRubro.value.trim()||null, negocio_direccion:F.fDireccion.value.trim()||null,
       negocio_horarios:F.fHorarios.value.trim()||null, negocio_mapa:F.fMapa.value.trim()||null
     };
