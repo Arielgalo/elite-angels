@@ -6,7 +6,7 @@
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Feed · Aura</title>
-<meta name="description" content="Planes gratis cerca tuyo y lo último de la comunidad. Sumate a un plan en un lugar público, sin costo.">
+<meta name="description" content="El feed de Aura: videos y fotos de la comunidad, y planes gratis cerca tuyo.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,12 +16,31 @@
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
 <link rel="stylesheet" href="css/styles.css?v=41">
 <style>
-  .fd-chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px}
-  .fd-chip{padding:8px 15px;border-radius:999px;border:1px solid var(--line,rgba(255,255,255,.14));background:transparent;color:var(--text-soft);font-weight:600;font-size:.85rem;cursor:pointer;white-space:nowrap}
+  .fd-tabs{display:flex;gap:8px;justify-content:center;margin:0 0 22px}
+  .fd-tab{padding:9px 20px;border-radius:999px;border:1px solid var(--line,rgba(255,255,255,.14));background:transparent;color:var(--text-soft);font-weight:700;cursor:pointer}
+  .fd-tab.on{background:var(--gold);border-color:var(--gold);color:#0a0a0c}
+  .fd-feed{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
+  .post{border:1px solid var(--line,rgba(255,255,255,.1));border-radius:18px;overflow:hidden;background:var(--black-soft,rgba(255,255,255,.02))}
+  .post-media{position:relative;background:#000;aspect-ratio:9/16;max-height:70vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .post-media video,.post-media img{width:100%;height:100%;object-fit:cover;display:block}
+  .post-mute{position:absolute;bottom:12px;right:12px;background:rgba(10,10,12,.7);color:#fff;border:none;border-radius:999px;width:40px;height:40px;font-size:1rem;cursor:pointer;z-index:2}
+  .post-body{padding:12px 16px 16px}
+  .post-cap{color:var(--text);line-height:1.5;margin:0 0 10px}
+  .post-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .pa{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:999px;padding:7px 13px;color:var(--text-soft);font-weight:600;font-size:.85rem;cursor:pointer}
+  .pa.on{color:var(--gold);border-color:var(--gold)}
+  .pa.like.on{color:#ff5a7a;border-color:#ff5a7a}
+  .post-coments{margin-top:12px;border-top:1px solid var(--line,rgba(255,255,255,.08));padding-top:12px;display:none}
+  .post-coments.on{display:block}
+  .pc{font-size:.9rem;color:var(--text-soft);margin:6px 0;line-height:1.4}
+  .pc b{color:var(--text)}
+  .pc-form{display:flex;gap:8px;margin-top:10px}
+  .pc-form input{flex:1;padding:9px 12px;border-radius:999px;border:1px solid var(--line,rgba(255,255,255,.16));background:var(--black-soft,rgba(255,255,255,.03));color:var(--text);font-family:var(--sans,'Manrope')}
+  .fd-chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;justify-content:center}
+  .fd-chip{padding:8px 15px;border-radius:999px;border:1px solid var(--line,rgba(255,255,255,.14));background:transparent;color:var(--text-soft);font-weight:600;font-size:.85rem;cursor:pointer}
   .fd-chip.on{background:var(--gold);border-color:var(--gold);color:#0a0a0c}
   .fd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
   .fd-card{border:1px solid var(--line,rgba(255,255,255,.1));border-radius:16px;background:var(--black-soft,rgba(255,255,255,.02));padding:20px;display:flex;flex-direction:column;gap:8px}
@@ -32,7 +51,7 @@
   .fd-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:10px}
   .fd-cupo{font-size:.82rem;color:var(--text-mute)}
   .fd-empty{text-align:center;color:var(--text-mute);padding:50px 20px;border:1px dashed var(--line,rgba(255,255,255,.14));border-radius:18px}
-  .fd-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-start;justify-content:center;z-index:1000;padding:24px 14px;overflow:auto}
+  .fd-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:flex-start;justify-content:center;z-index:1000;padding:24px 14px;overflow:auto}
   .fd-modal.on{display:flex}
   .fd-dialog{background:var(--bg,#111014);border:1px solid var(--line,rgba(255,255,255,.14));border-radius:18px;max-width:520px;width:100%;padding:26px;position:relative;margin:auto}
   .fd-x{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-mute);font-size:1.6rem;cursor:pointer}
@@ -41,12 +60,7 @@
   .fd-f input,.fd-f select,.fd-f textarea{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.16));background:var(--black-soft,rgba(255,255,255,.03));color:var(--text);font-size:.95rem;box-sizing:border-box;font-family:var(--sans,'Manrope')}
   .fd-note{font-size:.85rem;min-height:18px;margin:6px 0}
   .fd-note.err{color:#f0a5bd}.fd-note.ok{color:var(--gold)}
-  .fd-sec-t{font-size:1.3rem;margin:44px 0 18px}
-  /* AURA HERO LEGIBILIDAD */
-  .page-hero-content h1{color:#fff}
-  .page-hero-content>p,.page-hero-content .hero-lead{color:rgba(255,255,255,.92)}
-  .page-hero-content .breadcrumb,.page-hero-content .breadcrumb a{color:rgba(255,255,255,.82)}
-  .page-hero .btn-ghost{color:#fff;border-color:rgba(255,255,255,.55)}
+  .fd-cta-top{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
 </style>
 </head>
 <body>
@@ -78,29 +92,43 @@
   <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
 </div>
 
-<section class="page-hero" style="min-height:auto;padding:120px 0 40px">
-  <div class="hero-bg" style="background-image:linear-gradient(115deg,rgba(10,10,12,.93),rgba(10,10,12,.6) 58%,rgba(10,10,12,.34)),url('https://fsjrimmurtnrorqhnbwu.supabase.co/storage/v1/object/public/sitio/1783277101540_k0hw7i.jpg');background-size:cover;background-position:center"></div>
-  <div class="container page-hero-content">
-    <span class="eyebrow">La Plata</span>
-    <h1>Planes gratis <span class="text-gold">cerca tuyo.</span></h1>
-    <p>Alguien publica un plan en un lugar público y se suma quien quiera. Sin precio, nunca. La unidad es el plan, no la persona.</p>
-    <div class="hero-actions"><button class="btn btn-gold" id="fdNuevo">Crear un plan</button></div>
-  </div>
-</section>
-
-<section class="section" style="padding-top:24px">
+<section class="section" style="padding-top:110px">
   <div class="container">
-    <div class="fd-chips" id="fdChips"><button class="fd-chip on" data-cat="">Todos</button></div>
-    <div id="fdPlanes"><div class="fd-empty">Cargando planes…</div></div>
+    <div class="fd-cta-top">
+      <button class="btn btn-gold" id="fdNuevoPost">Subir foto o video</button>
+      <button class="btn btn-ghost" id="fdNuevoPlan">Crear un plan</button>
+    </div>
+    <div class="fd-tabs">
+      <button class="fd-tab on" data-view="posteos">Posteos</button>
+      <button class="fd-tab" data-view="planes">Planes</button>
+    </div>
 
-    <h2 class="fd-sec-t">Posteos de la comunidad</h2>
-    <div id="fdPosts"><div class="fd-empty">Cargando…</div></div>
+    <div id="viewPosteos">
+      <div class="fd-feed" id="fdFeed"><div class="fd-empty">Cargando posteos…</div></div>
+    </div>
+
+    <div id="viewPlanes" style="display:none">
+      <div class="fd-chips" id="fdChips"><button class="fd-chip on" data-cat="">Todos</button></div>
+      <div id="fdPlanes"><div class="fd-empty">Cargando planes…</div></div>
+    </div>
   </div>
 </section>
 
-<div class="fd-modal" id="fdModal">
+<div class="fd-modal" id="postModal">
   <div class="fd-dialog">
-    <button class="fd-x" id="fdX" aria-label="Cerrar">&times;</button>
+    <button class="fd-x" data-close="postModal" aria-label="Cerrar">&times;</button>
+    <h2 style="margin:0 0 4px">Subir foto o video</h2>
+    <p style="color:var(--text-mute);font-size:.85rem;margin:0 0 16px">Mostrá tu día, tu talento, tu trabajo. Aparece en el feed de la comunidad.</p>
+    <label class="fd-f"><span>Archivo (imagen o video)</span><input id="postFile" type="file" accept="image/*,video/*"></label>
+    <label class="fd-f"><span>Texto (opcional, máx. 300)</span><textarea id="postCap" rows="2" maxlength="300" placeholder="Contá algo…"></textarea></label>
+    <div class="fd-note" id="postNote"></div>
+    <div style="display:flex;justify-content:flex-end;gap:10px"><button class="btn btn-gold" id="postSubir">Publicar</button></div>
+  </div>
+</div>
+
+<div class="fd-modal" id="planModal">
+  <div class="fd-dialog">
+    <button class="fd-x" data-close="planModal" aria-label="Cerrar">&times;</button>
     <h2 style="margin:0 0 4px">Crear un plan</h2>
     <p style="color:var(--text-mute);font-size:.85rem;margin:0 0 16px">Los planes son gratis, en un lugar público. Sin precio.</p>
     <label class="fd-f"><span>Título</span><input id="pTitulo" placeholder="Ej: Mate y charla de proyectos"></label>
@@ -129,113 +157,178 @@
 <script src="js/theme.js?v=1" defer></script>
 <script>
 (function(){
-  var client=null, user=null, cat='', VENUES=[], CATS=[], PLANES=[], JOINED={};
+  var client=null, user=null;
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function needLogin(){ location.href='cuenta.html?next=feed.html'; }
+  function openM(id){ document.getElementById(id).classList.add('on'); }
+  function closeM(id){ document.getElementById(id).classList.remove('on'); }
+  document.addEventListener('click',function(e){ var c=e.target.closest('[data-close]'); if(c) closeM(c.getAttribute('data-close')); });
+  ['postModal','planModal'].forEach(function(id){ var m=document.getElementById(id); m.addEventListener('click',function(e){ if(e.target===m) closeM(id); }); });
+
+  document.querySelector('.fd-tabs').addEventListener('click',function(e){
+    var b=e.target.closest('.fd-tab'); if(!b) return;
+    Array.prototype.forEach.call(this.children,function(x){x.classList.remove('on');}); b.classList.add('on');
+    var v=b.dataset.view;
+    document.getElementById('viewPosteos').style.display = v==='posteos'?'block':'none';
+    document.getElementById('viewPlanes').style.display = v==='planes'?'block':'none';
+    if(v==='planes' && !window.__planesLoaded){ window.__planesLoaded=true; loadPlanes(); }
+  });
+
+  var feedEl=document.getElementById('fdFeed');
+  var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(ents){
+    ents.forEach(function(en){ var v=en.target; if(en.isIntersecting){ v.play&&v.play().catch(function(){}); } else { v.pause&&v.pause(); } });
+  },{threshold:.6}) : null;
+
+  function mediaHtml(p){
+    if(p.tipo==='video' && p.video_url){
+      return '<div class="post-media"><video src="'+esc(p.video_url)+'" loop muted playsinline preload="metadata"></video>'
+        +'<button class="post-mute" data-mute aria-label="Sonido">🔇</button></div>';
+    }
+    var src=p.foto_url||p.video_url;
+    return '<div class="post-media"><img src="'+esc(src)+'" loading="lazy" alt=""></div>';
+  }
+  function postCard(p){
+    var liked=p._liked?' on':''; var saved=p._saved?' on':'';
+    return '<div class="post" data-id="'+esc(p.id)+'">'
+      + mediaHtml(p)
+      + '<div class="post-body">'
+      + (p.caption?'<p class="post-cap">'+esc(p.caption)+'</p>':'')
+      + '<div class="post-actions">'
+      +   '<button class="pa like'+liked+'" data-act="like">♥ <span class="c">'+(p._likes||0)+'</span></button>'
+      +   '<button class="pa" data-act="coment">💬 <span class="c">'+(p._coments||0)+'</span></button>'
+      +   '<button class="pa save'+saved+'" data-act="save">🔖 '+(p._saved?'Guardado':'Guardar')+'</button>'
+      +   '<button class="pa" data-act="report">⚑ Reportar</button>'
+      + '</div>'
+      + '<div class="post-coments" data-coments></div>'
+      + '</div></div>';
+  }
+  async function loadPosteos(){
+    try{
+      var r=await client.from('posts').select('*').eq('estado','visible').order('created_at',{ascending:false}).limit(30);
+      var posts=r.data||[]; if(!posts.length){ feedEl.innerHTML='<div class="fd-empty"><b>Todavía no hay posteos.</b><br>Subí el primero: mostrá tu talento.</div>'; return; }
+      var ids=posts.map(function(p){return p.id;});
+      var likes=await client.from('post_likes').select('post_id,account_id').in('post_id',ids);
+      var lc={}, lm={}; (likes.data||[]).forEach(function(x){ lc[x.post_id]=(lc[x.post_id]||0)+1; if(user&&x.account_id===user.id) lm[x.post_id]=1; });
+      var cc={}; try{ var cr=await client.from('post_comentarios').select('post_id').in('post_id',ids); (cr.data||[]).forEach(function(x){ cc[x.post_id]=(cc[x.post_id]||0)+1; }); }catch(e){}
+      var sm={}; if(user){ try{ var sr=await client.from('post_guardados').select('post_id').eq('account_id',user.id).in('post_id',ids); (sr.data||[]).forEach(function(x){ sm[x.post_id]=1; }); }catch(e){} }
+      posts.forEach(function(p){ p._likes=lc[p.id]||0; p._liked=!!lm[p.id]; p._coments=cc[p.id]||0; p._saved=!!sm[p.id]; });
+      feedEl.innerHTML=posts.map(postCard).join('');
+      if(io) feedEl.querySelectorAll('video').forEach(function(v){ io.observe(v); });
+    }catch(e){ feedEl.innerHTML='<div class="fd-empty">No se pudo cargar el feed.</div>'; }
+  }
+  feedEl.addEventListener('click',async function(e){
+    var mute=e.target.closest('[data-mute]');
+    if(mute){ var v=mute.parentNode.querySelector('video'); if(v){ v.muted=!v.muted; mute.textContent=v.muted?'🔇':'🔊'; if(!v.muted) v.play().catch(function(){}); } return; }
+    var btn=e.target.closest('[data-act]'); if(!btn) return;
+    var card=btn.closest('.post'); var pid=card.getAttribute('data-id'); var act=btn.getAttribute('data-act');
+    if(!user && act!=='coment'){ needLogin(); return; }
+    if(act==='like'){
+      var on=btn.classList.contains('on'); var cSpan=btn.querySelector('.c'); var n=parseInt(cSpan.textContent,10)||0;
+      btn.classList.toggle('on'); cSpan.textContent = on? Math.max(0,n-1) : n+1;
+      try{ if(on){ await client.from('post_likes').delete().eq('post_id',pid).eq('account_id',user.id); } else { await client.from('post_likes').insert({post_id:pid,account_id:user.id}); } }catch(err){}
+    } else if(act==='save'){
+      var son=btn.classList.contains('on'); btn.classList.toggle('on'); btn.innerHTML = son? '🔖 Guardar':'🔖 Guardado';
+      try{ if(son){ await client.from('post_guardados').delete().eq('post_id',pid).eq('account_id',user.id); } else { await client.from('post_guardados').insert({post_id:pid,account_id:user.id}); } }catch(err){}
+    } else if(act==='report'){
+      var motivo=prompt('¿Por qué reportás este posteo?'); if(motivo==null) return;
+      try{ await client.from('post_reportes').insert({post_id:pid,account_id:user.id,motivo:motivo}); btn.textContent='⚑ Reportado'; btn.disabled=true; }catch(err){}
+    } else if(act==='coment'){
+      var box=card.querySelector('[data-coments]'); box.classList.toggle('on');
+      if(box.classList.contains('on') && !box.dataset.loaded){ box.dataset.loaded='1'; await loadComents(pid, box); }
+    }
+  });
+  async function loadComents(pid, box){
+    box.innerHTML='<div class="pc">Cargando…</div>';
+    try{
+      var r=await client.from('post_comentarios').select('texto,creado_en').eq('post_id',pid).order('creado_en',{ascending:true}).limit(50);
+      var list=(r.data||[]).map(function(x){return '<div class="pc">'+esc(x.texto)+'</div>';}).join('') || '<div class="pc" style="color:var(--text-mute)">Sé el primero en comentar.</div>';
+      box.innerHTML=list + (user? '<div class="pc-form"><input placeholder="Escribí un comentario…" data-cin><button class="btn btn-gold" data-csend style="padding:9px 16px">Enviar</button></div>' : '<div class="pc" style="color:var(--text-mute)"><a href="cuenta.html?next=feed.html" style="color:var(--gold)">Ingresá</a> para comentar.</div>');
+      var send=box.querySelector('[data-csend]');
+      if(send) send.addEventListener('click',async function(){
+        var inp=box.querySelector('[data-cin]'); var t=(inp.value||'').trim(); if(!t) return; send.disabled=true;
+        try{ await client.from('post_comentarios').insert({post_id:pid,account_id:user.id,texto:t}); inp.value=''; box.dataset.loaded=''; await loadComents(pid,box);
+          var cbtn=box.closest('.post').querySelector('[data-act="coment"] .c'); if(cbtn) cbtn.textContent=(parseInt(cbtn.textContent,10)||0)+1;
+        }catch(err){ send.disabled=false; }
+      });
+    }catch(e){ box.innerHTML='<div class="pc">No se pudieron cargar los comentarios.</div>'; }
+  }
+
+  document.getElementById('fdNuevoPost').addEventListener('click',function(){ if(!user){ needLogin(); return; } document.getElementById('postNote').textContent=''; openM('postModal'); });
+  document.getElementById('postSubir').addEventListener('click',async function(){
+    var note=document.getElementById('postNote'); note.className='fd-note';
+    var f=document.getElementById('postFile').files[0];
+    if(!f){ note.textContent='Elegí un archivo.'; note.className='fd-note err'; return; }
+    var esVideo=(f.type||'').indexOf('video')===0;
+    note.textContent='Subiendo…';
+    try{
+      var ext=(f.name.split('.').pop()||'bin').toLowerCase();
+      var path=user.id+'/'+Date.now()+'_'+Math.random().toString(36).slice(2,7)+'.'+ext;
+      var up=await client.storage.from('posts').upload(path,f,{upsert:false,contentType:f.type||undefined});
+      if(up.error) throw up.error;
+      var pub=client.storage.from('posts').getPublicUrl(path); var url=pub.data.publicUrl;
+      var row={ user_id:user.id, caption:(document.getElementById('postCap').value||'').slice(0,300), estado:'visible', tipo: esVideo?'video':'foto' };
+      if(esVideo) row.video_url=url; else row.foto_url=url;
+      var ins=await client.from('posts').insert(row);
+      if(ins.error) throw ins.error;
+      note.textContent='¡Publicado! ✓'; note.className='fd-note ok';
+      setTimeout(function(){ closeM('postModal'); loadPosteos(); }, 600);
+    }catch(err){ note.textContent='No se pudo: '+(err.message||err); note.className='fd-note err'; }
+  });
+
+  var VENUES=[], CATS=[], PLANES=[], JOINED={}, cat='';
+  var planesEl=document.getElementById('fdPlanes');
   function fdate(s){ if(!s) return 'A coordinar'; try{ return new Date(s).toLocaleString('es-AR',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(e){ return s; } }
-
-  var planesEl=document.getElementById('fdPlanes'), postsEl=document.getElementById('fdPosts');
-
   function planCard(p){
-    var v=p.venues||{}; var cnt=(p._n||0); var full=p.cupo_max? (cnt>=p.cupo_max):false;
-    var joined=!!JOINED[p.id];
-    var btn = joined? '<span class="fd-cupo" style="color:var(--gold)">✓ Ya estás</span>'
-      : (full? '<span class="fd-cupo">Completo</span>' : '<button class="btn btn-gold" data-join="'+esc(p.id)+'" style="padding:9px 16px">Sumarme</button>');
-    return '<div class="fd-card"><span class="fd-free">Gratis</span>'
-      +'<h3>'+esc(p.titulo)+'</h3>'
+    var v=p.venues||{}; var cnt=(p._n||0); var full=p.cupo_max?(cnt>=p.cupo_max):false; var joined=!!JOINED[p.id];
+    var btn = joined? '<span class="fd-cupo" style="color:var(--gold)">✓ Ya estás</span>' : (full?'<span class="fd-cupo">Completo</span>':'<button class="btn btn-gold" data-join="'+esc(p.id)+'" style="padding:9px 16px">Sumarme</button>');
+    return '<div class="fd-card"><span class="fd-free">Gratis</span><h3>'+esc(p.titulo)+'</h3>'
       +(p.actividad?'<div class="fd-act">'+esc(p.actividad)+'</div>':'')
       +'<div class="fd-meta"><span>📍 '+esc(v.nombre||'Lugar público')+(v.zona?(' · '+esc(v.zona)):'')+'</span><span>🗓️ '+esc(fdate(p.empieza_en))+'</span></div>'
       +'<div class="fd-foot"><span class="fd-cupo">'+cnt+(p.cupo_max?(' / '+p.cupo_max):'')+' sumados</span>'+btn+'</div></div>';
   }
   function renderPlanes(){
     var list=PLANES.filter(function(p){ return !cat || p.categoria_id===cat; });
-    planesEl.innerHTML = list.length? '<div class="fd-grid">'+list.map(planCard).join('')+'</div>'
-      : '<div class="fd-empty">Todavía no hay planes en esta categoría. <br>Creá el primero — es gratis.</div>';
+    planesEl.innerHTML=list.length? '<div class="fd-grid">'+list.map(planCard).join('')+'</div>' : '<div class="fd-empty">Todavía no hay planes acá. Creá el primero, es gratis.</div>';
   }
   async function loadPlanes(){
     try{
-      var r=await client.from('plans').select('*, venues(nombre,zona,direccion_texto)').in('estado',['abierto','completo']).order('empieza_en',{ascending:true});
-      PLANES=r.data||[];
-      var ids=PLANES.map(function(p){return p.id;});
-      if(ids.length){
-        var rp=await client.from('plan_participants').select('plan_id,account_id').in('plan_id',ids);
-        var counts={}; (rp.data||[]).forEach(function(x){ counts[x.plan_id]=(counts[x.plan_id]||0)+1; if(user&&x.account_id===user.id) JOINED[x.plan_id]=true; });
-        PLANES.forEach(function(p){ p._n=counts[p.id]||0; });
-      }
+      var r=await client.from('plans').select('*, venues(nombre,zona)').in('estado',['abierto','completo']).order('empieza_en',{ascending:true});
+      PLANES=r.data||[]; var ids=PLANES.map(function(p){return p.id;});
+      if(ids.length){ var rp=await client.from('plan_participants').select('plan_id,account_id').in('plan_id',ids); var counts={}; (rp.data||[]).forEach(function(x){ counts[x.plan_id]=(counts[x.plan_id]||0)+1; if(user&&x.account_id===user.id) JOINED[x.plan_id]=true; }); PLANES.forEach(function(p){ p._n=counts[p.id]||0; }); }
     }catch(e){ PLANES=[]; }
     renderPlanes();
   }
-  async function loadPosts(){
-    try{
-      var r=await client.from('posts').select('*').eq('estado','aprobado').order('created_at',{ascending:false}).limit(12);
-      var d=r.data||[];
-      postsEl.innerHTML = d.length? '<div class="fd-grid">'+d.map(function(x){return '<div class="fd-card"><h3 style="font-size:1rem">'+esc(x.caption||'Posteo')+'</h3></div>';}).join('')+'</div>'
-        : '<div class="fd-empty">Todavía no hay posteos.</div>';
-    }catch(e){ postsEl.innerHTML='<div class="fd-empty">No se pudieron cargar los posteos.</div>'; }
-  }
   planesEl.addEventListener('click',async function(e){
-    var b=e.target.closest('[data-join]'); if(!b) return;
-    if(!user){ location.href='cuenta.html?next=feed.html'; return; }
+    var b=e.target.closest('[data-join]'); if(!b) return; if(!user){ needLogin(); return; }
     var pid=b.getAttribute('data-join'); b.disabled=true; b.textContent='Sumándote…';
-    try{
-      var res=await client.from('plan_participants').insert({plan_id:pid, account_id:user.id});
-      if(res.error) throw res.error;
-      JOINED[pid]=true; await loadPlanes();
-    }catch(err){ b.disabled=false; b.textContent='Sumarme'; }
+    try{ var res=await client.from('plan_participants').insert({plan_id:pid,account_id:user.id}); if(res.error) throw res.error; JOINED[pid]=true; await loadPlanes(); }catch(err){ b.disabled=false; b.textContent='Sumarme'; }
   });
-
-  function buildChips(){
-    var w=document.getElementById('fdChips');
-    w.innerHTML='<button class="fd-chip on" data-cat="">Todos</button>'+CATS.map(function(c){return '<button class="fd-chip" data-cat="'+esc(c.id)+'">'+esc(c.nombre)+'</button>';}).join('');
-    w.addEventListener('click',function(e){var b=e.target.closest('.fd-chip'); if(!b)return; Array.prototype.forEach.call(w.children,function(c){c.classList.remove('on');}); b.classList.add('on'); cat=b.dataset.cat; renderPlanes();});
-  }
-
-  var modal=document.getElementById('fdModal');
-  function openModal(){
-    if(!user){ location.href='cuenta.html?next=feed.html'; return; }
+  document.getElementById('fdChips').addEventListener('click',function(e){ var b=e.target.closest('.fd-chip'); if(!b) return; Array.prototype.forEach.call(this.children,function(c){c.classList.remove('on');}); b.classList.add('on'); cat=b.dataset.cat; renderPlanes(); });
+  document.getElementById('fdNuevoPlan').addEventListener('click',function(){
+    if(!user){ needLogin(); return; }
+    document.getElementById('viewPosteos').style.display='none'; document.getElementById('viewPlanes').style.display='block';
+    if(!window.__planesLoaded){ window.__planesLoaded=true; loadPlanes(); }
     var pv=document.getElementById('pVenue'); pv.innerHTML=VENUES.map(function(v){return '<option value="'+esc(v.id)+'">'+esc(v.nombre)+(v.zona?(' · '+esc(v.zona)):'')+'</option>';}).join('');
     var pc=document.getElementById('pCat'); pc.innerHTML='<option value="">Sin categoría</option>'+CATS.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.nombre)+'</option>';}).join('');
-    document.getElementById('pNote').textContent=''; modal.classList.add('on');
-  }
-  document.getElementById('fdNuevo').addEventListener('click',openModal);
-  document.getElementById('fdX').addEventListener('click',function(){modal.classList.remove('on');});
-  modal.addEventListener('click',function(e){ if(e.target===modal) modal.classList.remove('on'); });
+    document.getElementById('pNote').textContent=''; openM('planModal');
+  });
   document.getElementById('pCrear').addEventListener('click',async function(){
     var note=document.getElementById('pNote'); note.className='fd-note';
-    var titulo=document.getElementById('pTitulo').value.trim();
-    if(!titulo){ note.textContent='Poné un título.'; note.className='fd-note err'; return; }
-    var cupo=parseInt(document.getElementById('pCupo').value,10);
-    var cuando=document.getElementById('pCuando').value;
-    var row={
-      account_id:user.id, titulo:titulo,
-      actividad:document.getElementById('pActividad').value.trim()||null,
-      categoria_id:document.getElementById('pCat').value||null,
-      venue_id:document.getElementById('pVenue').value||null,
-      empieza_en: cuando? new Date(cuando).toISOString():null,
-      cupo_max: isNaN(cupo)? null : cupo,
-      estado:'abierto'
-    };
+    var titulo=document.getElementById('pTitulo').value.trim(); if(!titulo){ note.textContent='Poné un título.'; note.className='fd-note err'; return; }
+    var cupo=parseInt(document.getElementById('pCupo').value,10); var cuando=document.getElementById('pCuando').value;
+    var row={ account_id:user.id, titulo:titulo, actividad:document.getElementById('pActividad').value.trim()||null, categoria_id:document.getElementById('pCat').value||null, venue_id:document.getElementById('pVenue').value||null, empieza_en:cuando?new Date(cuando).toISOString():null, cupo_max:isNaN(cupo)?null:cupo, estado:'abierto' };
     note.textContent='Publicando…';
-    try{
-      var res=await client.from('plans').insert(row).select().single();
-      if(res.error) throw res.error;
-      await client.from('plan_participants').insert({plan_id:res.data.id, account_id:user.id});
-      note.textContent='Plan publicado ✓'; note.className='fd-note ok';
-      setTimeout(function(){ modal.classList.remove('on'); loadPlanes(); }, 600);
-    }catch(err){ note.textContent='No se pudo: '+(err.message||err); note.className='fd-note err'; }
+    try{ var res=await client.from('plans').insert(row).select().single(); if(res.error) throw res.error; await client.from('plan_participants').insert({plan_id:res.data.id,account_id:user.id}); note.textContent='Plan publicado ✓'; note.className='fd-note ok'; setTimeout(function(){ closeM('planModal'); loadPlanes(); },600); }catch(err){ note.textContent='No se pudo: '+(err.message||err); note.className='fd-note err'; }
   });
 
   async function boot(){
     try{ var s=await client.auth.getSession(); user=s&&s.data&&s.data.session&&s.data.session.user; }catch(e){}
     try{ var rv=await client.from('venues').select('id,nombre,zona').eq('activo',true).order('nombre'); VENUES=rv.data||[]; }catch(e){}
-    try{ var rc=await client.from('categorias').select('id,nombre,orden').order('orden'); CATS=rc.data||[]; }catch(e){}
-    buildChips(); loadPlanes(); loadPosts();
+    try{ var rc=await client.from('categorias').select('id,nombre,orden').order('orden'); CATS=rc.data||[]; var w=document.getElementById('fdChips'); w.innerHTML='<button class="fd-chip on" data-cat="">Todos</button>'+CATS.map(function(c){return '<button class="fd-chip" data-cat="'+esc(c.id)+'">'+esc(c.nombre)+'</button>';}).join(''); }catch(e){}
+    loadPosteos();
   }
   var tries=0;
-  (function wait(){
-    if(window.eaSupa && window.eaSupa.client){ client=window.eaSupa.client; boot(); return; }
-    if(tries++>60){ planesEl.innerHTML='<div class="fd-empty">No se pudo cargar el feed.</div>'; return; }
-    setTimeout(wait,100);
-  })();
+  (function wait(){ if(window.eaSupa && window.eaSupa.client){ client=window.eaSupa.client; boot(); return; } if(tries++>60){ feedEl.innerHTML='<div class="fd-empty">No se pudo cargar el feed.</div>'; return; } setTimeout(wait,100); })();
 })();
 </script>
 </body>
