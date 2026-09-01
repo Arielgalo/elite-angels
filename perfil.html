@@ -142,6 +142,11 @@
         +'</div></div>';
     }
     var sobreBlock = x.sobre? '<div class="pf-sec"><h3>Sobre '+(x.tipo==='negocio'?'el negocio':'la persona')+'</h3><p>'+esc(x.sobre)+'</p></div>' : '';
+    var videoBlock = x.video_presentacion? '<div class="pf-sec"><h3>Video de presentación</h3><video src="'+esc(x.video_presentacion)+'" controls playsinline preload="metadata" style="width:100%;max-height:60vh;border-radius:14px;background:#000;margin-top:6px"></video></div>' : '';
+    var cvItems=''; if(x.estudios) cvItems+='<div><b>Estudios:</b> '+esc(x.estudios)+'</div>'; if(x.habilidades) cvItems+='<div><b>Habilidades:</b> '+esc(x.habilidades)+'</div>'; if(x.idiomas) cvItems+='<div><b>Idiomas:</b> '+esc(x.idiomas)+'</div>';
+    var cvBlock = cvItems? '<div class="pf-sec"><h3>CV</h3><div class="pf-neg">'+cvItems+'</div></div>' : '';
+    var mapEmbed='';
+    if(x.tipo==='negocio'){ var q=x.negocio_mapa||x.negocio_direccion; if(q){ var isUrl=q.indexOf('http')===0; var isEmbed=isUrl&&(q.indexOf('output=embed')>=0||q.indexOf('/embed')>=0); var src=isEmbed?q:('https://www.google.com/maps?q='+encodeURIComponent((x.negocio_direccion||q)+' La Plata')+'&output=embed'); mapEmbed='<div class="pf-sec"><h3>Ubicación</h3><iframe src="'+esc(src)+'" style="width:100%;height:300px;border:0;border-radius:14px" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>'; } }
     var waLink=wa(x.contacto_whatsapp);
     var ctas='';
     if(waLink) ctas+='<a class="btn btn-wa" href="'+esc(waLink)+'" target="_blank" rel="noopener">Contactar por WhatsApp</a>';
@@ -159,8 +164,8 @@
       +(chips?('<div class="pf-chips">'+chips+'</div>'):'')
       +(x.precio_centavos?('<div class="pf-precio">'+money(x.precio_centavos)+'</div>'):'')
       +'    <div class="pf-sec"><h3>'+(x.tipo==='sesion'?'Qué te llevás':'Qué entregás')+'</h3><p>'+esc(x.que_entrega||'')+'</p></div>'
-      +sobreBlock
-      +negBlock
+      +videoBlock+cvBlock+sobreBlock
+      +negBlock+mapEmbed
       +'    <div class="pf-sec" id="pfGaleria"></div>'
       +'    <div class="pf-cta">'+ctas+'</div>'
       +'    <div class="pf-note" id="pfNote"></div>'
@@ -180,6 +185,9 @@
       function bloque(tit,txt){ if(!txt)return; y+=4; doc.setFont(undefined,'bold'); doc.text(tit,20,y); y+=7; doc.setFont(undefined,'normal'); var arr=doc.splitTextToSize(String(txt),170); doc.text(arr,20,y); y+=arr.length*6; }
       bloque(x.tipo==='sesion'?'Que te llevas':'Que entregas', x.que_entrega);
       bloque('Sobre', x.sobre);
+      bloque('Estudios', x.estudios);
+      bloque('Habilidades', x.habilidades);
+      bloque('Idiomas', x.idiomas);
       doc.setFontSize(9); doc.text('Aura - auraexperience.com.ar',20,287);
       doc.save('CV-'+String(x.titulo||'aura').replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'.pdf');
     }catch(e){ alert('No se pudo generar el PDF.'); }
