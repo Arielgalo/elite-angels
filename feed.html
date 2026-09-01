@@ -25,7 +25,7 @@
   .fd-feed{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
   .post{border:1px solid var(--line,rgba(255,255,255,.1));border-radius:18px;overflow:hidden;background:var(--black-soft,rgba(255,255,255,.02))}
   .post-media{position:relative;background:#000;aspect-ratio:9/16;max-height:70vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .post-media video,.post-media img{width:100%;height:100%;object-fit:cover;display:block}
+  .post-media video,.post-media img{width:100%;height:100%;object-fit:contain;display:block;background:#000}
   .post-mute{position:absolute;bottom:12px;right:12px;background:rgba(10,10,12,.7);color:#fff;border:none;border-radius:999px;width:40px;height:40px;font-size:1rem;cursor:pointer;z-index:2}
   .post-body{padding:12px 16px 16px}
   .post-cap{color:var(--text);line-height:1.5;margin:0 0 10px}
@@ -100,12 +100,15 @@
     </div>
     <div class="fd-tabs">
       <button class="fd-tab on" data-view="posteos">Posteos</button>
+      <button class="fd-tab" data-view="noticias">Noticias</button>
       <button class="fd-tab" data-view="planes">Planes</button>
     </div>
 
     <div id="viewPosteos">
       <div class="fd-feed" id="fdFeed"><div class="fd-empty">Cargando posteos…</div></div>
     </div>
+
+    <div id="viewNoticias" style="display:none"><div id="fdNoticias"><div class="fd-empty">Cargando noticias…</div></div></div>
 
     <div id="viewPlanes" style="display:none">
       <div class="fd-chips" id="fdChips"><button class="fd-chip on" data-cat="">Todos</button></div>
@@ -170,8 +173,10 @@
     Array.prototype.forEach.call(this.children,function(x){x.classList.remove('on');}); b.classList.add('on');
     var v=b.dataset.view;
     document.getElementById('viewPosteos').style.display = v==='posteos'?'block':'none';
+    document.getElementById('viewNoticias').style.display = v==='noticias'?'block':'none';
     document.getElementById('viewPlanes').style.display = v==='planes'?'block':'none';
     if(v==='planes' && !window.__planesLoaded){ window.__planesLoaded=true; loadPlanes(); }
+    if(v==='noticias' && !window.__noticiasLoaded){ window.__noticiasLoaded=true; loadNoticias(); }
   });
 
   var feedEl=document.getElementById('fdFeed');
@@ -321,6 +326,19 @@
     try{ var res=await client.from('plans').insert(row).select().single(); if(res.error) throw res.error; await client.from('plan_participants').insert({plan_id:res.data.id,account_id:user.id}); note.textContent='Plan publicado ✓'; note.className='fd-note ok'; setTimeout(function(){ closeM('planModal'); loadPlanes(); },600); }catch(err){ note.textContent='No se pudo: '+(err.message||err); note.className='fd-note err'; }
   });
 
+  async function loadNoticias(){
+    var el=document.getElementById('fdNoticias');
+    try{
+      var r=await client.from('noticias').select('titulo,resumen,imagen,fuente,url,publicado_at').eq('estado','publicado').order('publicado_at',{ascending:false}).limit(30);
+      var d=r.data||[];
+      el.innerHTML = d.length? '<div class="fd-grid">'+d.map(function(n){
+        var res=(n.resumen?String(n.resumen).replace(/&#?[a-z0-9]+;/gi,' ').replace(/\s+/g,' ').trim().slice(0,120):'');
+        return '<a class="fd-card" style="text-decoration:none;color:inherit;padding:0;overflow:hidden" href="'+esc(n.url)+'" target="_blank" rel="noopener">'
+          +(n.imagen?'<div style="aspect-ratio:16/9;overflow:hidden;background:#000"><img src="'+esc(n.imagen)+'" loading="lazy" style="width:100%;height:100%;object-fit:cover"></div>':'')
+          +'<div style="padding:16px 18px"><div class="fd-free">'+esc(n.fuente||'Noticias')+'</div><h3 style="margin:6px 0;font-size:1.05rem">'+esc(n.titulo)+'</h3>'+(res?'<div class="fd-act">'+esc(res)+'…</div>':'')+'</div></a>';
+      }).join('')+'</div>' : '<div class="fd-empty">No hay noticias por ahora.</div>';
+    }catch(e){ el.innerHTML='<div class="fd-empty">No se pudieron cargar las noticias.</div>'; }
+  }
   async function boot(){
     try{ var s=await client.auth.getSession(); user=s&&s.data&&s.data.session&&s.data.session.user; }catch(e){}
     try{ var rv=await client.from('venues').select('id,nombre,zona').eq('activo',true).order('nombre'); VENUES=rv.data||[]; }catch(e){}
