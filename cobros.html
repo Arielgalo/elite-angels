@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<script>try{if(localStorage.getItem('aura_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+<script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cobros y planes · Aura</title>
+<meta name="description" content="Cómo se sostiene Aura: Impulso, Aura Pro, Aura Negocio, verificación y propinas. Los planes son gratis siempre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0a0c">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Aura">
+<link rel="stylesheet" href="css/styles.css?v=41">
+<style>
+  .page-hero-content h1{color:#fff}
+  .page-hero-content>p{color:rgba(255,255,255,.92)}
+  .page-hero .btn-ghost{color:#fff;border-color:rgba(255,255,255,.55)}
+  .cb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:20px}
+  .cb-card{border:1px solid var(--line,rgba(255,255,255,.1));border-radius:16px;background:var(--black-soft,rgba(255,255,255,.02));padding:24px;display:flex;flex-direction:column}
+  .cb-card.hi{border-color:var(--gold)}
+  .cb-tag{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  .cb-card h3{margin:8px 0 4px;font-size:1.2rem}
+  .cb-price{color:var(--text);font-weight:700;margin:4px 0 10px}
+  .cb-price small{color:var(--text-mute);font-weight:500;font-size:.8rem}
+  .cb-card p{color:var(--text-soft);line-height:1.55;font-size:.92rem;margin:0 0 16px}
+  .cb-card .btn{margin-top:auto}
+  .cb-free{border:1px solid var(--gold);border-radius:16px;padding:22px 26px;background:linear-gradient(90deg,rgba(212,175,110,.10),rgba(212,175,110,.02));text-align:center;max-width:760px;margin:0 auto 10px}
+  .cb-note{max-width:760px;margin:34px auto 0;border:1px dashed var(--line,rgba(255,255,255,.16));border-radius:14px;padding:20px 24px;color:var(--text-mute);font-size:.9rem;line-height:1.6}
+</style>
+</head>
+<body>
+
+<header class="header" id="header">
+  <div class="container nav">
+    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura"><span class="logo-text">Aura</span></a>
+    <nav class="nav-links">
+      <a href="index.html">Inicio</a>
+      <a href="modelos.html">Talentos</a>
+      <a href="feed.html">Feed</a>
+      <a href="nosotros.html">Qué es Aura</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="publicar.html" class="btn btn-ghost" style="padding:13px 22px">Publicar</a>
+      <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
+      <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Inicio</a>
+  <a href="modelos.html">Talentos</a>
+  <a href="feed.html">Feed</a>
+  <a href="nosotros.html">Qué es Aura</a>
+  <a href="publicar.html">Publicar</a>
+  <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
+</div>
+
+<section class="page-hero">
+  <div class="hero-bg"></div>
+  <div class="container page-hero-content">
+    <span class="eyebrow">Cómo se sostiene Aura</span>
+    <h1>Publicar es gratis. <span class="text-gold">Crecer, opcional.</span></h1>
+    <p>Podés usar Aura sin pagar nada. Si querés más visibilidad o herramientas, hay opciones pagas — y los planes son gratis siempre.</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:30px">
+  <div class="container">
+    <div class="cb-free">
+      <p style="margin:0"><strong style="color:var(--gold)">Los planes son gratis siempre.</strong> Nunca se cobra por un encuentro. Lo pago es siempre por un servicio o por más visibilidad.</p>
+    </div>
+
+    <div class="cb-grid">
+      <div class="cb-card hi">
+        <div class="cb-tag">Empezá por acá</div>
+        <h3>Impulso</h3>
+        <div class="cb-price">Pago único semanal</div>
+        <p>Destacá una publicación tuya durante una semana para que aparezca más arriba en Talentos.</p>
+        <button class="btn btn-gold" data-x>Impulsar</button>
+      </div>
+      <div class="cb-card">
+        <div class="cb-tag">Suscripción</div>
+        <h3>Aura Pro</h3>
+        <div class="cb-price">Mensual</div>
+        <p>Para personas que ofrecen su oficio: más publicaciones activas, estadísticas y prioridad en la búsqueda.</p>
+        <button class="btn btn-ghost" data-x>Suscribirme</button>
+      </div>
+      <div class="cb-card">
+        <div class="cb-tag">Suscripción</div>
+        <h3>Aura Negocio</h3>
+        <div class="cb-price">Mensual</div>
+        <p>Para comercios: ficha de negocio con logo, dirección y mapa, y más espacio para tus productos y servicios.</p>
+        <button class="btn btn-ghost" data-x>Suscribirme</button>
+      </div>
+      <div class="cb-card">
+        <div class="cb-tag">Confianza</div>
+        <h3>Verificación</h3>
+        <div class="cb-price">Pago único</div>
+        <p>Verificá tu identidad y mostrá el sello ✓ en tu ficha. Da más confianza a quien te contrata.</p>
+        <button class="btn btn-ghost" data-x>Verificarme</button>
+      </div>
+      <div class="cb-card">
+        <div class="cb-tag">Gracias</div>
+        <h3>Propina</h3>
+        <div class="cb-price">Voluntaria</div>
+        <p>¿Te trataron bien? Dejá una propina después de una interacción. Aura retiene solo un 10%.</p>
+        <button class="btn btn-ghost" data-x>Dejar propina</button>
+      </div>
+    </div>
+
+    <div class="cb-note" id="cbNote">
+      <strong>Nota:</strong> los montos y el cobro en sí se activan cuando se conecte la pasarela de pagos (por ejemplo MercadoPago) con las credenciales de la cuenta. Hasta entonces, estos botones muestran esta aclaración. La estructura de cobros ya está lista en la base de datos.
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura"><span class="logo-text">Aura</span></a>
+        <p><strong>En Aura se cobra por un servicio, nunca por un encuentro.</strong> Los planes son gratis siempre. Las sesiones pagas son por videollamada. Un proyecto de Grupo BA Zebra S.A., en La Plata.</p>
+      </div>
+      <div class="footer-col"><h4>Navegación</h4><a href="index.html">Inicio</a><a href="modelos.html">Talentos</a><a href="feed.html">Feed</a><a href="nosotros.html">Qué es Aura</a><a href="contacto.html">Contacto</a></div>
+      <div class="footer-col"><h4>En Aura</h4><a href="publicar.html">Publicar lo mío</a><a href="cobros.html">Cobros y planes</a></div>
+      <div class="footer-col"><h4>Contacto</h4><a href="mailto:zebraargentinasa@gmail.com">zebraargentinasa@gmail.com</a><a href="https://wa.me/5492214982243">WhatsApp</a></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Aura · La Plata, Argentina. · <a href="terminos.html" style="color:inherit;text-decoration:underline">Términos</a> · <a href="privacidad.html" style="color:inherit;text-decoration:underline">Privacidad</a></p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js?v=41" defer></script>
+<script src="js/pwa.js?v=4" defer></script>
+<script src="js/theme.js?v=1" defer></script>
+<script>
+(function(){
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-x]'); if(!b) return;
+    var n=document.getElementById('cbNote');
+    n.style.borderColor='var(--gold)'; n.style.color='var(--text-soft)';
+    n.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+})();
+</script>
+</body>
+</html>
