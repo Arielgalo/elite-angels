@@ -32,8 +32,18 @@
   .pf-qe h3{margin:0 0 8px;font-size:1rem}
   .pf-qe p{color:var(--text-soft);line-height:1.65;white-space:pre-line}
   .pf-cta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
-  .pf-note{margin-top:14px;color:var(--text-mute);font-size:.85rem}
+  .pf-note{margin-top:14px;color:var(--text-mute);font-size:.9rem;line-height:1.5}
+  .pf-note a{color:var(--gold);font-weight:600;word-break:break-all}
   .pf-block{margin-top:34px;border-top:1px solid var(--line,rgba(255,255,255,.08));padding-top:24px}
+  .pf-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-start;justify-content:center;z-index:1000;padding:24px 14px;overflow:auto}
+  .pf-modal.on{display:flex}
+  .pf-dialog{background:var(--bg,#111014);border:1px solid var(--line,rgba(255,255,255,.14));border-radius:18px;max-width:480px;width:100%;padding:26px;position:relative;margin:auto}
+  .pf-x{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-mute);font-size:1.6rem;cursor:pointer}
+  .pf-f{display:block;margin:12px 0}
+  .pf-f span{display:block;font-size:.82rem;font-weight:600;color:var(--text-soft);margin-bottom:6px}
+  .pf-f input,.pf-f select{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.16));background:var(--black-soft,rgba(255,255,255,.03));color:var(--text);font-size:.95rem;box-sizing:border-box;font-family:var(--sans,'Manrope')}
+  .pf-msg{font-size:.88rem;min-height:20px;margin:8px 0;line-height:1.5}
+  .pf-msg.err{color:#f0a5bd}.pf-msg.ok{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -71,6 +81,17 @@
   </div>
 </section>
 
+<div class="pf-modal" id="pfModal">
+  <div class="pf-dialog">
+    <button class="pf-x" id="pfMX" aria-label="Cerrar">&times;</button>
+    <h2 style="margin:0 0 4px" id="pfMTitle">Reservar sesión</h2>
+    <p style="color:var(--text-mute);font-size:.85rem;margin:0 0 6px">La sesión es por videollamada. Al confirmar generamos el link automáticamente.</p>
+    <label class="pf-f"><span>¿Cuándo querés la sesión?</span><input id="pfCuando" type="datetime-local"></label>
+    <div class="pf-msg" id="pfMMsg"></div>
+    <div style="display:flex;justify-content:flex-end;gap:10px"><button class="btn btn-gold" id="pfConfirmar">Confirmar reserva</button></div>
+  </div>
+</div>
+
 <footer class="footer">
   <div class="container">
     <div class="footer-bottom">
@@ -86,16 +107,18 @@
 <script src="js/theme.js?v=1" defer></script>
 <script>
 (function(){
-  var root=document.getElementById('pfRoot'), client=null;
+  var root=document.getElementById('pfRoot'), client=null, user=null, LISTING=null;
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function money(c){ if(c==null) return ''; return '$'+(c/100).toLocaleString('es-AR'); }
   var TLABEL={servicio:'Servicio / oficio',producto:'Producto',negocio:'Negocio',sesion:'Sesión · videollamada'};
-  function id(){ try{ return new URLSearchParams(location.search).get('id'); }catch(e){ return null; } }
+  function qid(){ try{ return new URLSearchParams(location.search).get('id'); }catch(e){ return null; } }
+  function uuid(){ try{ return crypto.randomUUID(); }catch(e){ return 'x'+Date.now()+Math.random().toString(36).slice(2,8); } }
   function notFound(){
     root.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--text-mute)"><h1 style="color:var(--text)">Esta ficha no está disponible.</h1>'
       +'<p>Puede que todavía no esté publicada.</p><div style="margin-top:18px"><a href="modelos.html" class="btn btn-gold">Ver Talentos</a></div></div>';
   }
   function render(x){
+    LISTING=x;
     var foto=x.foto_principal? '<img src="'+esc(x.foto_principal)+'" alt="'+esc(x.titulo||'')+'">':'';
     var verif=x.verificado? '<span class="pf-verif">✓ Identidad verificada</span>':'';
     var cta = (x.tipo==='sesion')? 'Reservar sesión' : (x.tipo==='negocio'? 'Contactar' : 'Reservar');
@@ -113,17 +136,42 @@
       +'    <div class="pf-block"><h3 style="margin:0 0 6px">Reseñas</h3><p style="color:var(--text-mute);margin:0">Las reseñas son gratis y se habilitan después de una interacción real. Todavía no hay reseñas.</p></div>'
       +'  </div>'
       +'</div>';
-    var btn=document.getElementById('pfCta');
-    if(btn) btn.addEventListener('click',function(){
-      var n=document.getElementById('pfNote');
-      n.textContent = (x.tipo==='sesion')
-        ? 'Las reservas de sesiones con agenda y videollamada se activan en breve.'
-        : 'Las reservas dentro de Aura se activan en breve.';
-      n.style.color='var(--gold)';
-    });
+    document.getElementById('pfCta').addEventListener('click',onCta);
   }
+  function onCta(){
+    var n=document.getElementById('pfNote');
+    if(!user){ location.href='cuenta.html?next=perfil.html%3Fid%3D'+encodeURIComponent(LISTING.id); return; }
+    if(LISTING.tipo==='sesion'){ document.getElementById('pfMMsg').textContent=''; document.getElementById('pfMMsg').className='pf-msg'; document.getElementById('pfModal').classList.add('on'); return; }
+    n.innerHTML='Escribile por WhatsApp para coordinar. Las reservas con agenda dentro de Aura se activan en breve.'; n.style.color='var(--gold)';
+  }
+
+  var modal=document.getElementById('pfModal');
+  document.getElementById('pfMX').addEventListener('click',function(){modal.classList.remove('on');});
+  modal.addEventListener('click',function(e){ if(e.target===modal) modal.classList.remove('on'); });
+  document.getElementById('pfConfirmar').addEventListener('click',async function(){
+    var msg=document.getElementById('pfMMsg'); msg.className='pf-msg';
+    var cuando=document.getElementById('pfCuando').value;
+    if(!cuando){ msg.textContent='Elegí una fecha y hora.'; msg.className='pf-msg err'; return; }
+    var room='https://meet.jit.si/aura-'+uuid();
+    msg.textContent='Reservando…';
+    try{
+      var res=await client.from('bookings').insert({
+        listing_id:LISTING.id, comprador_id:user.id,
+        empieza_en:new Date(cuando).toISOString(),
+        room_id:room, estado:'confirmada'
+      }).select().single();
+      if(res.error) throw res.error;
+      msg.className='pf-msg ok';
+      msg.innerHTML='¡Reserva confirmada! Tu link de videollamada:<br><a href="'+esc(room)+'" target="_blank" rel="noopener">'+esc(room)+'</a>';
+      var n=document.getElementById('pfNote');
+      n.innerHTML='Sesión reservada para el '+esc(new Date(cuando).toLocaleString('es-AR'))+'. Link: <a href="'+esc(room)+'" target="_blank" rel="noopener">'+esc(room)+'</a>';
+      n.style.color='var(--text-soft)';
+    }catch(err){ msg.textContent='No se pudo reservar: '+(err.message||err); msg.className='pf-msg err'; }
+  });
+
   async function boot(){
-    var q=id(); if(!q){ notFound(); return; }
+    try{ var s=await client.auth.getSession(); user=s&&s.data&&s.data.session&&s.data.session.user; }catch(e){}
+    var q=qid(); if(!q){ notFound(); return; }
     try{
       var r=await client.from('listings').select('*').eq('id',q).single();
       if(r.error || !r.data || r.data.estado!=='publicado'){ notFound(); return; }
