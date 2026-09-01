@@ -2,260 +2,236 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<script>try{if(localStorage.getItem('aura_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
-<!-- M1: feed abierto a visitantes anónimos. Subir video sigue requiriendo cuenta (UploadSheet). La confirmación +18 la maneja el componente Gate de este mismo archivo. -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Feed · Aura Experience</title>
-<meta name="description" content="Descubrí videos de la comunidad Aura. Subí el tuyo, seguí, comentá y conectá.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feed · Aura</title>
+<meta name="description" content="Planes gratis cerca tuyo y lo último de la comunidad. Sumate a un plan en un lugar público, sin costo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0a0a0c">
-<link rel="canonical" href="https://auraexperience.com.ar/feed.html">
-<meta property="og:url" content="https://auraexperience.com.ar/feed.html">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link rel="stylesheet" href="css/styles.css?v=41">
 <style>
-  html,body{margin:0;background:#0a0a0c;font-family:'Helvetica Neue',Helvetica,Arial,'Inter',sans-serif;overscroll-behavior:none;}
-  #root{height:100dvh;}
-  .no-sb::-webkit-scrollbar{display:none;} .no-sb{-ms-overflow-style:none;scrollbar-width:none;}
-  @keyframes auraspin{to{transform:rotate(360deg)}}
-  @keyframes kb{0%{transform:scale(1)}100%{transform:scale(1.12)}}
-  @keyframes eq{0%,100%{height:20%}50%{height:100%}}
-  @keyframes pulseSound{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
-  @keyframes upsheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
-  @keyframes menuIn{from{transform:translateX(-100%)}to{transform:translateX(0)}}
-  @keyframes modepop{0%{transform:translate(-50%,-4px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}
+  .fd-chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px}
+  .fd-chip{padding:8px 15px;border-radius:999px;border:1px solid var(--line,rgba(255,255,255,.14));background:transparent;color:var(--text-soft);font-weight:600;font-size:.85rem;cursor:pointer;white-space:nowrap}
+  .fd-chip.on{background:var(--gold);border-color:var(--gold);color:#0a0a0c}
+  .fd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  .fd-card{border:1px solid var(--line,rgba(255,255,255,.1));border-radius:16px;background:var(--black-soft,rgba(255,255,255,.02));padding:20px;display:flex;flex-direction:column;gap:8px}
+  .fd-free{align-self:flex-start;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  .fd-card h3{margin:0;font-size:1.12rem}
+  .fd-act{color:var(--text-soft);font-size:.92rem;line-height:1.5}
+  .fd-meta{color:var(--text-mute);font-size:.85rem;display:flex;flex-direction:column;gap:3px}
+  .fd-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:10px}
+  .fd-cupo{font-size:.82rem;color:var(--text-mute)}
+  .fd-empty{text-align:center;color:var(--text-mute);padding:50px 20px;border:1px dashed var(--line,rgba(255,255,255,.14));border-radius:18px}
+  .fd-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-start;justify-content:center;z-index:1000;padding:24px 14px;overflow:auto}
+  .fd-modal.on{display:flex}
+  .fd-dialog{background:var(--bg,#111014);border:1px solid var(--line,rgba(255,255,255,.14));border-radius:18px;max-width:520px;width:100%;padding:26px;position:relative;margin:auto}
+  .fd-x{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-mute);font-size:1.6rem;cursor:pointer}
+  .fd-f{display:block;margin-bottom:13px}
+  .fd-f span{display:block;font-size:.82rem;font-weight:600;color:var(--text-soft);margin-bottom:6px}
+  .fd-f input,.fd-f select,.fd-f textarea{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.16));background:var(--black-soft,rgba(255,255,255,.03));color:var(--text);font-size:.95rem;box-sizing:border-box;font-family:var(--sans,'Manrope')}
+  .fd-note{font-size:.85rem;min-height:18px;margin:6px 0}
+  .fd-note.err{color:#f0a5bd}.fd-note.ok{color:var(--gold)}
+  .fd-sec-t{font-size:1.3rem;margin:44px 0 18px}
 </style>
-<style>@media (pointer:coarse){.feed-arrows{display:none!important}}</style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/plain" id="app-src">
-const { useState, useEffect, useRef } = React;
-const sb = window.supabase.createClient('https://fsjrimmurtnrorqhnbwu.supabase.co','sb_publishable_2lWllWfVLWsPnnko4TEa4Q_2sx0kdI4');
-const AURAS=[['#f59e0b','#f43f5e','#a855f7'],['#22d3ee','#3b82f6','#8b5cf6'],['#34d399','#10b981','#f59e0b'],['#e879f9','#d946ef','#f43f5e'],['#fbbf24','#f97316','#ef4444'],['#60a5fa','#818cf8','#c084fc']];
-const ROLES={citas:'Reunirse o Entrevistas',amigos:'Amigos & Salidas',eventos:'Eventos, Roles & Presencia'};
-const MODES=[{k:'video',label:'Video',big:'🎬 Solo videos'},{k:'mixto',label:'Mixto',big:'✨ Video + Foto'},{k:'foto',label:'Foto',big:'📸 Solo fotos'}];
-const ckey=function(c){ return c.type==='post' ? ('P:'+c.postId) : (c.sid+'|'+(c.videoUrl||'')); };
-function Ico(p){return React.createElement('svg',{width:p.size||27,height:p.size||27,viewBox:'0 0 24 24',fill:p.fill||'none',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round'},React.createElement('path',{d:p.d}));}
-const HEART="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z";
-const CHAT="M21 11.5a8.4 8.4 0 0 1-11.9 7.6L3 21l1.9-6A8.4 8.4 0 1 1 21 11.5z";
-const SHARE="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7 M16 6l-4-4-4 4 M12 2v13";
-const FLAG="M4 21V4 M4 4h13l-2 4 2 4H4";
-const SPK_ON="M11 5 6 9H2v6h4l5 4V5z M15.5 8.5a5 5 0 0 1 0 7 M19 5a9 9 0 0 1 0 14";
-const SPK_OFF="M11 5 6 9H2v6h4l5 4V5z M22 9l-6 6 M16 9l6 6";
-function Eq(p){ return <div className="flex items-end gap-0.5 h-3.5">{[0,1,2,3].map(i=><span key={i} className="w-0.5 rounded-full" style={{background:p.color,height:'100%',animation:'eq '+(0.6+i*0.12)+'s ease-in-out '+(i*0.1)+'s infinite'}}/>)}</div>; }
-function AuraRing(p){ const c=p.colors; const fresh=p.fresh; return <div className="relative shrink-0" style={{width:p.size,height:p.size}}><div className="absolute rounded-full" style={{inset:0, background: fresh?('conic-gradient(from 0deg, '+c[0]+', '+c[1]+', '+c[2]+', '+c[0]+')'):'#3a3a40', animation: fresh?('auraspin '+(p.active?3:6)+'s linear infinite'):'none', boxShadow: fresh?('0 0 18px 3px '+c[1]+'aa'):'none'}}/><div className="absolute rounded-full overflow-hidden bg-neutral-900 flex items-center justify-center text-white font-bold" style={{inset: fresh?3:2}}>{c.img?<img src={c.img} className="w-full h-full object-cover" alt=""/>:(c.ini||'')}</div></div>; }
 
-function Card(props){
-  const p=props.p, aura=props.aura, soundOn=props.soundOn, setSoundOn=props.setSoundOn, vol=props.vol, setVol=props.setVol, isPost=p.type==='post', isNews=p.type==='noticia';
-  const ref=useRef(null), vidRef=useRef(null);
-  const [active,setActive]=useState(false); const [paused,setPaused]=useState(false); const [liked,setLiked]=useState(false); const volRef=useRef(typeof vol==='number'?vol:1);
-  useEffect(()=>{ const el=ref.current; if(!el) return;
-    const io=new IntersectionObserver(function(ent){ const e=ent[0]; const vis=e.intersectionRatio>0.6; setActive(vis); const v=vidRef.current; if(v){ if(vis){ v.muted=!soundOn; v.volume=volRef.current; v.play().then(function(){setPaused(false);}).catch(function(){}); } else { v.pause(); v.muted=true; } } },{threshold:[0,0.6,1]});
-    io.observe(el); return function(){io.disconnect();}; },[soundOn]);
-  useEffect(()=>{ const v=vidRef.current; if(v&&active){ v.muted=!soundOn; v.volume=volRef.current; } },[soundOn,active]);
-  useEffect(()=>{ volRef.current=vol; const v=vidRef.current; if(v&&active) v.volume=vol; },[vol,active]);
-  function toggleSound(e){ if(e) e.stopPropagation(); const ns=!soundOn; setSoundOn(ns); const v=vidRef.current; if(v){ v.muted=!ns; v.volume=volRef.current; if(ns){ v.play().then(function(){setPaused(false);}).catch(function(){}); } } }
-  function onMediaTap(){ if(!soundOn && p.video){ toggleSound(); return; } const v=vidRef.current; if(!v) return; if(v.paused){ v.play(); setPaused(false); } else { v.pause(); setPaused(true); } }
-  const avatarColors=Object.assign([aura[0],aura[1],aura[2]],{img: isNews?'assets/logo.svg':p.foto, ini:(p.name||'A').slice(0,1).toUpperCase()});
-  const hasVideo=!!p.video;
-  const fresh = p.freshTs ? ((Date.now()-p.freshTs) < 86400000) : false;
-  return <section ref={ref} className="relative h-full w-full shrink-0 snap-start snap-always overflow-hidden bg-neutral-950" onClick={onMediaTap}>
-    {hasVideo?<video ref={vidRef} src={p.video} poster={p.foto||undefined} loop muted playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover"/>:(p.foto?(isNews?<div className="absolute inset-0"><img src={p.foto} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover" style={{filter:'blur(26px) brightness(.45)',transform:'scale(1.2)'}}/><img src={p.foto} alt={p.name} className="absolute inset-0 w-full h-full object-contain"/></div>:<img src={p.foto} alt={p.name} className="absolute inset-0 w-full h-full object-cover" style={{animation:active?'kb 12s ease-out forwards':'none'}}/>):<div className="absolute inset-0" style={{background:'linear-gradient(160deg, '+aura[0]+'33, #0a0a0c 70%)'}}/>) }
-    <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(0,0,0,.82) 4%, rgba(0,0,0,0) 42%, rgba(0,0,0,.25))'}}/>
-    {hasVideo && paused && <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><span className="w-16 h-16 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white"><Ico d="M8 5v14l11-7z" fill="#fff" size={30}/></span></div>}
-    <div className="absolute right-2.5 bottom-32 flex flex-col items-center gap-5 z-10 text-white">
-      <a href={isNews?'noticias.html':(isPost?('feed.html?u='+(p.userId||'')):p.href)} onClick={function(e){e.stopPropagation();}} className="relative flex flex-col items-center active:scale-95" title="Ver el perfil"><AuraRing colors={avatarColors} size={54} active={active} fresh={fresh}/>{!isPost && !isNews && <span className="w-5 h-5 -mt-2 rounded-full flex items-center justify-center text-neutral-950 text-sm font-bold" style={{background:aura[1]}}>+</span>}</a>
-      <button onClick={function(e){e.stopPropagation();setLiked(function(v){return !v;});}} className="flex flex-col items-center gap-1" style={{color:liked?'#f43f5e':'#fff'}}><Ico d={HEART} fill={liked?'#f43f5e':'none'}/><span className="text-[11px] font-semibold">{(p.likes||0)+(liked?1:0)}</span></button>
-      <button onClick={function(e){e.stopPropagation();props.onComments(p);}} className="flex flex-col items-center gap-1"><Ico d={CHAT}/><span className="text-[11px] font-semibold">{props.count?props.count+' ':''}Comentar</span></button>
-      {hasVideo && <div className="flex flex-col items-center gap-2">{active && soundOn && <input type="range" min="0" max="1" step="0.05" value={vol} onClick={function(e){e.stopPropagation();}} onInput={function(e){e.stopPropagation(); const nv=parseFloat(e.target.value); volRef.current=nv; setVol(nv); const v=vidRef.current; if(v){ v.volume=nv; v.muted=false; } if(nv===0){ setSoundOn(false); } }} style={{writingMode:'vertical-lr',direction:'rtl',width:'5px',height:'78px',accentColor:'#fbbf24',cursor:'pointer'}}/>}<button onClick={toggleSound} title="Sonido" className="flex items-center justify-center"><span className="w-9 h-9 rounded-full bg-white/10 backdrop-blur flex items-center justify-center" style={{color:soundOn?'#fbbf24':'#fff'}}><Ico d={soundOn?SPK_ON:SPK_OFF} size={18}/></span></button></div>}
-      <button onClick={function(e){e.stopPropagation();props.onReport(p);}} className="flex flex-col items-center gap-1 text-white/80"><Ico d={FLAG} size={22}/><span className="text-[11px] font-semibold">Reportar</span></button>
+<header class="header" id="header">
+  <div class="container nav">
+    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura"><span class="logo-text">Aura</span></a>
+    <nav class="nav-links">
+      <a href="index.html">Inicio</a>
+      <a href="modelos.html">Talentos</a>
+      <a href="feed.html" class="active">Feed</a>
+      <a href="nosotros.html">Qué es Aura</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="publicar.html" class="btn btn-ghost" style="padding:13px 22px">Publicar</a>
+      <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
+      <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
     </div>
-    <div className="absolute left-4 right-20 bottom-24 z-10 text-white">
-      <div className="flex items-center gap-1.5 mb-1.5"><span className="font-bold text-[16px]">{isNews?('📰 '+(p.fuente||'Aura Noticias')):(isPost?('@'+(p.name||'usuario')):(p.name+(p.edad?(', '+p.edad):'')))}</span>{p.verificado && <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-300 border border-emerald-400/40 bg-emerald-400/10 rounded-full px-1.5 py-0.5">✓ Verificado</span>}{isPost && <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border border-white/20 text-white/70">video</span>}{isNews && <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full text-neutral-950 font-bold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>noticia</span>}</div>
-      {!isPost && !isNews && p.ciudad && <div className="text-[12px] text-white/70 mb-1.5">📍 {p.ciudad}</div>}
-      {(p.caption||p.bio) && <p className={isNews?"text-[17px] font-semibold leading-snug text-white mb-2 line-clamp-4":"text-[14px] leading-snug text-white/95 mb-2 line-clamp-3"}>{p.caption||p.bio}</p>}
-      {!isPost && !isNews && p.roles && p.roles.length>0 && <div className="flex flex-wrap gap-1.5">{p.roles.map(function(r){return <span key={r} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border border-amber-300/40 text-amber-200 bg-amber-300/10">{ROLES[r]||r}</span>;})}</div>}
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Inicio</a>
+  <a href="modelos.html">Talentos</a>
+  <a href="feed.html">Feed</a>
+  <a href="nosotros.html">Qué es Aura</a>
+  <a href="publicar.html">Publicar</a>
+  <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
+</div>
+
+<section class="page-hero" style="min-height:auto;padding:120px 0 40px">
+  <div class="hero-bg" style="background-image:linear-gradient(115deg,rgba(10,10,12,.93),rgba(10,10,12,.6) 58%,rgba(10,10,12,.34)),url('https://fsjrimmurtnrorqhnbwu.supabase.co/storage/v1/object/public/sitio/1783277101540_k0hw7i.jpg');background-size:cover;background-position:center"></div>
+  <div class="container page-hero-content">
+    <span class="eyebrow">La Plata</span>
+    <h1>Planes gratis <span class="text-gold">cerca tuyo.</span></h1>
+    <p>Alguien publica un plan en un lugar público y se suma quien quiera. Sin precio, nunca. La unidad es el plan, no la persona.</p>
+    <div class="hero-actions"><button class="btn btn-gold" id="fdNuevo">Crear un plan</button></div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:24px">
+  <div class="container">
+    <div class="fd-chips" id="fdChips"><button class="fd-chip on" data-cat="">Todos</button></div>
+    <div id="fdPlanes"><div class="fd-empty">Cargando planes…</div></div>
+
+    <h2 class="fd-sec-t">Posteos de la comunidad</h2>
+    <div id="fdPosts"><div class="fd-empty">Cargando…</div></div>
+  </div>
+</section>
+
+<div class="fd-modal" id="fdModal">
+  <div class="fd-dialog">
+    <button class="fd-x" id="fdX" aria-label="Cerrar">&times;</button>
+    <h2 style="margin:0 0 4px">Crear un plan</h2>
+    <p style="color:var(--text-mute);font-size:.85rem;margin:0 0 16px">Los planes son gratis, en un lugar público. Sin precio.</p>
+    <label class="fd-f"><span>Título</span><input id="pTitulo" placeholder="Ej: Mate y charla de proyectos"></label>
+    <label class="fd-f"><span>De qué se trata</span><textarea id="pActividad" rows="2" placeholder="Contá el plan en una línea"></textarea></label>
+    <label class="fd-f"><span>Categoría</span><select id="pCat"></select></label>
+    <label class="fd-f"><span>Lugar público</span><select id="pVenue"></select></label>
+    <label class="fd-f"><span>Cuándo</span><input id="pCuando" type="datetime-local"></label>
+    <label class="fd-f"><span>Cupo máximo (opcional)</span><input id="pCupo" type="number" min="2" placeholder="Ej: 8"></label>
+    <div class="fd-note" id="pNote"></div>
+    <div style="display:flex;justify-content:flex-end;gap:10px"><button class="btn btn-gold" id="pCrear">Publicar plan</button></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <p><strong>En Aura se cobra por un servicio, nunca por un encuentro.</strong> Los planes son gratis siempre. · © 2026 Aura · La Plata.</p>
     </div>
-    {!isPost && <a href={p.href} target={isNews&&p.external?'_blank':undefined} rel={isNews&&p.external?'noopener':undefined} onClick={function(e){e.stopPropagation();}} className="absolute left-4 bottom-12 z-10 px-5 py-2 rounded-full text-[13px] font-semibold text-neutral-950" style={{background:'linear-gradient(90deg, '+aura[0]+', '+aura[1]+')'}}>{isNews?('Leer en '+(p.fuente||'la fuente')+' →'):('Conocer a '+p.name+' →')}</a>}
-  </section>;
-}
+  </div>
+</footer>
 
-function Drawer(props){
-  const card=props.card; const [list,setList]=useState(null); const [autor,setAutor]=useState(''); const [texto,setTexto]=useState(''); const [sending,setSending]=useState(false);
-  useEffect(()=>{ (async function(){ try{ let q=sb.from('comentarios').select('*').eq('estado','visible').order('created_at',{ascending:false}).limit(200); if(card.type==='post'){ q=q.eq('post_id',card.postId);} else { q=q.eq('solicitud_id',card.sid); q= card.videoUrl?q.eq('video_url',card.videoUrl):q.is('video_url',null);} const res=await q; setList(res.data||[]); }catch(e){ setList([]); } })(); },[]);
-  // Fase 2: comentarios en vivo para esta tarjeta (prepend con dedupe por id)
-  useEffect(function(){ const filt=card.type==='post'?('post_id=eq.'+card.postId):('solicitud_id=eq.'+card.sid); const ch=sb.channel('rt-com-'+(card.type==='post'?card.postId:card.sid)).on('postgres_changes',{event:'INSERT',schema:'public',table:'comentarios',filter:filt},function(payload){ const c=payload.new; if(!c||c.estado!=='visible') return; if(card.type!=='post' && card.videoUrl && c.video_url!==card.videoUrl) return; setList(function(l){ if(l&&l.some(function(x){return x.id===c.id;})) return l; return [c].concat(l||[]); }); }).subscribe(); return function(){ try{sb.removeChannel(ch);}catch(e){} }; },[]);
-  async function send(){ const t=texto.trim(); if(!t){return;} setSending(true); const row= card.type==='post' ? {post_id:card.postId, autor:(autor.trim()||'Anónimo').slice(0,40), texto:t.slice(0,500)} : {solicitud_id:card.sid, video_url:card.videoUrl||null, autor:(autor.trim()||'Anónimo').slice(0,40), texto:t.slice(0,500)}; try{ const res=await sb.from('comentarios').insert(row).select().single(); if(res.error) throw res.error; setList(function(l){return [res.data].concat(l||[]);}); setTexto(''); props.onPosted(card); }catch(e){ alert('No se pudo enviar el comentario.'); } setSending(false); }
-  const n=list?list.length:0;
-  return <div className="absolute inset-0 z-40" onClick={props.onClose}><div className="absolute inset-0 bg-black/50"/><div className="absolute bottom-0 inset-x-0 bg-neutral-900 rounded-t-2xl flex flex-col" style={{height:'68%',animation:'upsheet .22s ease-out'}} onClick={function(e){e.stopPropagation();}}>
-    <div className="pt-2 pb-1 flex flex-col items-center"><span className="w-10 h-1 rounded-full bg-white/20"/></div>
-    <div className="px-4 py-2 text-white font-semibold text-center border-b border-white/10">{n} comentario{n===1?'':'s'}</div>
-    <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 no-sb">
-      {list===null && <div className="text-white/50 text-center py-6">Cargando…</div>}
-      {list && list.length===0 && <div className="text-white/50 text-center py-8">Sé la primera persona en comentar 💬</div>}
-      {list && list.map(function(c){ return <div key={c.id} className="flex gap-3"><div className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-neutral-950 text-sm font-bold" style={{background:'linear-gradient(135deg,#f59e0b,#f43f5e)'}}>{(c.autor||'A').slice(0,1).toUpperCase()}</div><div className="min-w-0"><div className="text-amber-200 text-[12px] font-semibold">{c.autor||'Anónimo'}</div><div className="text-white/90 text-[14px] leading-snug break-words">{c.texto}</div></div></div>; })}
-    </div>
-    <div className="border-t border-white/10 p-3" style={{paddingBottom:'max(16px, env(safe-area-inset-bottom))'}}>
-      <input value={autor} onChange={function(e){setAutor(e.target.value);}} placeholder="Tu nombre o alias (opcional)" className="w-full mb-2 bg-white/5 text-white placeholder-white/40 text-[13px] rounded-full px-4 py-2 outline-none"/>
-      <div className="flex gap-2"><input value={texto} onChange={function(e){setTexto(e.target.value);}} onKeyDown={function(e){if(e.key==='Enter')send();}} placeholder="Escribí un comentario…" className="flex-1 bg-white/10 text-white placeholder-white/40 text-[14px] rounded-full px-4 py-2.5 outline-none"/><button onClick={send} disabled={sending||!texto.trim()} className="px-4 rounded-full font-semibold text-neutral-950 disabled:opacity-40" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>Enviar</button></div>
-    </div>
-  </div></div>;
-}
-
-function ReportSheet(props){
-  const [sent,setSent]=useState(false);
-  const reasons=['Contenido sexual explícito','Acoso, odio o violencia','Spam o estafa','Involucra a un menor','Otro'];
-  async function send(m){ try{ await sb.from('reportes').insert({ tipo:props.card.type||'perfil', ref_id: props.card.type==='post'?props.card.postId:props.card.sid, motivo:m }); }catch(e){} setSent(true); setTimeout(props.onClose,1500); }
-  return <div className="absolute inset-0 z-50" onClick={props.onClose}><div className="absolute inset-0 bg-black/60"/><div className="absolute bottom-0 inset-x-0 bg-neutral-900 rounded-t-2xl p-5" style={{animation:'upsheet .22s ease-out',paddingBottom:'max(20px, env(safe-area-inset-bottom))'}} onClick={function(e){e.stopPropagation();}}>
-    <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4"/>
-    {sent ? <div className="text-center text-white py-6"><div className="text-3xl mb-2">✓</div>Gracias. Nuestro equipo lo revisa.</div> :
-    <div><h3 className="text-white font-bold text-lg mb-1">Reportar contenido</h3><p className="text-white/60 text-sm mb-4">¿Por qué lo reportás? Lo revisamos y actuamos.</p>
-      {reasons.map(function(r){ return <button key={r} onClick={function(){send(r);}} className="w-full text-left text-white bg-white/5 hover:bg-white/10 rounded-xl px-4 py-3 mb-2 text-[15px]">{r}</button>; })}
-      <button onClick={props.onClose} className="w-full text-white/60 py-2 mt-1">Cancelar</button></div>}
-  </div></div>;
-}
-
-function UploadSheet(props){
-  const me=props.me; const [file,setFile]=useState(null); const [cap,setCap]=useState(''); const [busy,setBusy]=useState(false); const [err,setErr]=useState('');
-  async function pub(){ setErr(''); if(!file){ setErr('Elegí un video.'); return; } if(file.size>60*1024*1024){ setErr('El video pesa demasiado (máximo 60 MB). Grabá uno más corto.'); return; } setBusy(true); try{ await props.onUpload(file, cap); props.onDone(); }catch(e){ setErr('No se pudo subir: '+((e&&e.message)||e)); setBusy(false); } }
-  return <div className="absolute inset-0 z-50" onClick={busy?null:props.onClose}><div className="absolute inset-0 bg-black/60"/><div className="absolute bottom-0 inset-x-0 bg-neutral-900 rounded-t-2xl p-5" style={{animation:'upsheet .22s ease-out',paddingBottom:'max(20px, env(safe-area-inset-bottom))'}} onClick={function(e){e.stopPropagation();}}>
-    <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4"/>
-    {!me ? <div className="text-center text-white py-4"><h3 className="font-bold text-lg mb-2">Subí tu video 🎬</h3><p className="text-white/60 text-sm mb-5">Creá tu cuenta gratis para publicar videos en el feed.</p><a href="cuenta.html" className="block w-full py-3 rounded-full font-semibold text-neutral-950 mb-2" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>Crear cuenta / Ingresar</a><button onClick={props.onClose} className="text-white/60 py-2">Ahora no</button></div>
-    : <div><h3 className="text-white font-bold text-lg mb-3">Subí tu video 🎬</h3>
-      <label className="block w-full mb-3">
-        <span className="text-white/70 text-sm">Elegí o grabá tu video (vertical, hasta 60 MB)</span>
-        <input type="file" accept="video/*" onChange={function(e){setFile(e.target.files[0]||null);}} className="mt-2 w-full text-white/80 text-sm"/>
-      </label>
-      {file && <div className="text-emerald-300 text-sm mb-2">✓ {file.name} ({Math.round(file.size/1048576*10)/10} MB)</div>}
-      <input value={cap} onChange={function(e){setCap(e.target.value);}} maxLength={280} placeholder="Escribí una descripción…" className="w-full bg-white/10 text-white placeholder-white/40 text-[14px] rounded-xl px-4 py-3 mb-3 outline-none"/>
-      {err && <div className="text-rose-300 text-sm mb-2">{err}</div>}
-      <button onClick={pub} disabled={busy} className="w-full py-3 rounded-full font-semibold text-neutral-950 disabled:opacity-50" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>{busy?'Subiendo…':'Publicar en el feed'}</button>
-      <button onClick={busy?null:props.onClose} className="w-full text-white/60 py-2 mt-1">Cancelar</button></div>}
-  </div></div>;
-}
-
-function Menu(props){
-  var Link=function(href,ic,txt,cls){ return React.createElement('a',{href:href,className:'flex items-center gap-3 px-5 py-3.5 text-[15px] border-b border-white/5 '+(cls||'text-white')},React.createElement('span',{className:'text-xl w-6 text-center'},ic),txt); };
-  return <div className="absolute inset-0 z-50" onClick={props.onClose}><div className="absolute inset-0 bg-black/60"/><div className="absolute left-0 top-0 bottom-0 w-72 max-w-[82%] bg-neutral-900 border-r border-white/10 overflow-y-auto no-sb" style={{animation:'menuIn .22s ease-out'}} onClick={function(e){e.stopPropagation();}}>
-    <div className="p-5 flex items-center gap-2 border-b border-white/10"><img src="assets/logo.svg" className="w-9 h-9" alt=""/><span className="text-white font-bold text-[17px]">Aura Experience</span></div>
-    <button onClick={function(){props.onClose();props.onUpload();}} className="flex items-center gap-3 px-5 py-3.5 text-[15px] border-b border-white/5 text-neutral-950 w-full text-left" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}><span className="text-xl w-6 text-center">🎬</span>Subí tu video</button>
-    {Link('cuenta.html','👤','Mi cuenta')}
-    {Link('modelos.html','🔍','Buscar perfiles')}
-    {Link('publicar.html','✍️','Publicá tu perfil')}
-    {Link('nosotros.html','ℹ️','Nosotros')}
-    {Link('contacto.html','✉️','Contacto')}
-    {Link('instalar.html','📲','Instalá la app')}
-    {Link('index.html?web=1','🖥️','Ver sitio completo','text-amber-200')}
-  </div></div>;
-}
-
-function Gate(props){ return <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur flex items-center justify-center p-5"><div className="max-w-sm w-full text-center rounded-3xl border border-white/10 bg-neutral-900 p-8"><img src="assets/logo.svg" className="w-16 h-16 mx-auto mb-4" alt="Aura"/><h2 className="text-white text-2xl font-bold mb-3">Acceso exclusivo +18</h2><p className="text-white/70 text-sm mb-6">Contenido para mayores de edad. Al ingresar confirmás que tenés 18 años o más.</p><button onClick={props.onOk} className="w-full py-3 rounded-full font-semibold text-neutral-950" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>Soy mayor de 18 · Ingresar</button><a href="index.html" className="block mt-3 text-white/50 text-sm">Salir</a></div></div>; }
-
-function ModeBar(props){
-  return <div className="absolute top-0 inset-x-0 z-30 pt-3">
-    <div className="flex items-center justify-between px-3">
-      <button onClick={props.onMenu} className="text-white/90 text-2xl w-8 text-left" title="Menú">☰</button>
-      <div className="flex bg-black/40 backdrop-blur rounded-full p-1 border border-white/10">
-        {MODES.map(function(m){ const on=props.mode===m.k; return <button key={m.k} onClick={function(){props.setMode(m.k);}} className={"px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition "+(on?'text-neutral-950':'text-white/70')} style={on?{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}:{}}>{m.label}</button>; })}
-      </div>
-      <div className="flex items-center gap-2 w-16 justify-end">
-        <button onClick={function(){if(window.auraNotif)window.auraNotif();}} className="text-white/90 text-[15px]" title="Avisos">🔔</button>
-        <button onClick={props.onUpload} className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-950 text-lg font-bold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}} title="Subir video">＋</button>
-      </div>
-    </div>
-    <div key={props.mode} className="mx-auto mt-2 w-fit px-4 py-1 rounded-full text-[12px] font-bold text-white/95" style={{background:'rgba(0,0,0,.35)',animation:'modepop .25s ease-out'}}>{(MODES.find(function(x){return x.k===props.mode;})||{}).big} <span className="text-white/50 font-normal">· deslizá para cambiar</span></div>
-  </div>;
-}
-
-function App(){
-  const [rows,setRows]=useState(null);
-  const [posts,setPosts]=useState([]);
-  const [noticias,setNoticias]=useState([]);
-  const [soundOn,setSoundOn]=useState(false);
-  const [vol,setVol]=useState(1);
-  const [counts,setCounts]=useState({});
-  const [cmt,setCmt]=useState(null);
-  const [rep,setRep]=useState(null);
-  const [upl,setUpl]=useState(false);
-  const [me,setMe]=useState(null);
-  const [mode,setMode]=useState(function(){ try{return localStorage.getItem('aura_feed_mode')||'mixto';}catch(e){return 'mixto';} });
-  const [menu,setMenu]=useState(false);
-  const [ok,setOk]=useState(true);
-  const touch=useRef({x:0,y:0});
-  const scroller=useRef(null);
-  function nav(dir){ const el=scroller.current; if(el) el.scrollBy({top: dir*el.clientHeight, behavior:'smooth'}); }
-  useEffect(function(){ if(rows===null) return; try{ const sid=new URLSearchParams(location.search).get('sid'); if(!sid) return; const el=scroller.current; if(!el) return; const t=setTimeout(function(){ const c=el.querySelector('[data-sid="'+sid+'"]'); if(c&&c.scrollIntoView) c.scrollIntoView(); },150); return function(){clearTimeout(t);}; }catch(e){} },[rows,posts,noticias,mode]);
-  function changeMode(k){ setMode(k); try{localStorage.setItem('aura_feed_mode',k);}catch(e){} }
-  function onTS(e){ const t=e.touches[0]; touch.current={x:t.clientX,y:t.clientY}; }
-  function onTE(e){ if(cmt||rep||upl||menu) return; const t=e.changedTouches[0]; const dx=t.clientX-touch.current.x, dy=t.clientY-touch.current.y; if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){ const i=MODES.findIndex(function(m){return m.k===mode;}); let ni=dx<0?i+1:i-1; if(ni<0)ni=0; if(ni>MODES.length-1)ni=MODES.length-1; if(ni!==i) changeMode(MODES[ni].k); } }
-  async function loadNoticias(){ try{ const r=await sb.from('noticias').select('id,titulo,resumen,imagen,fuente,url,tipo,publicado_at').eq('estado','publicado').not('imagen','is',null).order('publicado_at',{ascending:false}).limit(40); setNoticias(r.data||[]); }catch(e){} }
-  async function loadPosts(){ try{ const r=await sb.from('feed_posts').select('*').order('created_at',{ascending:false}).limit(200); setPosts(r.data||[]); }catch(e){} }
-  async function loadCounts(){ try{ const cr=await sb.from('comentarios').select('solicitud_id,video_url,post_id').eq('estado','visible').limit(8000); const m={}; (cr.data||[]).forEach(function(c){ const k=c.post_id?('P:'+c.post_id):(c.solicitud_id+'|'+(c.video_url||'')); m[k]=(m[k]||0)+1; }); setCounts(m); }catch(e){} }
-  useEffect(()=>{ (async function(){
-    try{ const res=await sb.from('perfiles_publicados').select('id,nombre,bio,ciudad,edad,roles,verificado,videos,fotos,puntos,created_at').limit(60); setRows(res.data||[]);}catch(e){ setRows([]); }
-    loadPosts(); loadCounts(); loadNoticias();
-    try{ const u=await sb.auth.getUser(); if(u.data.user){ let nom=(u.data.user.email||'').split('@')[0]; try{ const pr=await sb.from('usuarios').select('nombre').eq('id',u.data.user.id).maybeSingle(); if(pr.data&&pr.data.nombre) nom=pr.data.nombre; }catch(e){} setMe({id:u.data.user.id, nombre:nom}); } }catch(e){}
-  })(); },[]);
-  // Fase 2: feed en vivo — videos nuevos aparecen sin recargar (respeta RLS estado=visible)
-  useEffect(function(){ const ch=sb.channel('rt-feed-posts').on('postgres_changes',{event:'INSERT',schema:'public',table:'posts'},function(){ loadPosts(); }).subscribe(); return function(){ try{sb.removeChannel(ch);}catch(e){} }; },[]);
-  function onPosted(card){ const k=ckey(card); setCounts(function(c){ const n=Object.assign({},c); n[k]=(n[k]||0)+1; return n; }); }
-  async function uploadVideo(file, caption){
-    const u=await sb.auth.getUser(); if(!u.data.user) throw new Error('Iniciá sesión');
-    const ext=(file.name.split('.').pop()||'mp4').toLowerCase();
-    const path=u.data.user.id+'/'+Date.now()+'.'+ext;
-    const up=await sb.storage.from('posts').upload(path, file, {contentType:file.type||'video/mp4', upsert:false});
-    if(up.error) throw up.error;
-    const url=sb.storage.from('posts').getPublicUrl(path).data.publicUrl;
-    const ins=await sb.from('posts').insert({ user_id:u.data.user.id, video_url:url, caption:caption||null }).select().single();
-    if(ins.error) throw ins.error;
-  }
-  if(!ok) return <Gate onOk={function(){ try{sessionStorage.setItem('ea_age_ok','1');}catch(e){} setOk(true); }}/>;
-
-  const uParam=(function(){ try{ return new URLSearchParams(location.search).get('u'); }catch(e){ return null; } })();
-  let items=[]; let uAuthor='';
-  if(rows){
-    const base=function(r){ return { type:'perfil', sid:r.id, name:r.nombre, bio:r.bio, ciudad:r.ciudad, edad:r.edad, roles:r.roles||[], verificado:r.verificado, likes:r.puntos||0, foto:(Array.isArray(r.fotos)&&r.fotos[0])||null, freshTs: r.created_at? new Date(r.created_at).getTime():0, href:'perfil.html?sid='+r.id }; };
-    const pvids=[], fotos=[];
-    rows.forEach(function(r){ const b=base(r); const vv=Array.isArray(r.videos)?r.videos:[]; vv.forEach(function(v){ pvids.push(Object.assign({},b,{video:v,videoUrl:v})); }); if(b.foto) fotos.push(Object.assign({},b,{video:null,videoUrl:null})); });
-    const uposts=posts.map(function(p){ return { type:'post', postId:p.id, name:p.autor, caption:p.caption, video:p.video_url, videoUrl:p.video_url, foto:null, likes:0, freshTs: p.created_at? new Date(p.created_at).getTime():0, userId:p.user_id }; });
-    const nots=noticias.map(function(n){ return { type:'noticia', nid:n.id, name:'Aura Noticias', fuente:n.fuente, caption:n.titulo, bio:n.resumen, foto:n.imagen, video:null, videoUrl:null, likes:0, freshTs: n.publicado_at? new Date(n.publicado_at).getTime():0, href: (n.tipo==='propia'? ('nota.html?id='+n.id) : (n.url||'#')), external: n.tipo!=='propia' }; });
-    const fotosAll=nots.concat(fotos);
-    const vids=uposts.concat(pvids);
-    if(uParam){ items = uposts.filter(function(x){return x.userId===uParam;}); uAuthor=(items[0]&&items[0].name)||''; }
-    else { items = mode==='video'?vids : mode==='foto'?fotosAll : vids.concat(fotosAll); }
-  }
-
-  return <div className="h-full w-full flex justify-center bg-black"><div className="relative h-full w-full max-w-[460px] bg-neutral-950" onTouchStart={onTS} onTouchEnd={onTE}>
-    <ModeBar mode={mode} setMode={changeMode} onMenu={function(){setMenu(true);}} onUpload={function(){setUpl(true);}}/>
-    {rows===null && <div className="absolute inset-0 flex flex-col gap-3 p-4 pt-16 pointer-events-none"><div className="flex-1 rounded-2xl bg-neutral-800/60 animate-pulse"/><div className="h-24 rounded-2xl bg-neutral-800/60 animate-pulse"/></div>}
-    {uParam && <a href="feed.html" onClick={function(e){e.stopPropagation();}} className="absolute top-16 left-3 z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur text-white text-[13px] font-semibold">\u2190 @{uAuthor||'usuario'} \u00b7 sus videos</a>}
-    {rows && uParam && items.length===0 && <div className="h-full flex items-center justify-center text-white/60 px-8 text-center">Esta persona todav\u00eda no subi\u00f3 videos.</div>}
-
-    {rows && items.length===0 && <div className="h-full flex flex-col items-center justify-center text-white/60 gap-3 px-8 text-center"><p>{mode==='video'?'Todavía no hay videos. ¡Subí el primero!':'No hay publicaciones.'}</p><button onClick={function(){setUpl(true);}} className="px-5 py-2 rounded-full text-neutral-950 font-semibold" style={{background:'linear-gradient(90deg,#f59e0b,#f43f5e)'}}>🎬 Subir video</button></div>}
-    {rows && items.length>0 && <div ref={scroller} key={mode} className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-sb">{items.map(function(p,i){return <div key={(p.postId||p.sid)+'|'+(p.videoUrl||'')+i} data-sid={p.sid||''} className="h-full w-full"><Card p={p} aura={AURAS[i%AURAS.length]} soundOn={soundOn} setSoundOn={setSoundOn} vol={vol} setVol={setVol} count={counts[ckey(p)]} onComments={setCmt} onReport={setRep}/></div>;})}</div>}
-    {rows && items.length>0 && <div className="feed-arrows absolute left-2 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2.5"><button onClick={function(){nav(-1);}} className="w-9 h-9 rounded-full bg-white/10 text-white/55 text-base flex items-center justify-center active:scale-90 hover:bg-white/20 hover:text-white/90 transition">▲</button><button onClick={function(){nav(1);}} className="w-9 h-9 rounded-full bg-white/10 text-white/55 text-base flex items-center justify-center active:scale-90 hover:bg-white/20 hover:text-white/90 transition">▼</button></div>}
-    {cmt && <Drawer card={cmt} onClose={function(){setCmt(null);}} onPosted={onPosted}/>}
-    {rep && <ReportSheet card={rep} onClose={function(){setRep(null);}}/>}
-    {upl && <UploadSheet me={me} onUpload={uploadVideo} onDone={function(){ setUpl(false); loadPosts(); if(mode==='foto') changeMode('video'); }} onClose={function(){setUpl(false);}}/>}
-    {menu && <Menu onClose={function(){setMenu(false);}} onUpload={function(){setUpl(true);}}/>}
-  </div></div>;
-}
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
-</script>
-<script>
-(function(){ try{ var src=document.getElementById('app-src').textContent; var out=Babel.transform(src,{presets:[['react',{runtime:'classic'}]]}).code; var sc=document.createElement('script'); sc.textContent=out; document.body.appendChild(sc); }catch(e){ console.error(e); document.getElementById('root').innerHTML='<div style="color:#fff;padding:24px">No se pudo cargar: '+(e&&e.message||e)+'</div>'; } })();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/ea-supabase.js?v=31" defer></script>
+<script src="js/app.js?v=41" defer></script>
 <script src="js/pwa.js?v=4" defer></script>
+<script src="js/theme.js?v=1" defer></script>
+<script>
+(function(){
+  var client=null, user=null, cat='', VENUES=[], CATS=[], PLANES=[], JOINED={};
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function fdate(s){ if(!s) return 'A coordinar'; try{ return new Date(s).toLocaleString('es-AR',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(e){ return s; } }
+
+  var planesEl=document.getElementById('fdPlanes'), postsEl=document.getElementById('fdPosts');
+
+  function planCard(p){
+    var v=p.venues||{}; var cnt=(p._n||0); var full=p.cupo_max? (cnt>=p.cupo_max):false;
+    var joined=!!JOINED[p.id];
+    var btn = joined? '<span class="fd-cupo" style="color:var(--gold)">✓ Ya estás</span>'
+      : (full? '<span class="fd-cupo">Completo</span>' : '<button class="btn btn-gold" data-join="'+esc(p.id)+'" style="padding:9px 16px">Sumarme</button>');
+    return '<div class="fd-card"><span class="fd-free">Gratis</span>'
+      +'<h3>'+esc(p.titulo)+'</h3>'
+      +(p.actividad?'<div class="fd-act">'+esc(p.actividad)+'</div>':'')
+      +'<div class="fd-meta"><span>📍 '+esc(v.nombre||'Lugar público')+(v.zona?(' · '+esc(v.zona)):'')+'</span><span>🗓️ '+esc(fdate(p.empieza_en))+'</span></div>'
+      +'<div class="fd-foot"><span class="fd-cupo">'+cnt+(p.cupo_max?(' / '+p.cupo_max):'')+' sumados</span>'+btn+'</div></div>';
+  }
+  function renderPlanes(){
+    var list=PLANES.filter(function(p){ return !cat || p.categoria_id===cat; });
+    planesEl.innerHTML = list.length? '<div class="fd-grid">'+list.map(planCard).join('')+'</div>'
+      : '<div class="fd-empty">Todavía no hay planes en esta categoría. <br>Creá el primero — es gratis.</div>';
+  }
+  async function loadPlanes(){
+    try{
+      var r=await client.from('plans').select('*, venues(nombre,zona,direccion_texto)').in('estado',['abierto','completo']).order('empieza_en',{ascending:true});
+      PLANES=r.data||[];
+      var ids=PLANES.map(function(p){return p.id;});
+      if(ids.length){
+        var rp=await client.from('plan_participants').select('plan_id,account_id').in('plan_id',ids);
+        var counts={}; (rp.data||[]).forEach(function(x){ counts[x.plan_id]=(counts[x.plan_id]||0)+1; if(user&&x.account_id===user.id) JOINED[x.plan_id]=true; });
+        PLANES.forEach(function(p){ p._n=counts[p.id]||0; });
+      }
+    }catch(e){ PLANES=[]; }
+    renderPlanes();
+  }
+  async function loadPosts(){
+    try{
+      var r=await client.from('posts').select('*').eq('estado','aprobado').order('created_at',{ascending:false}).limit(12);
+      var d=r.data||[];
+      postsEl.innerHTML = d.length? '<div class="fd-grid">'+d.map(function(x){return '<div class="fd-card"><h3 style="font-size:1rem">'+esc(x.caption||'Posteo')+'</h3></div>';}).join('')+'</div>'
+        : '<div class="fd-empty">Todavía no hay posteos.</div>';
+    }catch(e){ postsEl.innerHTML='<div class="fd-empty">No se pudieron cargar los posteos.</div>'; }
+  }
+  planesEl.addEventListener('click',async function(e){
+    var b=e.target.closest('[data-join]'); if(!b) return;
+    if(!user){ location.href='cuenta.html?next=feed.html'; return; }
+    var pid=b.getAttribute('data-join'); b.disabled=true; b.textContent='Sumándote…';
+    try{
+      var res=await client.from('plan_participants').insert({plan_id:pid, account_id:user.id});
+      if(res.error) throw res.error;
+      JOINED[pid]=true; await loadPlanes();
+    }catch(err){ b.disabled=false; b.textContent='Sumarme'; }
+  });
+
+  function buildChips(){
+    var w=document.getElementById('fdChips');
+    w.innerHTML='<button class="fd-chip on" data-cat="">Todos</button>'+CATS.map(function(c){return '<button class="fd-chip" data-cat="'+esc(c.id)+'">'+esc(c.nombre)+'</button>';}).join('');
+    w.addEventListener('click',function(e){var b=e.target.closest('.fd-chip'); if(!b)return; Array.prototype.forEach.call(w.children,function(c){c.classList.remove('on');}); b.classList.add('on'); cat=b.dataset.cat; renderPlanes();});
+  }
+
+  var modal=document.getElementById('fdModal');
+  function openModal(){
+    if(!user){ location.href='cuenta.html?next=feed.html'; return; }
+    var pv=document.getElementById('pVenue'); pv.innerHTML=VENUES.map(function(v){return '<option value="'+esc(v.id)+'">'+esc(v.nombre)+(v.zona?(' · '+esc(v.zona)):'')+'</option>';}).join('');
+    var pc=document.getElementById('pCat'); pc.innerHTML='<option value="">Sin categoría</option>'+CATS.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.nombre)+'</option>';}).join('');
+    document.getElementById('pNote').textContent=''; modal.classList.add('on');
+  }
+  document.getElementById('fdNuevo').addEventListener('click',openModal);
+  document.getElementById('fdX').addEventListener('click',function(){modal.classList.remove('on');});
+  modal.addEventListener('click',function(e){ if(e.target===modal) modal.classList.remove('on'); });
+  document.getElementById('pCrear').addEventListener('click',async function(){
+    var note=document.getElementById('pNote'); note.className='fd-note';
+    var titulo=document.getElementById('pTitulo').value.trim();
+    if(!titulo){ note.textContent='Poné un título.'; note.className='fd-note err'; return; }
+    var cupo=parseInt(document.getElementById('pCupo').value,10);
+    var cuando=document.getElementById('pCuando').value;
+    var row={
+      account_id:user.id, titulo:titulo,
+      actividad:document.getElementById('pActividad').value.trim()||null,
+      categoria_id:document.getElementById('pCat').value||null,
+      venue_id:document.getElementById('pVenue').value||null,
+      empieza_en: cuando? new Date(cuando).toISOString():null,
+      cupo_max: isNaN(cupo)? null : cupo,
+      estado:'abierto'
+    };
+    note.textContent='Publicando…';
+    try{
+      var res=await client.from('plans').insert(row).select().single();
+      if(res.error) throw res.error;
+      await client.from('plan_participants').insert({plan_id:res.data.id, account_id:user.id});
+      note.textContent='Plan publicado ✓'; note.className='fd-note ok';
+      setTimeout(function(){ modal.classList.remove('on'); loadPlanes(); }, 600);
+    }catch(err){ note.textContent='No se pudo: '+(err.message||err); note.className='fd-note err'; }
+  });
+
+  async function boot(){
+    try{ var s=await client.auth.getSession(); user=s&&s.data&&s.data.session&&s.data.session.user; }catch(e){}
+    try{ var rv=await client.from('venues').select('id,nombre,zona').eq('activo',true).order('nombre'); VENUES=rv.data||[]; }catch(e){}
+    try{ var rc=await client.from('categorias').select('id,nombre,orden').order('orden'); CATS=rc.data||[]; }catch(e){}
+    buildChips(); loadPlanes(); loadPosts();
+  }
+  var tries=0;
+  (function wait(){
+    if(window.eaSupa && window.eaSupa.client){ client=window.eaSupa.client; boot(); return; }
+    if(tries++>60){ planesEl.innerHTML='<div class="fd-empty">No se pudo cargar el feed.</div>'; return; }
+    setTimeout(wait,100);
+  })();
+})();
+</script>
 </body>
 </html>
-<!-- redeploy 1783860948 -->
