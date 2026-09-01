@@ -107,6 +107,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <script src="js/ea-supabase.js?v=31" defer></script>
 <script src="js/app.js?v=41" defer></script>
 <script src="js/pwa.js?v=4" defer></script>
@@ -145,6 +146,7 @@
     var ctas='';
     if(waLink) ctas+='<a class="btn btn-wa" href="'+esc(waLink)+'" target="_blank" rel="noopener">Contactar por WhatsApp</a>';
     if(x.tipo==='sesion') ctas+='<button class="btn btn-gold" id="pfCta">Reservar sesión</button>';
+    ctas+='<button class="btn btn-ghost" id="pfCV">Descargar CV (PDF)</button>';
     ctas+='<a class="btn btn-ghost" href="modelos.html">Volver a Talentos</a>';
 
     root.innerHTML=''
@@ -159,12 +161,39 @@
       +'    <div class="pf-sec"><h3>'+(x.tipo==='sesion'?'Qué te llevás':'Qué entregás')+'</h3><p>'+esc(x.que_entrega||'')+'</p></div>'
       +sobreBlock
       +negBlock
+      +'    <div class="pf-sec" id="pfGaleria"></div>'
       +'    <div class="pf-cta">'+ctas+'</div>'
       +'    <div class="pf-note" id="pfNote"></div>'
       +'    <div class="pf-block"><h3 style="margin:0 0 6px">Reseñas</h3><p style="color:var(--text-mute);margin:0">Las reseñas son gratis y se habilitan después de una interacción real. Todavía no hay reseñas.</p></div>'
       +'  </div>'
       +'</div>';
     var b=document.getElementById('pfCta'); if(b) b.addEventListener('click',onSesion);
+    var cv=document.getElementById('pfCV'); if(cv) cv.addEventListener('click',function(){ generarCV(x); });
+    loadGaleria(x.account_id);
+  }
+  function generarCV(x){
+    try{
+      var J=(window.jspdf&&window.jspdf.jsPDF); if(!J){ alert('Generando… probá de nuevo en un segundo.'); return; }
+      var doc=new J(); var y=22; doc.setFontSize(20); doc.text(String(x.titulo||'CV'),20,y); y+=10; doc.setFontSize(11);
+      var L=[]; L.push('Tipo: '+(TLABEL[x.tipo]||'')); if(x.zona)L.push('Zona: '+x.zona); if(x.edad)L.push('Edad: '+x.edad+' anios'); if(x.estatura)L.push('Estatura: '+x.estatura); if(x.contacto_whatsapp)L.push('Contacto: '+x.contacto_whatsapp); if(x.precio_centavos)L.push('Precio: $'+(x.precio_centavos/100).toLocaleString('es-AR'));
+      L.forEach(function(l){ doc.text(String(l),20,y); y+=7; });
+      function bloque(tit,txt){ if(!txt)return; y+=4; doc.setFont(undefined,'bold'); doc.text(tit,20,y); y+=7; doc.setFont(undefined,'normal'); var arr=doc.splitTextToSize(String(txt),170); doc.text(arr,20,y); y+=arr.length*6; }
+      bloque(x.tipo==='sesion'?'Que te llevas':'Que entregas', x.que_entrega);
+      bloque('Sobre', x.sobre);
+      doc.setFontSize(9); doc.text('Aura - auraexperience.com.ar',20,287);
+      doc.save('CV-'+String(x.titulo||'aura').replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'.pdf');
+    }catch(e){ alert('No se pudo generar el PDF.'); }
+  }
+  async function loadGaleria(accId){
+    var el=document.getElementById('pfGaleria'); if(!el||!accId) return;
+    try{
+      var r=await client.from('posts').select('foto_url,video_url,tipo').eq('user_id',accId).eq('estado','visible').order('created_at',{ascending:false}).limit(12);
+      var d=r.data||[]; if(!d.length){ el.innerHTML=''; return; }
+      el.innerHTML='<h3>Fotos y videos</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:8px">'+d.map(function(p){
+        if(p.tipo==='video'&&p.video_url) return '<video src="'+esc(p.video_url)+'" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:#000" muted playsinline controls></video>';
+        var s=p.foto_url||p.video_url; return '<img src="'+esc(s)+'" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px">';
+      }).join('')+'</div>';
+    }catch(e){ el.innerHTML=''; }
   }
   function onSesion(){
     if(!user){ location.href='cuenta.html?next=perfil.html%3Fid%3D'+encodeURIComponent(LISTING.id); return; }
