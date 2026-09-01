@@ -16,7 +16,6 @@
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
 <link rel="stylesheet" href="css/styles.css?v=41">
 <style>
@@ -61,6 +60,8 @@
   .ma-msg.err{color:#f0a5bd}
   .ma-msg.ok{color:var(--gold)}
   .ma-formbtns{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+  .ma-hr{border:none;border-top:1px solid var(--line,rgba(255,255,255,.1));margin:6px 0 14px}
+  .ma-optlbl{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-mute);margin:2px 0 10px}
 </style>
 </head>
 <body>
@@ -100,7 +101,7 @@
   <div class="ma-dialog">
     <button class="ma-x" id="maX" aria-label="Cerrar">&times;</button>
     <h2 id="fTitle">Editar ficha</h2>
-    <div class="fsub" id="fSub">Se cobra por un servicio. Precio y “qué entregás” a la vista.</div>
+    <div class="fsub">Se cobra por un servicio. Precio y “qué entregás” a la vista.</div>
     <label class="ma-f"><span class="lbl">Título</span><input id="fTitulo" placeholder="Ej: Arreglos de ropa y costura"></label>
     <label class="ma-f"><span class="lbl">Tipo</span>
       <select id="fTipo">
@@ -113,7 +114,24 @@
     <label class="ma-f"><span class="lbl">Qué entregás / Qué te llevás <span class="ma-count" id="fCount">0</span>/80 mín.</span><textarea id="fQe" placeholder="Contá con claridad qué recibe la persona. Mínimo 80 caracteres."></textarea></label>
     <label class="ma-f" id="fPrecioWrap"><span class="lbl">Precio (ARS)</span><input id="fPrecio" type="number" min="0" step="100" placeholder="Ej: 8000"></label>
     <label class="ma-f"><span class="lbl">Zona</span><input id="fZona" placeholder="Ej: La Plata · Tolosa"></label>
-    <label class="ma-f"><span class="lbl">Foto (URL) — la podés cambiar cuando quieras</span><input id="fFoto" placeholder="https://…"></label>
+    <label class="ma-f"><span class="lbl">WhatsApp / teléfono de contacto</span><input id="fWhatsapp" placeholder="Ej: 5492211234567"></label>
+    <label class="ma-f"><span class="lbl">Foto (URL)</span><input id="fFoto" placeholder="https://…"></label>
+
+    <hr class="ma-hr">
+    <div class="ma-optlbl">Opcional — lo decidís vos</div>
+    <label class="ma-f"><span class="lbl">Sobre vos / experiencia (CV)</span><textarea id="fSobre" placeholder="Tu experiencia, estudios, lo que sabés hacer…"></textarea></label>
+    <label class="ma-f"><span class="lbl">Edad</span><input id="fEdad" type="number" min="0" placeholder="Opcional"></label>
+    <label class="ma-f"><span class="lbl">Estatura</span><input id="fEstatura" placeholder="Opcional, ej: 1,70 m"></label>
+
+    <div id="fNegocio" style="display:none">
+      <hr class="ma-hr">
+      <div class="ma-optlbl">Datos del negocio</div>
+      <label class="ma-f"><span class="lbl">Rubro</span><input id="fRubro" placeholder="Ej: Panadería"></label>
+      <label class="ma-f"><span class="lbl">Dirección</span><input id="fDireccion" placeholder="Calle y número"></label>
+      <label class="ma-f"><span class="lbl">Horarios</span><input id="fHorarios" placeholder="Ej: Lun a Sáb 9 a 20"></label>
+      <label class="ma-f"><span class="lbl">Link de Google Maps</span><input id="fMapa" placeholder="https://maps.google…"></label>
+    </div>
+
     <div class="ma-msg" id="fMsg"></div>
     <div class="ma-formbtns">
       <button class="btn btn-ghost" id="fBorrador">Guardar borrador</button>
@@ -170,9 +188,10 @@
       if(id==='posteos'){
         var r=await client.from('posts').select('*').eq('user_id',user.id).order('created_at',{ascending:false});
         var d=r.data||[];
-        p.innerHTML = d.length? '<div class="ma-grid">'+d.map(function(x){return '<div class="ma-card" style="cursor:default"><div class="ma-card-b"><div class="ma-card-t">'+esc(x.caption||'Posteo')+'</div><div class="ma-card-m">'+esc(x.estado||'')+'</div></div></div>';}).join('')+'</div>' : emptyState('Todavía no publicaste posteos.');
+        p.innerHTML = '<div class="ma-bar"><span class="hint">Tus fotos y videos aparecen en el Feed.</span><a class="btn btn-gold" href="feed.html">Subir al feed</a></div>'
+          + (d.length? '<div class="ma-grid">'+d.map(function(x){var m=x.foto_url?('<div class="ma-thumb"><img src="'+esc(x.foto_url)+'"></div>'):''; return '<div class="ma-card" style="cursor:default">'+m+'<div class="ma-card-b"><div class="ma-card-t">'+esc(x.caption||(x.tipo==='video'?'Video':'Foto'))+'</div><div class="ma-card-m">'+esc(x.estado||'')+'</div></div></div>';}).join('')+'</div>' : emptyState('Todavía no subiste posteos.'));
       } else if(id==='trabajos'){
-        p.innerHTML = emptyState('Acá va tu galería de trabajos: fotos de resultados de lo que hiciste. Todavía no cargaste ninguno.');
+        p.innerHTML = emptyState('Acá va tu galería de trabajos: fotos de resultados de lo que hiciste. Subilas desde el Feed (foto) y quedan en tu perfil.','Ir al Feed');
       } else if(id==='servicios'){
         var rs=await client.from('listings').select('*').eq('account_id',user.id).in('tipo',['servicio','producto','negocio']).order('creado_en',{ascending:false});
         var ds=rs.data||[]; cache.servicios=ds;
@@ -184,46 +203,46 @@
       } else if(id==='planes'){
         var rp=await client.from('plans').select('*').eq('account_id',user.id).order('creado_en',{ascending:false});
         var dp=rp.data||[];
-        p.innerHTML = dp.length? '<div class="ma-grid">'+dp.map(function(x){return '<div class="ma-card" style="cursor:default"><div class="ma-card-b"><div class="ma-card-t">'+esc(x.titulo)+'</div><div class="ma-card-m">'+esc(x.estado||'')+' · gratis</div></div></div>';}).join('')+'</div>' : emptyState('Todavía no creaste ningún plan. Los planes son gratis, en lugares públicos.');
+        p.innerHTML = '<div class="ma-bar"><span class="hint">Tus planes gratis.</span><a class="btn btn-gold" href="feed.html">Crear un plan</a></div>'
+          + (dp.length? '<div class="ma-grid">'+dp.map(function(x){return '<div class="ma-card" style="cursor:default"><div class="ma-card-b"><div class="ma-card-t">'+esc(x.titulo)+'</div><div class="ma-card-m">'+esc(x.estado||'')+' · gratis</div></div></div>';}).join('')+'</div>' : emptyState('Todavía no creaste ningún plan. Los planes son gratis, en lugares públicos.'));
       }
     }catch(err){ p.innerHTML=emptyState('No pudimos cargar esta sección ahora. Probá de nuevo en un rato.'); }
   }
 
   var modal=document.getElementById('maModal');
-  var fTitulo=document.getElementById('fTitulo'), fTipo=document.getElementById('fTipo'), fQe=document.getElementById('fQe'),
-      fPrecio=document.getElementById('fPrecio'), fZona=document.getElementById('fZona'), fFoto=document.getElementById('fFoto'),
-      fMsg=document.getElementById('fMsg'), fCount=document.getElementById('fCount'), fPrecioWrap=document.getElementById('fPrecioWrap');
-  function updCount(){ var n=(fQe.value||'').trim().length; fCount.textContent=n; fCount.className='ma-count'+(n>=80?' ok':''); }
-  fQe.addEventListener('input',updCount);
-  fTipo.addEventListener('change',function(){ fPrecioWrap.style.display = (fTipo.value==='negocio')?'none':'block'; });
+  var F={};
+  ['fTitulo','fTipo','fQe','fPrecio','fZona','fFoto','fWhatsapp','fSobre','fEdad','fEstatura','fRubro','fDireccion','fHorarios','fMapa','fMsg','fCount','fPrecioWrap','fNegocio'].forEach(function(id){ F[id]=document.getElementById(id); });
+  function updCount(){ var n=(F.fQe.value||'').trim().length; F.fCount.textContent=n; F.fCount.className='ma-count'+(n>=80?' ok':''); }
+  F.fQe.addEventListener('input',updCount);
+  function tipoUI(){ F.fPrecioWrap.style.display=(F.fTipo.value==='negocio')?'none':'block'; F.fNegocio.style.display=(F.fTipo.value==='negocio')?'block':'none'; }
+  F.fTipo.addEventListener('change',tipoUI);
   function openEditor(listing, tipoNuevo){
     current=listing;
     document.getElementById('fTitle').textContent = listing? 'Editar ficha' : 'Nueva ficha';
-    fTitulo.value = listing? (listing.titulo||'') : '';
-    fTipo.value = listing? (listing.tipo||'servicio') : (tipoNuevo||'servicio');
-    fQe.value = listing? (listing.que_entrega||'') : '';
-    fPrecio.value = (listing && listing.precio_centavos!=null)? (listing.precio_centavos/100) : '';
-    fZona.value = listing? (listing.zona||'') : '';
-    fFoto.value = listing? (listing.foto_principal||'') : '';
-    fPrecioWrap.style.display = (fTipo.value==='negocio')?'none':'block';
-    fMsg.textContent=''; fMsg.className='ma-msg'; updCount();
-    modal.classList.add('on');
+    F.fTitulo.value=listing?(listing.titulo||''):''; F.fTipo.value=listing?(listing.tipo||'servicio'):(tipoNuevo||'servicio');
+    F.fQe.value=listing?(listing.que_entrega||''):''; F.fPrecio.value=(listing&&listing.precio_centavos!=null)?(listing.precio_centavos/100):'';
+    F.fZona.value=listing?(listing.zona||''):''; F.fFoto.value=listing?(listing.foto_principal||''):'';
+    F.fWhatsapp.value=listing?(listing.contacto_whatsapp||''):''; F.fSobre.value=listing?(listing.sobre||''):'';
+    F.fEdad.value=(listing&&listing.edad!=null)?listing.edad:''; F.fEstatura.value=listing?(listing.estatura||''):'';
+    F.fRubro.value=listing?(listing.negocio_rubro||''):''; F.fDireccion.value=listing?(listing.negocio_direccion||''):'';
+    F.fHorarios.value=listing?(listing.negocio_horarios||''):''; F.fMapa.value=listing?(listing.negocio_mapa||''):'';
+    tipoUI(); F.fMsg.textContent=''; F.fMsg.className='ma-msg'; updCount(); modal.classList.add('on');
   }
   function closeEditor(){ modal.classList.remove('on'); current=null; }
   document.getElementById('maX').addEventListener('click',closeEditor);
   modal.addEventListener('click',function(e){ if(e.target===modal) closeEditor(); });
 
   function collect(publicar){
-    var tipo=fTipo.value;
-    var precioNum = parseFloat(fPrecio.value);
+    var tipo=F.fTipo.value; var precioNum=parseFloat(F.fPrecio.value); var edadNum=parseInt(F.fEdad.value,10);
     var patch={
-      titulo: fTitulo.value.trim(),
-      tipo: tipo,
-      que_entrega: fQe.value.trim() || null,
-      zona: fZona.value.trim() || null,
-      foto_principal: fFoto.value.trim() || null,
-      modalidad: (tipo==='sesion')?'video':'presencial',
-      precio_centavos: (isNaN(precioNum)? null : Math.round(precioNum*100))
+      titulo:F.fTitulo.value.trim(), tipo:tipo,
+      que_entrega:F.fQe.value.trim()||null, zona:F.fZona.value.trim()||null,
+      foto_principal:F.fFoto.value.trim()||null, modalidad:(tipo==='sesion')?'video':'presencial',
+      precio_centavos:(isNaN(precioNum)?null:Math.round(precioNum*100)),
+      contacto_whatsapp:F.fWhatsapp.value.trim()||null, sobre:F.fSobre.value.trim()||null,
+      edad:(isNaN(edadNum)?null:edadNum), estatura:F.fEstatura.value.trim()||null,
+      negocio_rubro:F.fRubro.value.trim()||null, negocio_direccion:F.fDireccion.value.trim()||null,
+      negocio_horarios:F.fHorarios.value.trim()||null, negocio_mapa:F.fMapa.value.trim()||null
     };
     if(tipo==='sesion') patch.direccion_id=null;
     if(publicar) patch.estado='publicado';
@@ -238,24 +257,17 @@
     return null;
   }
   async function save(publicar){
-    var patch=collect(publicar);
-    var err=validate(patch, publicar);
-    fMsg.className='ma-msg';
-    if(err){ fMsg.textContent=err; fMsg.className='ma-msg err'; return; }
-    fMsg.textContent='Guardando…';
+    var patch=collect(publicar); var err=validate(patch, publicar); F.fMsg.className='ma-msg';
+    if(err){ F.fMsg.textContent=err; F.fMsg.className='ma-msg err'; return; }
+    F.fMsg.textContent='Guardando…';
     try{
       var res;
-      if(current && current.id){
-        res=await client.from('listings').update(patch).eq('id',current.id).select().single();
-      } else {
-        patch.account_id=user.id;
-        if(!patch.estado) patch.estado='borrador';
-        res=await client.from('listings').insert(patch).select().single();
-      }
-      if(res.error){ fMsg.textContent='No se pudo guardar: '+res.error.message; fMsg.className='ma-msg err'; return; }
-      fMsg.textContent = publicar? 'Publicado ✓' : 'Guardado ✓'; fMsg.className='ma-msg ok';
+      if(current && current.id){ res=await client.from('listings').update(patch).eq('id',current.id).select().single(); }
+      else { patch.account_id=user.id; if(!patch.estado) patch.estado='borrador'; res=await client.from('listings').insert(patch).select().single(); }
+      if(res.error){ F.fMsg.textContent='No se pudo guardar: '+res.error.message; F.fMsg.className='ma-msg err'; return; }
+      F.fMsg.textContent=publicar?'Publicado ✓':'Guardado ✓'; F.fMsg.className='ma-msg ok';
       setTimeout(function(){ closeEditor(); loadTab(curTab); }, 500);
-    }catch(e){ fMsg.textContent='Error: '+(e&&e.message||e); fMsg.className='ma-msg err'; }
+    }catch(e){ F.fMsg.textContent='Error: '+(e&&e.message||e); F.fMsg.className='ma-msg err'; }
   }
   document.getElementById('fBorrador').addEventListener('click',function(){ save(false); });
   document.getElementById('fPublicar').addEventListener('click',function(){ save(true); });
