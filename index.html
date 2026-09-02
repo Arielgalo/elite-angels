@@ -6,11 +6,11 @@
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <script>(function(){try{if(location.hostname.indexOf("netlify.app")>-1)return;var m=/android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent||"");var w=location.search.indexOf("web")>-1;if(w){try{sessionStorage.setItem("aura_web","1")}catch(e){}}var flag=false;try{flag=sessionStorage.getItem("aura_web")==="1"}catch(e){}if(m&&!w&&!flag){location.replace("feed.html");}}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aura · Encuentros, sesiones y talentos</title>
-<meta name="description" content="Sumate a planes gratis cerca tuyo, reservá sesiones de asesoría por videollamada o publicá tu oficio. Precio y tema siempre a la vista.">
+<title>Aura Experience · Plataforma de perfiles y roles · todos los géneros</title>
+<meta name="description" content="¿Necesitás generar dinero ya, incluso este fin de semana? Ingresá como perfil de Aura y conectá para generar liquidez con personas que te buscan. Generá tu CV, desarrollá tu portfolio y mostrá tus habilidades.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Aura · Encuentros, sesiones y talentos">
-<meta property="og:description" content="Sumate a planes gratis cerca tuyo, reservá sesiones de asesoría por videollamada o publicá tu oficio. Precio y tema siempre a la vista.">
+<meta property="og:title" content="Aura Experience · Plataforma de perfiles y roles · todos los géneros">
+<meta property="og:description" content="¿Necesitás generar dinero ya, incluso este fin de semana? Ingresá como perfil de Aura y conectá para generar liquidez con personas que te buscan. Generá tu CV, desarrollá tu portfolio y mostrá tus habilidades.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,39 +24,26 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
-<link rel="stylesheet" href="css/styles.css?v=41">
-<style>
-  .qa-rule{border:1px solid var(--gold);border-radius:16px;padding:26px 28px;background:linear-gradient(90deg,rgba(212,175,110,.10),rgba(212,175,110,.02));text-align:center}
-  .qa-rule .big{display:block;font-family:var(--serif,'Sora');font-size:clamp(1.4rem,3.4vw,2rem);font-weight:700;color:var(--gold-bright,var(--gold));line-height:1.15;margin-bottom:10px}
-  .three .feature p strong{color:var(--text)}
-  .three .dur{font-family:var(--sans,'Manrope');font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:block}
-  .three .feature{display:flex;flex-direction:column}
-  .three .feature .flink{margin-top:auto;padding-top:14px;color:var(--gold);font-weight:600;font-size:.9rem}
-  .home-hero .hero-lead{max-width:560px}
-  /* AURA HERO LEGIBILIDAD */
-  .page-hero-content h1{color:#fff}
-  .page-hero-content>p,.page-hero-content .hero-lead{color:rgba(255,255,255,.92)}
-  .page-hero-content .breadcrumb,.page-hero-content .breadcrumb a{color:rgba(255,255,255,.82)}
-  .page-hero .btn-ghost{color:#fff;border-color:rgba(255,255,255,.55)}
-</style>
+<link rel="stylesheet" href="css/styles.css?v=11">
 </head>
 <body>
 
 
 <header class="header" id="header">
   <div class="container nav">
-    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura"><span class="logo-text">Aura</span></a>
+    <a href="index.html" class="logo">
+      <img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience">
+      <span class="logo-text">Aura<span> Experience</span></span>
+    </a>
     <nav class="nav-links">
       <a href="index.html" class="active">Inicio</a>
-      <a href="modelos.html">Talentos</a>
-      <a href="feed.html">Feed</a>
-      <a href="nosotros.html">Qué es Aura</a>
-      <a href="contacto.html">Contacto</a>
-      <a href="cuenta.html">Mi cuenta</a>
+      <a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a>
+      <a href="noticias.html">Noticias</a><a href="nosotros.html">Nosotros</a>
+      <a href="contacto.html">Contacto</a><a href="instalar.html">Instalá la app</a><a href="cuenta.html">Mi cuenta</a>
     </nav>
     <div class="nav-actions">
-      <a href="publicar.html" class="btn btn-ghost" style="padding:13px 22px">Publicar</a>
-      <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
+      <a href="publicar.html" class="btn btn-ghost" style="padding:13px 22px">Publicá</a>
+      <a href="mi-perfil.html" class="btn btn-gold">Mi perfil</a>
       <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -64,99 +51,185 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html">Inicio</a>
-  <a href="modelos.html">Talentos</a>
-  <a href="feed.html">Feed</a>
-  <a href="nosotros.html">Qué es Aura</a>
+  <a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a>
+  <a href="nosotros.html">Nosotros</a>
   <a href="contacto.html">Contacto</a>
-  <a href="publicar.html">Publicar</a>
-  <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
+  <a href="publicar.html">Publicá tu perfil</a>
+  <a href="mi-perfil.html" class="btn btn-gold">Mi perfil</a>
 </div>
-<section class="page-hero home-hero">
-  <div class="hero-bg" style="background-image:linear-gradient(115deg,rgba(10,10,12,.93),rgba(10,10,12,.6) 58%,rgba(10,10,12,.32)),url('https://fsjrimmurtnrorqhnbwu.supabase.co/storage/v1/object/public/sitio/1783277101540_k0hw7i.jpg');background-size:cover;background-position:center"></div>
-  <div class="container page-hero-content reveal in">
-    <span class="eyebrow">La Plata</span>
-    <h1>Lo que sabés vale. <span class="text-gold">Lo que te falta, alguien lo sabe.</span></h1>
-    <p class="hero-lead">Encuentros gratis con gente cerca tuyo, y sesiones pagas con quien sabe lo que necesitás aprender.</p>
+
+<section class="hero">
+  <div class="hero-carousel" id="heroCarousel">
+    <div class="hero-slide grad-a active" style="background-image:linear-gradient(120deg,rgba(18,7,22,.78),rgba(18,7,22,.28) 46%,rgba(18,7,22,0) 72%),url('https://fsjrimmurtnrorqhnbwu.supabase.co/storage/v1/object/public/sitio/1783276688113_7pn3hk.jpg');background-size:cover;background-position:center"><div class="hero-phrase"><span class="ph-en">First, let's meet</span><span class="ph-es">Primero, conocerse</span></div></div>
+    <div class="hero-slide grad-b" style="background-image:linear-gradient(120deg,rgba(18,7,22,.78),rgba(18,7,22,.28) 46%,rgba(18,7,22,0) 72%),url('https://fsjrimmurtnrorqhnbwu.supabase.co/storage/v1/object/public/sitio/1783276688771_sb6a34.jpg');background-size:cover;background-position:center"><div class="hero-phrase"><span class="ph-en">For every person</span><span class="ph-es">Para todas las personas</span></div></div>
+    <div class="hero-slide grad-c" style="background-image:linear-gradient(120deg,rgba(18,7,22,.78),rgba(18,7,22,.28) 46%,rgba(18,7,22,0) 72%),url('https://fsjrimmurtnrorqhnbwu.supabase.co/storage/v1/object/public/sitio/1783277101540_k0hw7i.jpg');background-size:cover;background-position:center"><div class="hero-phrase"><span class="ph-en">Events, business & more</span><span class="ph-es">Eventos, negocios y más</span></div></div>
+    <div class="hero-slide grad-d" style="background-image:linear-gradient(120deg,rgba(18,7,22,.78),rgba(18,7,22,.28) 46%,rgba(18,7,22,0) 72%),url('https://fsjrimmurtnrorqhnbwu.supabase.co/storage/v1/object/public/sitio/1783277102597_e3ifg2.jpg');background-size:cover;background-position:center"><div class="hero-phrase"><span class="ph-en">Moments that matter</span><span class="ph-es">Momentos que valen</span></div></div>
+    <div class="hero-slide grad-a" style="background-image:linear-gradient(120deg,rgba(18,7,22,.78),rgba(18,7,22,.28) 46%,rgba(18,7,22,0) 72%),url('https://fsjrimmurtnrorqhnbwu.supabase.co/storage/v1/object/public/sitio/1783277103368_nkzkq5.jpg');background-size:cover;background-position:center"><div class="hero-phrase"><span class="ph-en">Good talks over drinks</span><span class="ph-es">Charlas y buenos tragos</span></div></div>
+    <div class="hero-slide grad-b" style="background-image:linear-gradient(120deg,rgba(18,7,22,.78),rgba(18,7,22,.28) 46%,rgba(18,7,22,0) 72%),url('https://fsjrimmurtnrorqhnbwu.supabase.co/storage/v1/object/public/sitio/1783276066695_tlxmy6.jpg');background-size:cover;background-position:center"><div class="hero-phrase"><span class="ph-en">Dinner with style</span><span class="ph-es">Cenas con estilo</span></div></div>
+    <div class="hero-slide grad-c" style="background-image:linear-gradient(120deg,rgba(18,7,22,.78),rgba(18,7,22,.28) 46%,rgba(18,7,22,0) 72%),url('https://fsjrimmurtnrorqhnbwu.supabase.co/storage/v1/object/public/sitio/1783277557331_vgf5ry.jpg');background-size:cover;background-position:center"><div class="hero-phrase"><span class="ph-en">Easy connections</span><span class="ph-es">Conexiones que fluyen</span></div></div>
+    <div class="hero-slide grad-d" style="background-image:linear-gradient(120deg,rgba(18,7,22,.78),rgba(18,7,22,.28) 46%,rgba(18,7,22,0) 72%),url('https://fsjrimmurtnrorqhnbwu.supabase.co/storage/v1/object/public/sitio/1783276067994_7l1xz3.jpg');background-size:cover;background-position:center"><div class="hero-phrase"><span class="ph-en">Memorable moments</span><span class="ph-es">Momentos memorables</span></div></div>
+    <div class="hero-slide grad-a" style="background-image:linear-gradient(120deg,rgba(18,7,22,.78),rgba(18,7,22,.28) 46%,rgba(18,7,22,0) 72%),url('assets/hero/car9.jpg');background-size:cover;background-position:center"><div class="hero-phrase"><span class="ph-en">Your time, your value</span><span class="ph-es">Tu tiempo, tu valor</span></div></div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="container hero-inner reveal in">
+    <span class="eyebrow" data-cfg="hero_eyebrow" style="letter-spacing:.1em;text-transform:none;font-size:.82rem;display:block;max-width:540px;line-height:1.55">Red de presencias y roles a demanda por tiempo y valor.</span>
+    <h1 id="heroTitulo">Conexiones reales. <span class="text-gold">Acuerdos privados a tu medida.</span></h1>
+    <p class="hero-lead" id="heroLead">En Aura, tu presencia y tu tiempo tienen un valor real. Descubrí personas que buscan cubrir diferentes roles: acompañamiento profesional, empresarial, pedidos y puestos laborales o de oficios varios, asistencias o simplemente compañía, charlas interesantes, o presencia a cambio de valor por tiempo. Creá vínculos que potencien tu vida, definí tus propios límites y generá ingresos de manera directa y discreta hoy mismo.</p>
     <div class="hero-actions">
-      <a href="modelos.html" class="btn btn-gold">Buscar un talento</a>
-      <a href="publicar.html" class="btn btn-ghost">Publicar lo mío</a>
+      <a href="modelos.html" class="btn btn-gold">Explorar perfiles</a>
+      <a href="publicar.html" class="btn btn-ghost">Publicá tu espacio</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num" id="statModelos">11</div><div class="lbl">Perfiles</div></div>
+      <div class="hero-stat"><div class="num" id="statCiudades">6</div><div class="lbl">Provincias</div></div>
+      <div class="hero-stat"><div class="num">24/7</div><div class="lbl">Disponibles</div></div>
+    </div>
+  </div>
+  <div class="hero-dots" id="heroDots"></div>
+</section>
+
+<div class="trust">
+  <div class="trust-track">
+    <span class="trust-item">Discreción Absoluta</span>
+    <span class="trust-item">Perfiles y Roles Verificados</span>
+    <span class="trust-item">Atención Premium</span>
+    <span class="trust-item">Cobertura Internacional</span>
+    <span class="trust-item">Reservas 24/7</span>
+    <span class="trust-item">Discreción Absoluta</span>
+    <span class="trust-item">Perfiles y Roles Verificados</span>
+    <span class="trust-item">Atención Premium</span>
+    <span class="trust-item">Cobertura Internacional</span>
+    <span class="trust-item">Reservas 24/7</span>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Selección exclusiva</span>
+      <h2 data-cfg="feat_title">Perfiles destacados</h2>
+      <p data-cfg="feat_sub">Personas de distintos géneros y estilos, entre las más buscadas de la plataforma. Cada perfil se verifica para garantizar autenticidad y respeto.</p>
+      <div class="divider"></div>
+    </div>
+    <div class="models-grid" id="featuredGrid"></div>
+    <div style="text-align:center;margin-top:54px" class="reveal">
+      <a href="modelos.html" class="btn btn-ghost">Ver catálogo completo</a>
     </div>
   </div>
 </section>
 
-<section class="section" style="padding-top:40px;padding-bottom:10px">
-  <div class="container" style="max-width:820px">
-    <div class="qa-rule">
-      <span class="big">Se cobra por un servicio. Nunca por un encuentro.</span>
-      <p style="margin:0;color:var(--text-soft)">Los planes son gratis siempre. Las sesiones pagas son por videollamada.</p>
+<section class="section" id="destSection">
+  <div class="container">
+    <div class="section-head reveal"><span class="eyebrow">Cada día algo nuevo</span><h2>Nuevos hoy y en <span class="text-gold">ascenso</span></h2><p>Entrá cada día: perfiles recién llegados y quienes más suben en el ranking. Lo mejor se mueve rápido.</p><div class="divider"></div></div>
+    <div class="dest-block reveal"><div class="dest-title"><span class="dest-ic">✦</span> Recién llegados</div><div class="models-grid" id="nuevosGrid"></div></div>
+    <div class="dest-block reveal reveal-d1" style="margin-top:46px"><div class="dest-title"><span class="dest-ic">▲</span> En ascenso · más puntos</div><div class="models-grid" id="subenGrid"></div></div>
+  </div>
+</section>
+
+<section class="section cv-auto" style="background:var(--black-soft)">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Experiencias a medida</span>
+      <h2 data-cfg="serv_title">Para cada ocasión</h2>
+      <p data-cfg="serv_sub">Compañía y conexiones para lo que necesites, con acuerdo, respeto y buen gusto.</p>
+      <div class="divider"></div>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21l2.3-7.4-6-4.6h7.6z"/></svg></div>
+        <h3 data-cfg="serv1_title">Eventos, galas & sociales</h3>
+        <p data-cfg="serv1_text">Compañía con presencia para cenas, galas, estrenos y eventos sociales donde importa llegar bien acompañada/o. Cualquier género, según lo que busques.</p>
+      </div>
+      <div class="service-card reveal reveal-d1">
+        <div class="service-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v6l9 4 9-4V7"/></svg></div>
+        <h3 data-cfg="serv2_title">Negocios & asistencia</h3>
+        <p data-cfg="serv2_text">Coequiper, asistente o presencia en reuniones, viajes de trabajo y ferias. Perfiles con actitud profesional y buen trato.</p>
+      </div>
+      <div class="service-card reveal reveal-d2">
+        <div class="service-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 12a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"/><path d="M12 8v4l3 2"/></svg></div>
+        <h3 data-cfg="serv3_title">Planes & buenos momentos</h3>
+        <p data-cfg="serv3_text">Un café, una charla, una cena: conocerse sin apuro y compartir un buen rato. Lo que surja después, se acuerda entre las partes.</p>
+      </div>
     </div>
   </div>
 </section>
 
 <section class="section">
   <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">Cómo funciona</span>
-      <h2>Tres cosas, una regla</h2>
-      <p>Descubrí por tema y por zona, no por caras. Precio y tema siempre a la vista.</p>
-      <div class="divider"></div>
-    </div>
-    <div class="feature-row three">
-      <div class="feature reveal">
-        <span class="dur">Gratis siempre</span>
-        <h3>Planes</h3>
-        <p>Encuentros abiertos. Alguien publica un plan con actividad, lugar y hora, y otros se suman. <strong>La unidad es el plan, no la persona.</strong> Sin precio, nunca.</p>
-        <a href="feed.html" class="flink">Ver planes cerca →</a>
-      </div>
-      <div class="feature reveal reveal-d1">
-        <span class="dur">Con precio</span>
-        <h3>Talentos</h3>
-        <p>Servicios, productos y negocios. Tres tipos de ficha: <strong>Persona</strong>, <strong>Negocio</strong> y <strong>Producto</strong>. "Mis trabajos" es la galería de resultados.</p>
-        <a href="modelos.html" class="flink">Buscar un talento →</a>
-      </div>
-      <div class="feature reveal reveal-d2">
-        <span class="dur">Con precio</span>
-        <h3>Sesiones</h3>
-        <p>Mentorías de 30 o 60 minutos por videollamada. Asesoría, tormenta de ideas, revisión o clase práctica. Campo obligatorio: <strong>"Qué te llevás"</strong>.</p>
-        <a href="nosotros.html" class="flink">Cómo funcionan →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" style="background:var(--black-soft)">
-  <div class="container">
     <div class="split">
       <div class="split-visual reveal">
         <div class="figure logo-figure" id="estandarVisual">
-          <img src="assets/logo.svg" alt="Aura" class="figure-logo">
-          <div class="tag"><div class="name">Aura</div><div class="meta">Un proyecto de Grupo BA Zebra S.A.</div></div>
+          <img src="assets/logo.svg" alt="Aura Experience" class="figure-logo">
+          <div class="tag"><div class="name">Excelencia · 2026</div><div class="meta">Plataforma de confianza</div></div>
         </div>
       </div>
       <div class="split-content reveal reveal-d1">
-        <span class="eyebrow">Qué es Aura</span>
-        <h2>Aura es la herramienta. <span class="text-gold">El trabajo es de la gente.</span></h2>
-        <p>Ponemos el lugar, las reglas y el sistema. Quien ofrece define qué hace y cuánto cobra. Quien contrata elige a quién y para qué. Aura no interviene en esa decisión ni la orienta.</p>
+        <span class="eyebrow">Por qué Aura Experience</span>
+        <h2 data-cfg="why_title">Cómo funciona nuestra propuesta</h2>
+        <p data-cfg="why_text">Aura es una plataforma para todas las personas. El primer paso siempre es <strong>conocerse</strong>: se paga por el tiempo para conocer a la persona, y su tiempo se valora. A partir de ahí, cada quien decide con libertad.</p>
         <ul class="check-list">
-          <li><span class="ck">✓</span><span><strong>Verificamos la identidad</strong> de quien publica un servicio y revisamos cada publicación antes de que salga.</span></li>
-          <li><span class="ck">✓</span><span><strong>El precio es obligatorio</strong> en todo lo que se cobra. No se admite "a convenir".</span></li>
-          <li><span class="ck">✓</span><span><strong>Las reseñas son gratis</strong> y no se pueden comprar, destacar ni ocultar por dinero.</span></li>
+          <li><span class="ck">✓</span><span><strong>Presencial o por internet.</strong> Los planes pueden ser online o en persona. Vos elegís el formato.</span></li>
+          <li><span class="ck">✓</span><span><strong>Primero, un lugar seguro.</strong> El primer plan, preferentemente público, seguro y elegido entre ambos.</span></li>
+          <li><span class="ck">✓</span><span><strong>Crece con el tiempo.</strong> Si el vínculo funciona, suman planes, proyectos, trabajo o lo que acuerden. Todo entre partes.</span></li>
+          <li><span class="ck">✓</span><span><strong>Ganá ingresos con tu presencia.</strong> Personalizás cada plan con pautas de tiempo acordadas, entre adultos que consienten.</span></li>
         </ul>
-        <a href="nosotros.html" class="btn btn-gold">Qué es Aura</a>
+        <a href="nosotros.html" class="btn btn-gold">Conocé más</a>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section cta-band">
+<section class="section cv-auto" style="background:var(--black-soft)">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Lo que dicen</span>
+      <h2>Usuarios que confían</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi reveal">
+        <div class="quote">"</div>
+        <p>Un servicio impecable de principio a fin. Profesionalismo, elegancia y una discreción que se agradece enormemente.</p>
+        <div class="who"><span class="av">A</span><div><div class="nm">Alejandro M.</div><div class="rt">★★★★★</div></div></div>
+      </div>
+      <div class="testi reveal reveal-d1">
+        <div class="quote">"</div>
+        <p>La compañía perfecta para un evento importante. Todo coincidió exactamente con lo prometido. Volveré sin dudarlo.</p>
+        <div class="who"><span class="av">R</span><div><div class="nm">Ricardo T.</div><div class="rt">★★★★★</div></div></div>
+      </div>
+      <div class="testi reveal reveal-d2">
+        <div class="quote">"</div>
+        <p>Atención exquisita y una reserva rapidísima. Se nota que cuidan cada detalle. Recomendados al cien por cien.</p>
+        <div class="who"><span class="av">S</span><div><div class="nm">Sebastián L.</div><div class="rt">★★★★★</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0"><div class="container">
+  <div class="section-head reveal"><span class="eyebrow">Cobertura nacional</span><h2>Explorá por provincia</h2><div class="divider"></div></div>
+  <div class="pais-chips reveal">
+    <a href="modelos.html?prov=Ciudad de Buenos Aires" class="pais-chip">CABA</a>
+    <a href="modelos.html?prov=Buenos Aires" class="pais-chip">Buenos Aires</a>
+    <a href="modelos.html?prov=Córdoba" class="pais-chip">Córdoba</a>
+    <a href="modelos.html?prov=Santa Fe" class="pais-chip">Santa Fe</a>
+    <a href="modelos.html?prov=Mendoza" class="pais-chip">Mendoza</a>
+    <a href="modelos.html?prov=Neuquén" class="pais-chip">Neuquén</a>
+    <a href="modelos.html?prov=Río Negro" class="pais-chip">Río Negro</a>
+    <a href="modelos.html?prov=Salta" class="pais-chip">Salta</a>
+    <a href="modelos.html?prov=Tucumán" class="pais-chip">Tucumán</a>
+  </div>
+</div></section>
+
+<section class="section cta-band cv-auto">
   <div class="container">
     <div class="cta-inner reveal">
-      <span class="eyebrow">Empezá</span>
-      <h2>Sumate a Aura</h2>
-      <p>Sumate a planes gratis cerca tuyo, reservá una sesión o publicá tu oficio.</p>
+      <span class="eyebrow">Tu próxima experiencia</span>
+      <h2 data-cfg="cta_title">Tu próximo plan<br>te está esperando</h2>
+      <p data-cfg="cta_text">Escribinos y te ayudamos a encontrar la compañía ideal para tu próximo plan.</p>
       <div class="hero-actions" style="justify-content:center">
-        <a href="modelos.html" class="btn btn-gold">Buscar un talento</a>
-        <a href="publicar.html" class="btn btn-ghost">Publicar lo mío</a>
+        <a href="contacto.html" class="btn btn-gold">Reservar ahora</a>
+        <a href="https://wa.me/5492214982243" class="btn btn-wa">WhatsApp</a>
       </div>
     </div>
   </div>
@@ -166,27 +239,47 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura"><span class="logo-text">Aura</span></a>
-        <p><strong>En Aura se cobra por un servicio, nunca por un encuentro.</strong> Los planes son gratis siempre. Las sesiones pagas son por videollamada. Un proyecto de Grupo BA Zebra S.A., en La Plata.</p>
+        <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience"><span class="logo-text">Aura<span> Experience</span></span></a>
+        <p>¿Necesitás generar dinero ya, incluso este fin de semana? Ingresá como perfil de Aura y conectá para generar liquidez con personas que te buscan. Generá tu CV, desarrollá tu portfolio y mostrá tus habilidades.</p>
         <div class="socials">
           <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="Telegram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 4L3 11l5 2 2 6 3-4 5 4z"/></svg></a>
           <a href="https://wa.me/5492214982243" aria-label="WhatsApp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 0 1-13 8l-5 1 1-5A9 9 0 1 1 21 12z"/></svg></a>
         </div>
       </div>
-      <div class="footer-col"><h4>Navegación</h4><a href="index.html">Inicio</a><a href="modelos.html">Talentos</a><a href="feed.html">Feed</a><a href="nosotros.html">Qué es Aura</a><a href="contacto.html">Contacto</a></div>
-      <div class="footer-col"><h4>En Aura</h4><a href="modelos.html">Talentos y oficios</a><a href="feed.html">Sesiones</a><a href="feed.html">Planes</a><a href="publicar.html">Publicar lo mío</a></div>
-      <div class="footer-col"><h4>Contacto</h4><a href="mailto:zebraargentinasa@gmail.com">zebraargentinasa@gmail.com</a><a href="https://wa.me/5492214982243">WhatsApp</a></div>
+      <div class="footer-col">
+        <h4>Navegación</h4>
+        <a href="index.html">Inicio</a>
+        <a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="contacto.html">Contacto</a>
+      </div>
+      <div class="footer-col">
+        <h4>Servicios</h4>
+        <a href="modelos.html">Eventos & sociales</a>
+        <a href="modelos.html">Viajes</a>
+        <a href="modelos.html">Planes</a>
+        <a href="contacto.html">Reservas</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <a href="tel:+5492214982243" class="js-phone">+54 9 221 498-2243</a>
+        <a href="contacto.html">staffcontactos@gmail.com</a>
+        <a href="https://wa.me/5492214982243">WhatsApp 24/7</a>
+      </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 Aura · La Plata, Argentina. · <a href="terminos.html" style="color:inherit;text-decoration:underline">Términos</a> · <a href="privacidad.html" style="color:inherit;text-decoration:underline">Privacidad</a></p>
+      <p>© 2026 Aura Experience. Todos los derechos reservados. · <a href="terminos.html" style="color:inherit;text-decoration:underline">Términos</a> · <a href="privacidad.html" style="color:inherit;text-decoration:underline">Privacidad</a></p>
+      <div class="age"><span class="b18">18+</span><span>Solo para mayores de edad</span></div>
     </div>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="js/ea-supabase.js?v=31" defer></script>
-<script src="js/app.js?v=41" defer></script>
+<script src="js/app.js?v=30" defer></script>
 <script src="js/pwa.js?v=4" defer></script>
 <script src="js/theme.js?v=1" defer></script>
 </body>
 </html>
+                                                                                                                                                                                          
