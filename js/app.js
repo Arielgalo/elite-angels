@@ -84,9 +84,16 @@ const ubicTxt = (m) => [m.ciudad, m.provincia].filter(Boolean).join(', ');
 const waLink = (tel) => 'https://wa.me/' + String(tel || '').replace(/[^\d]/g, '');
 const numCm = (v) => { const n = parseInt(String(v||'').replace(/[^\d]/g,''),10); return isNaN(n)?null:n; };
 
-// Giro de producto: se elimina el catálogo demo del modelo anterior (acompañantes).
-// El catálogo real sale de Supabase (perfiles_publicados). Sin datos = catálogo vacío, no demo.
-const MODELS = [];
+const MODELS = [
+  { id:'martina', name:'Martina', provincia:'Ciudad de Buenos Aires', ciudad:'Palermo', age:24, height:'1.72', cabello:'Castaña', tipo:'Delgada', nacionalidad:'Argentina', precio_cita:60000, price:60000, plan:'premium', puntos:48, tone:'#d4af6e', langs:['Español','Inglés'], style:['Elegante','Culta'], bio:'Refinada, culta y conversadora.' },
+  { id:'delfina', name:'Delfina', provincia:'Córdoba', ciudad:'Córdoba', age:26, height:'1.75', cabello:'Morena', tipo:'Atlética', nacionalidad:'Argentina', precio_cita:50000, price:50000, plan:'premium', puntos:35, tone:'#d9a7a0', langs:['Español','Portugués'], style:['Sofisticada'], bio:'Presencia magnética y trato exquisito.' },
+  { id:'camila', name:'Camila', provincia:'Santa Fe', ciudad:'Rosario', age:23, height:'1.68', cabello:'Rubia', tipo:'Curvas', nacionalidad:'Argentina', precio_cita:40000, price:40000, plan:'top', puntos:18, tone:'#e8cf9a', langs:['Español'], style:['Dulce'], bio:'Encanto y buena charla.' },
+  { id:'renata', name:'Renata', provincia:'Buenos Aires', ciudad:'La Plata', age:25, height:'1.71', cabello:'Morena', tipo:'Curvas', nacionalidad:'Argentina', precio_cita:35000, price:35000, plan:'top', puntos:14, tone:'#cfc0a4', langs:['Español'], style:['Apasionada'], bio:'Carácter cálido y cercano.' },
+  { id:'lucia', name:'Lucía', provincia:'Mendoza', ciudad:'Mendoza', age:22, height:'1.70', cabello:'Castaña', tipo:'Delgada', nacionalidad:'Argentina', precio_cita:30000, price:30000, plan:'estandar', puntos:6, tone:'#c9a4cf', langs:['Español'], style:['Juvenil'], bio:'Juventud y simpatía.' },
+  { id:'abril', name:'Abril', provincia:'Neuquén', ciudad:'Neuquén', age:27, height:'1.73', cabello:'Pelirroja', tipo:'Curvas', nacionalidad:'Argentina', precio_cita:30000, price:30000, plan:'estandar', puntos:3, tone:'#a4b8cf', langs:['Español'], style:['Carismática'], bio:'Para conocernos sin apuro.' },
+  { id:'valentina', name:'Valentina', provincia:'Ciudad de Buenos Aires', ciudad:'Recoleta', age:28, height:'1.74', cabello:'Rubia', tipo:'Voluptuosa', nacionalidad:'Argentina', precio_cita:50000, price:50000, plan:'top', puntos:22, tone:'#e8cf9a', langs:['Español','Inglés'], style:['Glamorosa'], bio:'Elegancia y actitud.' },
+  { id:'bianca', name:'Bianca', provincia:'Salta', ciudad:'Salta', age:23, height:'1.69', cabello:'Morena', tipo:'Delgada', nacionalidad:'Argentina', precio_cita:30000, price:30000, plan:'estandar', puntos:1, tone:'#cfc0a4', langs:['Español'], style:['Misteriosa'], bio:'Un café y una buena charla.' },
+];
 function figureSVG(tone){ return `<svg viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" color="${tone}" d="M100 40c14 0 24 11 24 27s-10 30-24 30-24-14-24-30 10-27 24-27Zm-44 110c8-18 25-30 44-30s36 12 44 30c10 22 14 70 14 130H42c0-60 4-108 14-130Z"/></svg>`; }
 
 const PLAN_BADGE={premium:'PREMIUM VIP',top:'TOP',estandar:'ESTÁNDAR'};
@@ -245,8 +252,7 @@ async function renderProfile(){
   const wrap=document.getElementById('pName'); if(!wrap) return;
   const params=new URLSearchParams(location.search); const sid=params.get('sid'); let m,real=false;
   if(sid&&window.eaSupa){ const p=await window.eaSupa.getPerfil(sid); if(p){ m=fromPublicado(p); real=true; } }
-  if(!m){ const id=params.get('id'); m=MODELS.find(x=>x.id===id)||MODELS[0]; }
-  if(!m){ const w=document.querySelector('.container'); if(w) w.innerHTML='<p style="padding:60px 0;text-align:center;color:var(--text-mute)">Este perfil no está disponible.</p>'; return; }
+  if(!m){ const id=params.get('id')||'valentina'; m=MODELS.find(x=>x.id===id)||MODELS[0]; }
   document.title=`${m.name} · Aura Experience`;
   document.getElementById('crumbName').textContent=m.name;
   document.getElementById('pName').textContent=m.name; if(m.verificado){ const _pn=document.getElementById('pName'); if(_pn && !_pn.parentElement.querySelector('.verif-badge')) _pn.insertAdjacentHTML('afterend','<span class="verif-badge" style="margin-top:6px">✓ Perfil verificado</span>'); }
