@@ -5,8 +5,9 @@
 <script>try{if(localStorage.getItem('aura_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ficha · Aura</title>
-<meta name="description" content="Ficha de talento en Aura: qué entregás, precio y zona a la vista.">
+<!-- M1: perfil previsualizable por anónimos. Contacto, galería completa y videos se gatean con modal (app.js). Confirmación +18 inyectada por app.js (eaAgeGate). -->
+<title>Perfil · Aura Experience</title>
+<meta name="description" content="Perfil en Aura Experience — presencia y conexiones para todos los géneros.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,57 +17,26 @@
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
-<link rel="stylesheet" href="css/styles.css?v=41">
-<style>
-  .pf-wrap{display:grid;grid-template-columns:minmax(0,420px) 1fr;gap:34px;align-items:start}
-  @media(max-width:760px){.pf-wrap{grid-template-columns:1fr}}
-  .pf-photo{border-radius:18px;overflow:hidden;background:#1a1a1f;aspect-ratio:4/5;position:relative}
-  .pf-photo img{width:100%;height:100%;object-fit:cover}
-  .pf-verif{position:absolute;top:12px;left:12px;background:rgba(10,10,12,.8);color:var(--gold);font-size:.75rem;font-weight:700;padding:5px 11px;border-radius:999px}
-  .pf-tipo{color:var(--gold);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem}
-  .pf-titulo{font-size:clamp(1.7rem,4vw,2.5rem);margin:8px 0 6px;line-height:1.1}
-  .pf-zona{color:var(--text-mute);margin-bottom:14px}
-  .pf-chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
-  .pf-chip{font-size:.8rem;color:var(--text-soft);border:1px solid var(--line,rgba(255,255,255,.14));border-radius:999px;padding:4px 12px}
-  .pf-precio{font-size:1.5rem;font-weight:700;color:var(--gold);margin:6px 0 18px}
-  .pf-sec{margin-top:24px}
-  .pf-sec h3{margin:0 0 8px;font-size:1rem}
-  .pf-sec p{color:var(--text-soft);line-height:1.65;white-space:pre-line;margin:0}
-  .pf-neg{border:1px solid var(--line,rgba(255,255,255,.1));border-radius:14px;padding:16px 18px;margin-top:10px}
-  .pf-neg div{color:var(--text-soft);font-size:.92rem;margin:4px 0}
-  .pf-neg b{color:var(--text)}
-  .pf-cta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
-  .btn-wa{background:#25d366;color:#0a0a0c;border-color:#25d366}
-  .pf-note{margin-top:14px;color:var(--text-mute);font-size:.9rem;line-height:1.5}
-  .pf-note a{color:var(--gold);font-weight:600;word-break:break-all}
-  .pf-block{margin-top:34px;border-top:1px solid var(--line,rgba(255,255,255,.08));padding-top:24px}
-  .pf-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-start;justify-content:center;z-index:1000;padding:24px 14px;overflow:auto}
-  .pf-modal.on{display:flex}
-  .pf-dialog{background:var(--bg,#111014);border:1px solid var(--line,rgba(255,255,255,.14));border-radius:18px;max-width:480px;width:100%;padding:26px;position:relative;margin:auto}
-  .pf-x{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-mute);font-size:1.6rem;cursor:pointer}
-  .pf-f{display:block;margin:12px 0}
-  .pf-f span{display:block;font-size:.82rem;font-weight:600;color:var(--text-soft);margin-bottom:6px}
-  .pf-f input{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.16));background:var(--black-soft,rgba(255,255,255,.03));color:var(--text);font-size:.95rem;box-sizing:border-box;font-family:var(--sans,'Manrope')}
-  .pf-msg{font-size:.88rem;min-height:20px;margin:8px 0;line-height:1.5}
-  .pf-msg.err{color:#f0a5bd}.pf-msg.ok{color:var(--gold)}
-</style>
+<link rel="stylesheet" href="css/styles.css?v=40">
+<style>@media (max-width:760px){#mainImg{display:none !important}.profile-gallery{margin-bottom:0 !important}}</style>
 </head>
 <body>
 
-<header class="header scrolled" id="header" style="position:sticky">
+
+<header class="header" id="header">
   <div class="container nav">
-    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura"><span class="logo-text">Aura</span></a>
+    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience"><span class="logo-text">Aura<span> Experience</span></span></a>
     <nav class="nav-links">
       <a href="index.html">Inicio</a>
-      <a href="modelos.html">Talentos</a>
-      <a href="feed.html">Feed</a>
-      <a href="nosotros.html">Qué es Aura</a>
-      <a href="contacto.html">Contacto</a>
+      <a href="modelos.html" class="active">Perfiles</a>
+      <a href="noticias.html">Noticias</a><a href="nosotros.html">Nosotros</a>
+      <a href="contacto.html">Contacto</a><a href="instalar.html">Instalá la app</a><a href="cuenta.html">Mi cuenta</a>
     </nav>
     <div class="nav-actions">
-      <a href="publicar.html" class="btn btn-ghost" style="padding:13px 22px">Publicar</a>
-      <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
+      <a href="publicar.html" class="btn btn-ghost" style="padding:13px 22px">Publicá</a>
+      <a href="mi-perfil.html" class="btn btn-gold">Mi perfil</a>
       <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -74,176 +44,96 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html">Inicio</a>
-  <a href="modelos.html">Talentos</a>
-  <a href="feed.html">Feed</a>
-  <a href="nosotros.html">Qué es Aura</a>
+  <a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a>
+  <a href="nosotros.html">Nosotros</a>
   <a href="contacto.html">Contacto</a>
-  <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
+  <a href="publicar.html">Publicá tu perfil</a>
+  <a href="mi-perfil.html" class="btn btn-gold">Mi perfil</a>
 </div>
 
-<section class="section" style="padding-top:40px">
-  <div class="container" id="pfRoot" style="max-width:1000px">
-    <div style="text-align:center;color:var(--text-mute);padding:60px 0">Cargando ficha…</div>
+<section class="section" style="padding-top:140px">
+  <div class="container">
+    <div class="breadcrumb" style="margin-bottom:34px"><a href="index.html">Inicio</a> · <a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a> · <span id="crumbName">Perfil</span></div>
+    <div class="profile-grid">
+      <!-- Galería -->
+      <div class="profile-gallery reveal">
+        <div class="profile-main-img" id="mainImg"></div>
+        <div class="profile-thumbs" id="thumbs"></div>
+      </div>
+      <!-- Info -->
+      <div class="profile-info reveal reveal-d1">
+        <div class="profile-header">
+          <span class="model-badge vip" style="position:static;display:inline-block;margin-bottom:14px">VIP Aura</span>
+          <h1 id="pName">—</h1>
+          <div class="profile-loc">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <span id="pLoc">—</span>
+          </div>
+          <div class="profile-rating"><span>★★★★★</span><span style="color:var(--text-soft);font-size:.9rem">5.0 · Perfil verificado</span></div>
+        </div>
+
+        <div class="spec-grid" id="specGrid"></div>
+
+        <h3 style="font-size:1.4rem;margin-bottom:12px">Sobre mí</h3>
+        <p class="profile-bio" id="pBio">—</p>
+
+        <h3 style="font-size:1.4rem;margin:24px 0 14px">Idiomas & Estilo</h3>
+        <div class="tag-chips" id="pChips"></div>
+
+        <div class="rate-box" id="rateBox">
+          <h3 style="font-size:1.3rem;margin-bottom:8px">Tarifas</h3>
+        </div>
+
+        <div id="profileAudio"></div>
+        <div class="profile-actions" id="profileActions"></div>
+      </div>
+    </div>
   </div>
 </section>
 
-<div class="pf-modal" id="pfModal">
-  <div class="pf-dialog">
-    <button class="pf-x" id="pfMX" aria-label="Cerrar">&times;</button>
-    <h2 style="margin:0 0 4px">Reservar sesión</h2>
-    <p style="color:var(--text-mute);font-size:.85rem;margin:0 0 6px">La sesión es por videollamada. Al confirmar generamos el link automáticamente.</p>
-    <label class="pf-f"><span>¿Cuándo querés la sesión?</span><input id="pfCuando" type="datetime-local"></label>
-    <div class="pf-msg" id="pfMMsg"></div>
-    <div style="display:flex;justify-content:flex-end;gap:10px"><button class="btn btn-gold" id="pfConfirmar">Confirmar reserva</button></div>
+<section class="section" style="padding-top:10px"><div class="container"><div id="profileVideos"></div></div></section>
+<section class="section" style="background:var(--black-soft)"><div class="container" id="resenasSection"></div></section>
+
+<!-- Perfiles relacionados -->
+<section class="section" style="background:var(--black-soft)">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Quizás también te gusten</span>
+      <h2>Otros perfiles</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="models-grid" id="relatedGrid"></div>
   </div>
-</div>
+</section>
 
 <footer class="footer">
   <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience"><span class="logo-text">Aura<span> Experience</span></span></a>
+        <p>Aura Experience — Alquilá presencia humana para lo que necesites: citas, amigos, eventos, roles o simple compañía. Personas reales y verificadas, para todas las personas y todos los géneros. El primer paso siempre es conocerse.</p>
+        <div class="socials">
+          <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="Telegram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 4L3 11l5 2 2 6 3-4 5 4z"/></svg></a>
+          <a href="https://wa.me/5492214982243" aria-label="WhatsApp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 0 1-13 8l-5 1 1-5A9 9 0 1 1 21 12z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Navegación</h4><a href="index.html">Inicio</a><a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a><a href="nosotros.html">Nosotros</a><a href="contacto.html">Contacto</a></div>
+      <div class="footer-col"><h4>Servicios</h4><a href="modelos.html">Eventos & Galas</a><a href="modelos.html">Viajes</a><a href="modelos.html">Cenas privadas</a><a href="contacto.html">Reservas VIP</a></div>
+      <div class="footer-col"><h4>Contacto</h4><a href="tel:+5492214982243" class="js-phone">+54 9 221 498-2243</a><a href="contacto.html">staffcontactos@gmail.com</a><a href="https://wa.me/5492214982243">WhatsApp 24/7</a></div>
+    </div>
     <div class="footer-bottom">
-      <p>© 2026 Aura · La Plata, Argentina. · <a href="terminos.html" style="color:inherit;text-decoration:underline">Términos</a> · <a href="privacidad.html" style="color:inherit;text-decoration:underline">Privacidad</a></p>
+      <p>© 2026 Aura Experience. Todos los derechos reservados. · <a href="terminos.html" style="color:inherit;text-decoration:underline">Términos</a> · <a href="privacidad.html" style="color:inherit;text-decoration:underline">Privacidad</a></p>
+      <div class="age"><span class="b18">18+</span><span>Solo para mayores de edad</span></div>
     </div>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-<script src="js/ea-supabase.js?v=31" defer></script>
-<script src="js/app.js?v=41" defer></script>
+<script src="js/ea-supabase.js?v=40" defer></script>
+<script src="js/app.js?v=40" defer></script>
 <script src="js/pwa.js?v=4" defer></script>
 <script src="js/theme.js?v=1" defer></script>
-<script>
-(function(){
-  var root=document.getElementById('pfRoot'), client=null, user=null, LISTING=null;
-  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-  function money(c){ if(c==null) return ''; return '$'+(c/100).toLocaleString('es-AR'); }
-  function wa(num){ var d=String(num||'').replace(/\D/g,''); return d? ('https://wa.me/'+d):''; }
-  var TLABEL={servicio:'Servicio / oficio',producto:'Producto',negocio:'Negocio',sesion:'Sesión · videollamada'};
-  function qid(){ try{ return new URLSearchParams(location.search).get('id'); }catch(e){ return null; } }
-  function uuid(){ try{ return crypto.randomUUID(); }catch(e){ return 'x'+Date.now()+Math.random().toString(36).slice(2,8); } }
-  function notFound(){
-    root.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--text-mute)"><h1 style="color:var(--text)">Esta ficha no está disponible.</h1>'
-      +'<p>Puede que todavía no esté publicada.</p><div style="margin-top:18px"><a href="modelos.html" class="btn btn-gold">Ver Talentos</a></div></div>';
-  }
-  function render(x){
-    LISTING=x;
-    var foto=x.foto_principal? '<img src="'+esc(x.foto_principal)+'" alt="'+esc(x.titulo||'')+'">':'';
-    var verif=x.verificado? '<span class="pf-verif">✓ Identidad verificada</span>':'';
-    var chips='';
-    if(x.edad) chips+='<span class="pf-chip">'+esc(x.edad)+' años</span>';
-    if(x.estatura) chips+='<span class="pf-chip">'+esc(x.estatura)+'</span>';
-    var negBlock='';
-    if(x.tipo==='negocio' && (x.negocio_rubro||x.negocio_direccion||x.negocio_horarios||x.negocio_mapa)){
-      negBlock='<div class="pf-sec"><h3>El negocio</h3><div class="pf-neg">'
-        +(x.negocio_rubro?'<div><b>Rubro:</b> '+esc(x.negocio_rubro)+'</div>':'')
-        +(x.negocio_direccion?'<div><b>Dirección:</b> '+esc(x.negocio_direccion)+'</div>':'')
-        +(x.negocio_horarios?'<div><b>Horarios:</b> '+esc(x.negocio_horarios)+'</div>':'')
-        +(x.negocio_mapa?'<div><a href="'+esc(x.negocio_mapa)+'" target="_blank" rel="noopener" style="color:var(--gold)">Ver en el mapa →</a></div>':'')
-        +'</div></div>';
-    }
-    var sobreBlock = x.sobre? '<div class="pf-sec"><h3>Sobre '+(x.tipo==='negocio'?'el negocio':'la persona')+'</h3><p>'+esc(x.sobre)+'</p></div>' : '';
-    var videoBlock = x.video_presentacion? '<div class="pf-sec"><h3>Video de presentación</h3><video src="'+esc(x.video_presentacion)+'" controls playsinline preload="metadata" style="width:100%;max-height:60vh;border-radius:14px;background:#000;margin-top:6px"></video></div>' : '';
-    var cvItems=''; if(x.estudios) cvItems+='<div><b>Estudios:</b> '+esc(x.estudios)+'</div>'; if(x.habilidades) cvItems+='<div><b>Habilidades:</b> '+esc(x.habilidades)+'</div>'; if(x.idiomas) cvItems+='<div><b>Idiomas:</b> '+esc(x.idiomas)+'</div>';
-    var cvBlock = cvItems? '<div class="pf-sec"><h3>CV</h3><div class="pf-neg">'+cvItems+'</div></div>' : '';
-    var mapEmbed='';
-    if(x.tipo==='negocio'){ var q=x.negocio_mapa||x.negocio_direccion; if(q){ var isUrl=q.indexOf('http')===0; var isEmbed=isUrl&&(q.indexOf('output=embed')>=0||q.indexOf('/embed')>=0); var src=isEmbed?q:('https://www.google.com/maps?q='+encodeURIComponent((x.negocio_direccion||q)+' La Plata')+'&output=embed'); mapEmbed='<div class="pf-sec"><h3>Ubicación</h3><iframe src="'+esc(src)+'" style="width:100%;height:300px;border:0;border-radius:14px" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>'; } }
-    var waLink=wa(x.contacto_whatsapp);
-    var ctas='';
-    if(waLink) ctas+='<a class="btn btn-wa" href="'+esc(waLink)+'" target="_blank" rel="noopener">Contactar por WhatsApp</a>';
-    if(x.tipo==='sesion') ctas+='<button class="btn btn-gold" id="pfCta">Reservar sesión</button>';
-    ctas+='<button class="btn btn-ghost" id="pfCV">Descargar CV (PDF)</button>';
-    ctas+='<a class="btn btn-ghost" href="modelos.html">Volver a Talentos</a>';
-
-    root.innerHTML=''
-      +'<div class="pf-wrap">'
-      +'  <div class="pf-photo">'+foto+verif+'</div>'
-      +'  <div class="pf-info">'
-      +'    <div class="pf-tipo">'+esc(TLABEL[x.tipo]||'')+'</div>'
-      +'    <h1 class="pf-titulo">'+esc(x.titulo||'')+'</h1>'
-      +'    <div class="pf-zona">'+(x.zona?('📍 '+esc(x.zona)):'')+'</div>'
-      +(chips?('<div class="pf-chips">'+chips+'</div>'):'')
-      +(x.precio_centavos?('<div class="pf-precio">'+money(x.precio_centavos)+'</div>'):'')
-      +'    <div class="pf-sec"><h3>'+(x.tipo==='sesion'?'Qué te llevás':'Qué entregás')+'</h3><p>'+esc(x.que_entrega||'')+'</p></div>'
-      +videoBlock+cvBlock+sobreBlock
-      +negBlock+mapEmbed
-      +'    <div class="pf-sec" id="pfGaleria"></div>'
-      +'    <div class="pf-cta">'+ctas+'</div>'
-      +'    <div class="pf-note" id="pfNote"></div>'
-      +'    <div class="pf-block"><h3 style="margin:0 0 6px">Reseñas</h3><p style="color:var(--text-mute);margin:0">Las reseñas son gratis y se habilitan después de una interacción real. Todavía no hay reseñas.</p></div>'
-      +'  </div>'
-      +'</div>';
-    var b=document.getElementById('pfCta'); if(b) b.addEventListener('click',onSesion);
-    var cv=document.getElementById('pfCV'); if(cv) cv.addEventListener('click',function(){ generarCV(x); });
-    loadGaleria(x.account_id);
-  }
-  function generarCV(x){
-    try{
-      var J=(window.jspdf&&window.jspdf.jsPDF); if(!J){ alert('Generando… probá de nuevo en un segundo.'); return; }
-      var doc=new J(); var y=22; doc.setFontSize(20); doc.text(String(x.titulo||'CV'),20,y); y+=10; doc.setFontSize(11);
-      var L=[]; L.push('Tipo: '+(TLABEL[x.tipo]||'')); if(x.zona)L.push('Zona: '+x.zona); if(x.edad)L.push('Edad: '+x.edad+' anios'); if(x.estatura)L.push('Estatura: '+x.estatura); if(x.contacto_whatsapp)L.push('Contacto: '+x.contacto_whatsapp); if(x.precio_centavos)L.push('Precio: $'+(x.precio_centavos/100).toLocaleString('es-AR'));
-      L.forEach(function(l){ doc.text(String(l),20,y); y+=7; });
-      function bloque(tit,txt){ if(!txt)return; y+=4; doc.setFont(undefined,'bold'); doc.text(tit,20,y); y+=7; doc.setFont(undefined,'normal'); var arr=doc.splitTextToSize(String(txt),170); doc.text(arr,20,y); y+=arr.length*6; }
-      bloque(x.tipo==='sesion'?'Que te llevas':'Que entregas', x.que_entrega);
-      bloque('Sobre', x.sobre);
-      bloque('Estudios', x.estudios);
-      bloque('Habilidades', x.habilidades);
-      bloque('Idiomas', x.idiomas);
-      doc.setFontSize(9); doc.text('Aura - auraexperience.com.ar',20,287);
-      doc.save('CV-'+String(x.titulo||'aura').replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'.pdf');
-    }catch(e){ alert('No se pudo generar el PDF.'); }
-  }
-  async function loadGaleria(accId){
-    var el=document.getElementById('pfGaleria'); if(!el||!accId) return;
-    try{
-      var r=await client.from('posts').select('foto_url,video_url,tipo').eq('user_id',accId).eq('estado','visible').order('created_at',{ascending:false}).limit(12);
-      var d=r.data||[]; if(!d.length){ el.innerHTML=''; return; }
-      el.innerHTML='<h3>Fotos y videos</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:8px">'+d.map(function(p){
-        if(p.tipo==='video'&&p.video_url) return '<video src="'+esc(p.video_url)+'" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:#000" muted playsinline controls></video>';
-        var s=p.foto_url||p.video_url; return '<img src="'+esc(s)+'" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px">';
-      }).join('')+'</div>';
-    }catch(e){ el.innerHTML=''; }
-  }
-  function onSesion(){
-    if(!user){ location.href='cuenta.html?next=perfil.html%3Fid%3D'+encodeURIComponent(LISTING.id); return; }
-    document.getElementById('pfMMsg').textContent=''; document.getElementById('pfMMsg').className='pf-msg';
-    document.getElementById('pfModal').classList.add('on');
-  }
-  var modal=document.getElementById('pfModal');
-  document.getElementById('pfMX').addEventListener('click',function(){modal.classList.remove('on');});
-  modal.addEventListener('click',function(e){ if(e.target===modal) modal.classList.remove('on'); });
-  document.getElementById('pfConfirmar').addEventListener('click',async function(){
-    var msg=document.getElementById('pfMMsg'); msg.className='pf-msg';
-    var cuando=document.getElementById('pfCuando').value;
-    if(!cuando){ msg.textContent='Elegí una fecha y hora.'; msg.className='pf-msg err'; return; }
-    var room='https://meet.jit.si/aura-'+uuid();
-    msg.textContent='Reservando…';
-    try{
-      var res=await client.from('bookings').insert({
-        listing_id:LISTING.id, comprador_id:user.id,
-        empieza_en:new Date(cuando).toISOString(), room_id:room, estado:'confirmada'
-      }).select().single();
-      if(res.error) throw res.error;
-      msg.className='pf-msg ok';
-      msg.innerHTML='¡Reserva confirmada! Tu link de videollamada:<br><a href="'+esc(room)+'" target="_blank" rel="noopener">'+esc(room)+'</a>';
-    }catch(err){ msg.textContent='No se pudo reservar: '+(err.message||err); msg.className='pf-msg err'; }
-  });
-
-  async function boot(){
-    try{ var s=await client.auth.getSession(); user=s&&s.data&&s.data.session&&s.data.session.user; }catch(e){}
-    var q=qid(); if(!q){ notFound(); return; }
-    try{
-      var r=await client.from('listings').select('*').eq('id',q).single();
-      if(r.error || !r.data || r.data.estado!=='publicado'){ notFound(); return; }
-      render(r.data);
-    }catch(e){ notFound(); }
-  }
-  var tries=0;
-  (function wait(){
-    if(window.eaSupa && window.eaSupa.client){ client=window.eaSupa.client; boot(); return; }
-    if(tries++>60){ notFound(); return; }
-    setTimeout(wait,100);
-  })();
-})();
-</script>
 </body>
 </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                             
