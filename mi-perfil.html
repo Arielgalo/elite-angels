@@ -6,7 +6,7 @@
 <script>if(location.hostname.indexOf("netlify.app")>-1)location.replace("https://auraexperience.com.ar"+location.pathname+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Mi Aura · Aura</title>
+<title>Mi perfil · Aura Experience</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,308 +16,50 @@
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
-<link rel="stylesheet" href="css/styles.css?v=41">
-<style>
-  .ma-empty{text-align:center;max-width:600px;margin:40px auto}
-  .ma-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:6px 0 22px;border-bottom:1px solid var(--line,rgba(255,255,255,.08))}
-  .ma-av{width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8a6a3a);display:flex;align-items:center;justify-content:center;font-family:var(--serif,'Sora');font-weight:700;font-size:1.5rem;color:#0a0a0c;overflow:hidden;flex:0 0 auto}
-  .ma-av img{width:100%;height:100%;object-fit:cover}
-  .ma-id{flex:1 1 auto;min-width:0}
-  .ma-id h1{font-size:clamp(1.5rem,3.4vw,2.1rem);margin:2px 0 3px;line-height:1.1}
-  .ma-id .ma-sub{color:var(--text-mute);font-size:.9rem}
-  .ma-actions{flex:0 0 auto}
-  .ma-tabs{display:flex;gap:6px;overflow-x:auto;padding:20px 0 4px;-webkit-overflow-scrolling:touch}
-  .ma-tab{flex:0 0 auto;padding:9px 16px;border-radius:999px;border:1px solid var(--line,rgba(255,255,255,.12));background:transparent;color:var(--text-soft);font-family:var(--sans,'Manrope');font-weight:600;font-size:.9rem;cursor:pointer;white-space:nowrap;transition:.15s}
-  .ma-tab.on{background:var(--gold);border-color:var(--gold);color:#0a0a0c}
-  .ma-panel{padding:22px 0 10px;min-height:200px}
-  .ma-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-  .ma-bar .hint{color:var(--text-mute);font-size:.85rem}
-  .ma-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-  .ma-card{border:1px solid var(--line,rgba(255,255,255,.1));border-radius:14px;overflow:hidden;background:var(--black-soft,rgba(255,255,255,.02));cursor:pointer;transition:.15s}
-  .ma-card:hover{border-color:var(--gold)}
-  .ma-card-b{padding:16px 18px}
-  .ma-card-t{font-weight:600;margin-bottom:6px}
-  .ma-card-m{font-size:.82rem;color:var(--gold)}
-  .ma-thumb{aspect-ratio:4/5;position:relative;overflow:hidden;background:#1a1a1f}
-  .ma-thumb img{width:100%;height:100%;object-fit:cover}
-  .ma-vf{position:absolute;top:8px;left:8px;background:rgba(10,10,12,.78);color:var(--gold);font-size:.66rem;font-weight:700;padding:3px 7px;border-radius:999px}
-  .ma-empty2{text-align:center;color:var(--text-mute);padding:40px 16px;border:1px dashed var(--line,rgba(255,255,255,.14));border-radius:16px}
-  .ma-empty2 p{margin:0 0 14px;max-width:440px;margin-inline:auto;line-height:1.55}
-  .ma-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-start;justify-content:center;z-index:1000;padding:24px 14px;overflow:auto}
-  .ma-modal.on{display:flex}
-  .ma-dialog{background:var(--bg,#111014);border:1px solid var(--line,rgba(255,255,255,.14));border-radius:18px;max-width:560px;width:100%;padding:26px;position:relative;margin:auto}
-  .ma-x{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-mute);font-size:1.6rem;cursor:pointer;line-height:1}
-  .ma-dialog h2{margin:0 0 4px;font-size:1.3rem}
-  .ma-dialog .fsub{color:var(--text-mute);font-size:.85rem;margin-bottom:16px}
-  .ma-f{display:block;margin-bottom:14px}
-  .ma-f span.lbl{display:block;font-size:.82rem;font-weight:600;color:var(--text-soft);margin-bottom:6px}
-  .ma-f input,.ma-f select,.ma-f textarea{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.16));background:var(--black-soft,rgba(255,255,255,.03));color:var(--text);font-family:var(--sans,'Manrope');font-size:.95rem;box-sizing:border-box}
-  .ma-f textarea{min-height:96px;resize:vertical}
-  .ma-count{font-weight:600}
-  .ma-count.ok{color:var(--gold)}
-  .ma-msg{min-height:20px;font-size:.85rem;margin:4px 0 10px}
-  .ma-msg.err{color:#f0a5bd}
-  .ma-msg.ok{color:var(--gold)}
-  .ma-formbtns{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-  .ma-hr{border:none;border-top:1px solid var(--line,rgba(255,255,255,.1));margin:6px 0 14px}
-  .ma-optlbl{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-mute);margin:2px 0 10px}
-</style>
+<link rel="stylesheet" href="css/styles.css?v=11">
 </head>
 <body>
 
 <header class="header scrolled" id="header" style="position:sticky">
   <div class="container nav">
-    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura"><span class="logo-text">Aura</span></a>
+    <a href="index.html" class="logo"><img src="assets/logo.svg" class="logo-emblem" alt="Aura Experience"><span class="logo-text">Aura<span> Experience</span></span></a>
     <nav class="nav-links">
       <a href="index.html">Inicio</a>
-      <a href="modelos.html">Talentos</a>
-      <a href="feed.html">Feed</a>
-      <a href="nosotros.html">Qué es Aura</a>
-      <a href="mi-perfil.html" class="active">Mi Aura</a>
+      <a href="modelos.html">Perfiles</a><a href="feed.html">Feed</a>
+      <a href="publicar.html">Publicá</a>
+      <a href="mi-perfil.html" class="active">Mi perfil</a>
     </nav>
-    <div class="nav-actions">
-      <button class="btn btn-gold" id="btnNuevoTop" style="padding:13px 22px">Publicar</button>
-      <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
-    </div>
+    <div class="nav-actions"><a href="publicar.html" class="btn btn-gold" style="padding:13px 22px">Publicar</a></div>
   </div>
 </header>
 
-<div class="mobile-menu" id="mobileMenu">
-  <a href="index.html">Inicio</a>
-  <a href="modelos.html">Talentos</a>
-  <a href="feed.html">Feed</a>
-  <a href="nosotros.html">Qué es Aura</a>
-  <a href="mi-perfil.html" class="btn btn-gold">Mi Aura</a>
-</div>
-
-<section class="section" style="padding-top:34px">
-  <div class="container" id="miAura" style="max-width:960px">
-    <div class="ma-empty2"><p>Cargando tu Aura…</p></div>
+<section class="section" style="padding-top:60px">
+  <div class="container">
+    <div style="text-align:center;max-width:620px;margin:0 auto 36px">
+      <span class="eyebrow">Acceso de perfiles</span>
+      <h1 style="font-size:clamp(2rem,4.5vw,3rem);margin-top:12px">Editá tu perfil</h1>
+      <p style="color:var(--text-soft);margin-top:10px">Ingresá con el email que usaste al publicar. Podés actualizar tus fotos, videos, voz, descripción y datos cuando quieras.</p>
+    </div>
+    <div id="portalRoot"></div>
   </div>
 </section>
-
-<div class="ma-modal" id="maModal">
-  <div class="ma-dialog">
-    <button class="ma-x" id="maX" aria-label="Cerrar">&times;</button>
-    <h2 id="fTitle">Editar ficha</h2>
-    <div class="fsub">Se cobra por un servicio. Precio y “qué entregás” a la vista.</div>
-    <label class="ma-f"><span class="lbl">Título</span><input id="fTitulo" placeholder="Ej: Arreglos de ropa y costura"></label>
-    <label class="ma-f"><span class="lbl">Tipo</span>
-      <select id="fTipo">
-        <option value="servicio">Servicio / oficio</option>
-        <option value="producto">Producto</option>
-        <option value="negocio">Negocio</option>
-        <option value="sesion">Sesión (videollamada)</option>
-      </select>
-    </label>
-    <label class="ma-f"><span class="lbl">Qué entregás / Qué te llevás <span class="ma-count" id="fCount">0</span>/80 mín.</span><textarea id="fQe" placeholder="Contá con claridad qué recibe la persona. Mínimo 80 caracteres."></textarea></label>
-    <label class="ma-f" id="fPrecioWrap"><span class="lbl">Precio (ARS)</span><input id="fPrecio" type="number" min="0" step="100" placeholder="Ej: 8000"></label>
-    <label class="ma-f"><span class="lbl">Zona</span><input id="fZona" placeholder="Ej: La Plata · Tolosa"></label>
-    <label class="ma-f"><span class="lbl">WhatsApp / teléfono de contacto</span><input id="fWhatsapp" placeholder="Ej: 5492211234567"></label>
-    <label class="ma-f"><span class="lbl">Foto (URL)</span><input id="fFoto" placeholder="https://…"></label>
-
-    <hr class="ma-hr">
-    <div class="ma-optlbl">Opcional — lo decidís vos</div>
-    <label class="ma-f"><span class="lbl">Sobre vos / experiencia (CV)</span><textarea id="fSobre" placeholder="Tu experiencia, estudios, lo que sabés hacer…"></textarea></label>
-    <label class="ma-f"><span class="lbl">Edad</span><input id="fEdad" type="number" min="0" placeholder="Opcional"></label>
-    <label class="ma-f"><span class="lbl">Estatura</span><input id="fEstatura" placeholder="Opcional, ej: 1,70 m"></label>
-    <label class="ma-f"><span class="lbl">Video de presentación (URL)</span><input id="fVideo" placeholder="https://… mp4 o link de video"></label>
-    <label class="ma-f"><span class="lbl">Estudios</span><input id="fEstudios" placeholder="Opcional"></label>
-    <label class="ma-f"><span class="lbl">Habilidades</span><input id="fHabilidades" placeholder="Opcional"></label>
-    <label class="ma-f"><span class="lbl">Idiomas</span><input id="fIdiomas" placeholder="Opcional"></label>
-
-    <div id="fNegocio" style="display:none">
-      <hr class="ma-hr">
-      <div class="ma-optlbl">Datos del negocio</div>
-      <label class="ma-f"><span class="lbl">Rubro</span><input id="fRubro" placeholder="Ej: Panadería"></label>
-      <label class="ma-f"><span class="lbl">Dirección</span><input id="fDireccion" placeholder="Calle y número"></label>
-      <label class="ma-f"><span class="lbl">Horarios</span><input id="fHorarios" placeholder="Ej: Lun a Sáb 9 a 20"></label>
-      <label class="ma-f"><span class="lbl">Link de Google Maps</span><input id="fMapa" placeholder="https://maps.google…"></label>
-    </div>
-
-    <div class="ma-msg" id="fMsg"></div>
-    <div class="ma-formbtns">
-      <button class="btn btn-ghost" id="fBorrador">Guardar borrador</button>
-      <button class="btn btn-gold" id="fPublicar">Publicar</button>
-    </div>
-  </div>
-</div>
 
 <footer class="footer" style="padding:50px 0 30px">
   <div class="container">
     <div class="footer-bottom" style="border:none;padding:0">
-      <p>© 2026 Aura · La Plata, Argentina.</p>
+      <p>© 2026 Aura Experience</p>
+      <div class="age"><span class="b18">18+</span><span>Solo para mayores de edad</span></div>
     </div>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="js/ea-supabase.js?v=31" defer></script>
-<script src="js/app.js?v=41" defer></script>
+<script src="js/locations.js" defer></script>
+<script src="js/app.js?v=30" defer></script>
 <script src="js/pwa.js?v=4" defer></script>
 <script src="js/theme.js?v=1" defer></script>
-<script>
-(function(){
-  var root=document.getElementById('miAura'), client=null, user=null, current=null, curTab='servicios', cache={};
-  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-  function money(c){ if(c==null) return ''; return '$'+(c/100).toLocaleString('es-AR'); }
-  function badge(e){ return {borrador:'Borrador',en_revision:'En revisión',publicado:'Publicado',pausado:'Pausado',archivado:'Archivado'}[e]||e||''; }
-  var TABS=[['posteos','Posteos'],['trabajos','Mis trabajos'],['servicios','Servicios'],['sesiones','Sesiones'],['planes','Mis planes']];
-
-  function loginView(){
-    root.innerHTML='<div class="ma-empty"><span class="eyebrow">Mi Aura</span>'
-      +'<h1>Ingresá a tu cuenta</h1>'
-      +'<p style="color:var(--text-soft)">Con tu cuenta gestionás tus posteos, tus trabajos, tus servicios, tus sesiones y tus planes.</p>'
-      +'<div class="hero-actions" style="justify-content:center;margin-top:18px"><a href="cuenta.html?next=mi-perfil.html" class="btn btn-gold">Ingresar o crear cuenta</a></div></div>';
-  }
-  function emptyState(msg, cta){
-    return '<div class="ma-empty2"><p>'+msg+'</p>'+(cta?'<button class="btn btn-ghost" data-nuevo="1">'+cta+'</button>':'')+'</div>';
-  }
-  function listingList(rows){
-    return '<div class="ma-grid">'+rows.map(function(x){
-      var thumb=x.foto_principal? '<div class="ma-thumb"><img src="'+esc(x.foto_principal)+'" alt="" loading="lazy">'+(x.verificado?'<span class="ma-vf">✓ Verificado</span>':'')+'</div>':'';
-      return '<div class="ma-card" data-edit="'+esc(x.id)+'">'+thumb+'<div class="ma-card-b"><div class="ma-card-t">'+esc(x.titulo)+'</div>'
-        +'<div class="ma-card-m">'+esc(badge(x.estado))+(x.precio_centavos?(' · '+money(x.precio_centavos)):'')+'</div></div></div>';
-    }).join('')+'</div>';
-  }
-  function bar(txt, tipoNuevo){
-    return '<div class="ma-bar"><span class="hint">'+txt+'</span><button class="btn btn-gold" data-nuevo="'+tipoNuevo+'">+ Nuevo</button></div>';
-  }
-  async function loadTab(id){
-    curTab=id;
-    var p=document.getElementById('maPanel'); if(!p) return;
-    p.innerHTML='<div class="ma-empty2"><p>Cargando…</p></div>';
-    try{
-      if(id==='posteos'){
-        var r=await client.from('posts').select('*').eq('user_id',user.id).order('created_at',{ascending:false});
-        var d=r.data||[];
-        p.innerHTML = '<div class="ma-bar"><span class="hint">Tus fotos y videos aparecen en el Feed.</span><a class="btn btn-gold" href="feed.html">Subir al feed</a></div>'
-          + (d.length? '<div class="ma-grid">'+d.map(function(x){var m=x.foto_url?('<div class="ma-thumb"><img src="'+esc(x.foto_url)+'"></div>'):''; return '<div class="ma-card" style="cursor:default">'+m+'<div class="ma-card-b"><div class="ma-card-t">'+esc(x.caption||(x.tipo==='video'?'Video':'Foto'))+'</div><div class="ma-card-m">'+esc(x.estado||'')+'</div></div></div>';}).join('')+'</div>' : emptyState('Todavía no subiste posteos.'));
-      } else if(id==='trabajos'){
-        p.innerHTML = emptyState('Acá va tu galería de trabajos: fotos de resultados de lo que hiciste. Subilas desde el Feed (foto) y quedan en tu perfil.','Ir al Feed');
-      } else if(id==='servicios'){
-        var rs=await client.from('listings').select('*').eq('account_id',user.id).in('tipo',['servicio','producto','negocio']).order('creado_en',{ascending:false});
-        var ds=rs.data||[]; cache.servicios=ds;
-        p.innerHTML = bar('Tocá una ficha para editarla y publicarla.','servicio') + (ds.length? listingList(ds) : emptyState('Todavía no tenés servicios. Creá el primero.','Crear un servicio'));
-      } else if(id==='sesiones'){
-        var rse=await client.from('listings').select('*').eq('account_id',user.id).eq('tipo','sesion').order('creado_en',{ascending:false});
-        var dse=rse.data||[]; cache.sesiones=dse;
-        p.innerHTML = bar('Sesiones de asesoría por videollamada.','sesion') + (dse.length? listingList(dse) : emptyState('Todavía no ofreciste sesiones por videollamada.','Crear una sesión'));
-      } else if(id==='planes'){
-        var rp=await client.from('plans').select('*').eq('account_id',user.id).order('creado_en',{ascending:false});
-        var dp=rp.data||[];
-        p.innerHTML = '<div class="ma-bar"><span class="hint">Tus planes gratis.</span><a class="btn btn-gold" href="feed.html">Crear un plan</a></div>'
-          + (dp.length? '<div class="ma-grid">'+dp.map(function(x){return '<div class="ma-card" style="cursor:default"><div class="ma-card-b"><div class="ma-card-t">'+esc(x.titulo)+'</div><div class="ma-card-m">'+esc(x.estado||'')+' · gratis</div></div></div>';}).join('')+'</div>' : emptyState('Todavía no creaste ningún plan. Los planes son gratis, en lugares públicos.'));
-      }
-    }catch(err){ p.innerHTML=emptyState('No pudimos cargar esta sección ahora. Probá de nuevo en un rato.'); }
-  }
-
-  var modal=document.getElementById('maModal');
-  var F={};
-  ['fTitulo','fTipo','fQe','fPrecio','fZona','fFoto','fWhatsapp','fSobre','fEdad','fEstatura','fVideo','fEstudios','fHabilidades','fIdiomas','fRubro','fDireccion','fHorarios','fMapa','fMsg','fCount','fPrecioWrap','fNegocio'].forEach(function(id){ F[id]=document.getElementById(id); });
-  function updCount(){ var n=(F.fQe.value||'').trim().length; F.fCount.textContent=n; F.fCount.className='ma-count'+(n>=80?' ok':''); }
-  F.fQe.addEventListener('input',updCount);
-  function tipoUI(){ F.fPrecioWrap.style.display=(F.fTipo.value==='negocio')?'none':'block'; F.fNegocio.style.display=(F.fTipo.value==='negocio')?'block':'none'; }
-  F.fTipo.addEventListener('change',tipoUI);
-  function openEditor(listing, tipoNuevo){
-    current=listing;
-    document.getElementById('fTitle').textContent = listing? 'Editar ficha' : 'Nueva ficha';
-    F.fTitulo.value=listing?(listing.titulo||''):''; F.fTipo.value=listing?(listing.tipo||'servicio'):(tipoNuevo||'servicio');
-    F.fQe.value=listing?(listing.que_entrega||''):''; F.fPrecio.value=(listing&&listing.precio_centavos!=null)?(listing.precio_centavos/100):'';
-    F.fZona.value=listing?(listing.zona||''):''; F.fFoto.value=listing?(listing.foto_principal||''):'';
-    F.fWhatsapp.value=listing?(listing.contacto_whatsapp||''):''; F.fSobre.value=listing?(listing.sobre||''):'';
-    F.fEdad.value=(listing&&listing.edad!=null)?listing.edad:''; F.fEstatura.value=listing?(listing.estatura||''):'';
-    F.fVideo.value=listing?(listing.video_presentacion||''):''; F.fEstudios.value=listing?(listing.estudios||''):''; F.fHabilidades.value=listing?(listing.habilidades||''):''; F.fIdiomas.value=listing?(listing.idiomas||''):'';
-    F.fRubro.value=listing?(listing.negocio_rubro||''):''; F.fDireccion.value=listing?(listing.negocio_direccion||''):'';
-    F.fHorarios.value=listing?(listing.negocio_horarios||''):''; F.fMapa.value=listing?(listing.negocio_mapa||''):'';
-    tipoUI(); F.fMsg.textContent=''; F.fMsg.className='ma-msg'; updCount(); modal.classList.add('on');
-  }
-  function closeEditor(){ modal.classList.remove('on'); current=null; }
-  document.getElementById('maX').addEventListener('click',closeEditor);
-  modal.addEventListener('click',function(e){ if(e.target===modal) closeEditor(); });
-
-  function collect(publicar){
-    var tipo=F.fTipo.value; var precioNum=parseFloat(F.fPrecio.value); var edadNum=parseInt(F.fEdad.value,10);
-    var patch={
-      titulo:F.fTitulo.value.trim(), tipo:tipo,
-      que_entrega:F.fQe.value.trim()||null, zona:F.fZona.value.trim()||null,
-      foto_principal:F.fFoto.value.trim()||null, modalidad:(tipo==='sesion')?'video':'presencial',
-      precio_centavos:(isNaN(precioNum)?null:Math.round(precioNum*100)),
-      contacto_whatsapp:F.fWhatsapp.value.trim()||null, sobre:F.fSobre.value.trim()||null,
-      edad:(isNaN(edadNum)?null:edadNum), estatura:F.fEstatura.value.trim()||null,
-      video_presentacion:F.fVideo.value.trim()||null, estudios:F.fEstudios.value.trim()||null, habilidades:F.fHabilidades.value.trim()||null, idiomas:F.fIdiomas.value.trim()||null,
-      negocio_rubro:F.fRubro.value.trim()||null, negocio_direccion:F.fDireccion.value.trim()||null,
-      negocio_horarios:F.fHorarios.value.trim()||null, negocio_mapa:F.fMapa.value.trim()||null
-    };
-    if(tipo==='sesion') patch.direccion_id=null;
-    if(publicar) patch.estado='publicado';
-    return patch;
-  }
-  function validate(patch, publicar){
-    if(!patch.titulo) return 'Poné un título.';
-    if(publicar){
-      if(!patch.que_entrega || patch.que_entrega.length<80) return 'El “qué entregás” necesita al menos 80 caracteres para publicar.';
-      if(patch.tipo!=='negocio' && !(patch.precio_centavos>0)) return 'Poné un precio mayor a cero (no se admite “a convenir”).';
-    }
-    return null;
-  }
-  async function save(publicar){
-    var patch=collect(publicar); var err=validate(patch, publicar); F.fMsg.className='ma-msg';
-    if(err){ F.fMsg.textContent=err; F.fMsg.className='ma-msg err'; return; }
-    F.fMsg.textContent='Guardando…';
-    try{
-      var res;
-      if(current && current.id){ res=await client.from('listings').update(patch).eq('id',current.id).select().single(); }
-      else { patch.account_id=user.id; if(!patch.estado) patch.estado='borrador'; res=await client.from('listings').insert(patch).select().single(); }
-      if(res.error){ F.fMsg.textContent='No se pudo guardar: '+res.error.message; F.fMsg.className='ma-msg err'; return; }
-      F.fMsg.textContent=publicar?'Publicado ✓':'Guardado ✓'; F.fMsg.className='ma-msg ok';
-      setTimeout(function(){ closeEditor(); loadTab(curTab); }, 500);
-    }catch(e){ F.fMsg.textContent='Error: '+(e&&e.message||e); F.fMsg.className='ma-msg err'; }
-  }
-  document.getElementById('fBorrador').addEventListener('click',function(){ save(false); });
-  document.getElementById('fPublicar').addEventListener('click',function(){ save(true); });
-  document.getElementById('btnNuevoTop').addEventListener('click',function(){ if(user) openEditor(null,'servicio'); });
-
-  function shell(){
-    var md=(user.user_metadata||{});
-    var nombre=md.nombre||md.name||user.email||'Mi cuenta';
-    var avatar=md.avatar_url||'';
-    var inicial=(nombre||'A').trim().charAt(0).toUpperCase();
-    root.innerHTML='<div class="ma-head">'
-      +'<div class="ma-av">'+(avatar?'<img src="'+esc(avatar)+'" alt="">':esc(inicial))+'</div>'
-      +'<div class="ma-id"><span class="eyebrow">Mi Aura</span><h1>'+esc(nombre)+'</h1><div class="ma-sub">'+esc(user.email||'')+'</div></div>'
-      +'<div class="ma-actions"><button class="btn btn-gold" id="btnNuevo2">Publicar algo</button></div></div>'
-      +'<div class="ma-tabs" id="maTabs">'+TABS.map(function(t,i){return '<button class="ma-tab'+(t[0]==='servicios'?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'
-      +'<div class="ma-panel" id="maPanel"></div>';
-    document.getElementById('maTabs').addEventListener('click',function(e){
-      var b=e.target.closest('.ma-tab'); if(!b) return;
-      Array.prototype.forEach.call(document.querySelectorAll('.ma-tab'),function(x){x.classList.remove('on');});
-      b.classList.add('on'); loadTab(b.dataset.t);
-    });
-    document.getElementById('btnNuevo2').addEventListener('click',function(){ openEditor(null, curTab==='sesiones'?'sesion':'servicio'); });
-    document.getElementById('maPanel').addEventListener('click',function(e){
-      var nb=e.target.closest('[data-nuevo]'); if(nb){ openEditor(null, nb.getAttribute('data-nuevo')==='sesion'?'sesion':'servicio'); return; }
-      var c=e.target.closest('[data-edit]'); if(!c) return;
-      var id=c.getAttribute('data-edit');
-      var pool=(cache.servicios||[]).concat(cache.sesiones||[]);
-      var it=pool.filter(function(x){return x.id===id;})[0];
-      if(it) openEditor(it);
-    });
-    loadTab('servicios');
-  }
-  async function boot(){
-    try{ var r=await client.auth.getSession(); user=r&&r.data&&r.data.session&&r.data.session.user; }catch(e){ user=null; }
-    if(!user){ loginView(); return; }
-    shell();
-  }
-  var tries=0;
-  (function wait(){
-    if(window.eaSupa && window.eaSupa.client){ client=window.eaSupa.client; boot(); return; }
-    if(tries++>60){ loginView(); return; }
-    setTimeout(wait,100);
-  })();
-})();
-</script>
 </body>
 </html>
